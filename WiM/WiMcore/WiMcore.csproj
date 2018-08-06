@@ -142,6 +142,11 @@
   <ItemGroup>
     <Compile Include="ChildItem.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="Config\TaskElement.cs" />
+    <Compile Include="Config\TaskTemplateElementCollection.cs" />
+    <Compile Include="Config\WorkItemTemplateElement.cs" />
+    <Compile Include="Config\WorkItemTemplateElementCollection.cs" />
+    <Compile Include="Config\WorkitemTemplateSection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingsGetter.cs" />
     <Compile Include="TfsController.cs" />
@@ -154,5 +159,6 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
