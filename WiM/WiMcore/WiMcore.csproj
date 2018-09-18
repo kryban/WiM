@@ -149,6 +149,7 @@
     <Compile Include="Config\WorkitemTemplateSection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingsGetter.cs" />
+    <Compile Include="SwitchSelector.cs" />
     <Compile Include="TfsController.cs" />
     <Compile Include="Workitem.cs" />
     <Compile Include="WorkItemFields.cs" />

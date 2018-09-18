@@ -1,11 +1,9 @@
-﻿//using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-//using WorkItemMaintainer;
 using WiMcore;
 
 namespace WiMwpf
@@ -21,16 +19,14 @@ namespace WiMwpf
         {
             tfsController = new TfsController();
 
-            ConfiguredTasksOrActivities = SettingsGetter.AllTasks;
+            ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(SwitchSelector.Default);
             
-
             DataContext = this;
             InitializeComponent();
-
-            var foo = WimListBox;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
         private void NotifyOfChange(string propertyName)
         {
             if (PropertyChanged != null)
@@ -241,13 +237,13 @@ namespace WiMwpf
         private void MenuItem_TacoSwitch_Click(object sender, RoutedEventArgs e)
         {
             tacoSwitch = true;
-            ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection();
+            ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(SwitchSelector.Xtreme);
         }
 
         private void MenuItem_ReguliereTaken_Click(object sender, RoutedEventArgs e)
         {
             tacoSwitch = false;
-            ConfiguredTasksOrActivities = SettingsGetter.AllTasks;
+            ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(SwitchSelector.Default);
         }
     }
 }
