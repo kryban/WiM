@@ -197,10 +197,10 @@ namespace WiMwpf
                 WorkItemWrapper newTask = new WorkItemWrapper();
                 if (tacoSwitch)
                 {
-                    newTask.Title = workItemWrapper.Title;
+                    newTask.Title = item.Title;
                     newTask.WorkItemIterationPath = workItemWrapper.WorkItemIterationPath;
                     newTask.WorkItemAreaPath = workItemWrapper.WorkItemAreaPath;
-                    newTask.WorkItemTaskActivity = item.Title;
+                    newTask.WorkItemTaskActivity = item.ActivityType;
                     newTask.WorkItemType = "Task";
                 }
                 else
@@ -241,7 +241,7 @@ namespace WiMwpf
         private void MenuItem_TacoSwitch_Click(object sender, RoutedEventArgs e)
         {
             tacoSwitch = true;
-            ConfiguredTasksOrActivities = SettingsGetter.AllActivities;
+            ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection();
         }
 
         private void MenuItem_ReguliereTaken_Click(object sender, RoutedEventArgs e)

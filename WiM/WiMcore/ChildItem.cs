@@ -17,5 +17,7 @@ namespace WiMcore
             get { return isSelected; }
             set { isSelected = value; }
         }
+
+        public string ActivityType { get; set; }
     }
 }
