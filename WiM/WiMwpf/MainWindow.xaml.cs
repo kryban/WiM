@@ -14,6 +14,7 @@ namespace WiMwpf
         private WorkItemWrapper workItemWrapper;
         private string searchTextBoxDefaultText = "pbi Id";
         private bool tacoSwitch = false;
+        private WorkitemHelper workitemHelper;
 
         public MainWindow()
         {
@@ -22,6 +23,8 @@ namespace WiMwpf
             ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(SwitchSelector.Default);
             
             DataContext = this;
+            workitemHelper = new WorkitemHelper(); //todo: refactor
+
             InitializeComponent();
         }
 
@@ -110,7 +113,7 @@ namespace WiMwpf
             WrapperWorkItemType = workItemWrapper.WorkItemType;
             WrapperWorkItemProjectName = workItemWrapper.WorkItemProjectName;
 
-            if (AllowedToAddTaskToPbi())
+            if (workitemHelper.AllowToAddToPbi(WrapperWorkItemType, workItemWrapper))
             {
                 KoppelLabelContent = "Koppel Taak";
                 Koppel_label.Foreground = System.Windows.Media.Brushes.Black;
@@ -158,12 +161,12 @@ namespace WiMwpf
             return WimMainChecks.Children.OfType<CheckBox>();
         }
 
-        private bool AllowedToAddTaskToPbi()
-        {
-            return workItemWrapper != null &&
-                   WrapperWorkItemType != null &&
-                  (WrapperWorkItemType == "Product Backlog Item" || WrapperWorkItemType == "Bug");
-        }
+        //private bool AllowedToAddTaskToPbi()
+        //{
+        //    return workItemWrapper != null &&
+        //           WrapperWorkItemType != null &&
+        //          (WrapperWorkItemType == "Product Backlog Item" || WrapperWorkItemType == "Bug");
+        //}
 
         private void Koppel_button_Click(object sender, RoutedEventArgs e)
         {

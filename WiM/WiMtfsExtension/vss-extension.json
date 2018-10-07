@@ -1,0 +1,96 @@
+{
+  "manifestVersion": 1,
+  "id": "testext",
+  "version": "0.1.1",
+  "name": "TestExtension",
+  "scopes": [],
+  "description": "My extension makes hubs great again",
+  "publisher": "jgarverick",
+  "galleryFlags": [
+    "Preview"
+  ],
+  "icons": {
+    "default": "static/images/logo.png"
+  },
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "demands": [
+    "api-version/3.0"
+  ],
+  "tags": [
+    "Sample"
+  ],
+  "screenshots": [
+    {
+      "path": "static/images/screen1.png"
+    }
+  ],
+  "content": {
+    "license": {
+      "path": "license.md"
+    },
+    "details": {
+      "path": "overview.md"
+    }
+  },
+  "links": {
+    "getstarted": {
+      "uri": "https://bit.ly"
+    },
+    "support": {
+      "uri": "https://bit.ly"
+    },
+    "issues": {
+      "uri": "https://bit.ly"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "uri": "https://bit.ly"
+  },
+  "branding": {
+    "color": "rgb(220, 235, 252)",
+    "theme": "light"
+  },
+  "files": [
+    {
+      "path": "dist",
+      "addressable": true
+    },
+    {
+      "path": "static/images/logo.png",
+      "addressable": true
+    },
+    {
+      "path": "static/css/app.css",
+      "addressable": true
+    },
+    {
+      "path": "static/index.html",
+      "addressable": true
+    },
+    {
+      "path": "node_modules/vss-web-extension-sdk/lib",
+      "addressable": true,
+      "packagePath": "lib"
+    }
+  ],
+  "categories": [
+    "Integrate"
+  ],
+  "contributions": [
+    {
+      "id": "testext",
+      "targets": ["ms.vss-releaseManagement-web.hub-group-rm","ms.vss-build-web.build-release-hub-group"],
+      "type": "ms.vss-web.hub",
+      "properties": {
+        "name": "TestExtension",
+        "order": 100,
+        "uri": "static/index.html"
+      }
+    }
+  ]
+}

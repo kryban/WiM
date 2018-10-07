@@ -141,7 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChildItem.cs" />
-    <Compile Include="Class1.cs" />
+    <Compile Include="WorkitemHelper.cs" />
     <Compile Include="Config\TaskElement.cs" />
     <Compile Include="Config\TaskTemplateElementCollection.cs" />
     <Compile Include="Config\WorkItemTemplateElement.cs" />
