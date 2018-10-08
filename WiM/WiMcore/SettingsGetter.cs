@@ -12,7 +12,7 @@ namespace WiMcore
         public static string ApiCreateTask { get { return TfsUrl + ConfigurationManager.AppSettings[nameof(ApiCreateTask)]; } }
         public static string ApiWorkitemUrl { get { return TfsUrl + ConfigurationManager.AppSettings[nameof(ApiWorkitemUrl)]; } }
 
-        public static List<ChildItem> GetChildItemsFromSection(string switchSelector)
+        public static CustomObservableCollection<ChildItem> GetChildItemsFromSection(string switchSelector)
         {
             try
             {
@@ -20,16 +20,25 @@ namespace WiMcore
                 {
                     var template = section.WorkItemTemplates.Single(t => t.Switch == switchSelector);
 
-                    return template.TaskTemplateElements.Select(t =>
+                    var foo = template.TaskTemplateElements.Select(t =>
                         new ChildItem {Key = t.Title, Title = t.Title, ActivityType = t.ActivityType}).ToList();
+
+                    var retval = new CustomObservableCollection<ChildItem>();
+
+                    foreach (var item in foo)
+                    {
+                        retval.Add(item);
+                    }
+
+                    return retval;
                 }
             }
             catch
             {
-                return new List<ChildItem>();
+                return new CustomObservableCollection<ChildItem>();
             }
 
-            return new List<ChildItem>();
+            return new CustomObservableCollection<ChildItem>();
         }
     }
 }

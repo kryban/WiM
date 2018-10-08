@@ -1,20 +1,75 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace WiMcore
 {
-    public class ChildItem
+    public class ChildItem: INotifyPropertyChanged
     {
-        public string Key { get; set; }
-        public string Title { get; set; }
+        private string key;
+        public string Key
+        {
+            get => key;
+            set
+            {
+                key = value;
+                //NotifyOfChange("Key");
+            }
+        }
 
-        public bool IsSelected { get; set; }// = true;
+        private string title;
+        public string Title
+        {
+            get => title;
+            set
+            {
+                title = value;
+                //NotifyOfChange("Title");
+            }
+        }
 
-        public string ActivityType { get; set; }
+        private bool isSelected;
+        public bool IsSelected
+        {
+            get => isSelected;
+            set
+            {
+                isSelected = value;
+                //NotifyOfChange("IsSelected");
+            }
+        }
 
-        public bool IsEnabled { get; set; }
+        private string activityType;
+        public string ActivityType
+        {
+            get => activityType;
+            set
+            {
+                activityType = value;
+                //NotifyOfChange("ActivityType");
+            }
+        }
+
+
+    private bool isEnabled;
+        public bool IsEnabled
+        {
+            get => isEnabled;
+            set
+            {
+                isEnabled = value;
+                //NotifyOfChange("IsEnabled");
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        //private void NotifyOfChange(string propertyName)
+        //{
+        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        //}
     }
 }
