@@ -110,6 +110,18 @@ namespace WiMcore
             return new WorkItemWrapper(wi);
         }
 
+        public bool AllowToAddToPbi(string wrapperWorkItemType, WorkItemWrapper workItemWrapper)
+        {
+            return workItemWrapper != null &&
+                wrapperWorkItemType != null &&
+                (wrapperWorkItemType == "Product Backlog Item" || wrapperWorkItemType == "Bug");
+        }
+
+        private void CheckSameTaskExists(string title)
+        {
+            throw new NotImplementedException();
+        }
+
         //public Workitem GetWorkitemById(int id)
         //{
         //   string query = SettingsGetter.ApiGetWorkitem + id;

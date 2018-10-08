@@ -11,13 +11,10 @@ namespace WiMcore
         public string Key { get; set; }
         public string Title { get; set; }
 
-        private bool isSelected = true;
-        public bool IsSelected
-        {
-            get { return isSelected; }
-            set { isSelected = value; }
-        }
+        public bool IsSelected { get; set; }// = true;
 
         public string ActivityType { get; set; }
+
+        public bool IsEnabled { get; set; }
     }
 }
