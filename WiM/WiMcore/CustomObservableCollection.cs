@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -9,45 +10,61 @@ using System.Threading.Tasks;
 
 namespace WiMcore
 {
-    // https://stackoverflow.com/questions/1427471/observablecollection-not-noticing-when-item-in-it-changes-even-with-inotifyprop
-    public sealed class CustomObservableCollection<T> : ObservableCollection<T>
-        where T : INotifyPropertyChanged
+    // https://www.codeproject.com/Tips/694370/How-to-Listen-to-Property-Chang
+    public sealed class CustomObservableCollection<T> :
+           ObservableCollection<T> where T : INotifyPropertyChanged
     {
-        public CustomObservableCollection()
+        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
-            CollectionChanged += FullObservableCollectionCollectionChanged;
-        }
-
-        public CustomObservableCollection(IEnumerable<T> pItems) : this()
-        {
-            foreach (var item in pItems)
+            if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                this.Add(item);
+                RegisterPropertyChanged(e.NewItems);
             }
+            else if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                UnRegisterPropertyChanged(e.OldItems);
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Replace)
+            {
+                UnRegisterPropertyChanged(e.OldItems);
+                RegisterPropertyChanged(e.NewItems);
+            }
+
+            base.OnCollectionChanged(e);
         }
 
-        private void FullObservableCollectionCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        protected override void ClearItems()
         {
-            if (e.NewItems != null)
+            UnRegisterPropertyChanged(this);
+            base.ClearItems();
+        }
+
+        private void RegisterPropertyChanged(IList items)
+        {
+            foreach (INotifyPropertyChanged item in items)
             {
-                foreach (Object item in e.NewItems)
+                if (item != null)
                 {
-                    ((INotifyPropertyChanged)item).PropertyChanged += ItemPropertyChanged;
+                    item.PropertyChanged += new PropertyChangedEventHandler(item_PropertyChanged);
                 }
             }
-            if (e.OldItems != null)
+        }
+
+        private void UnRegisterPropertyChanged(IList items)
+        {
+            foreach (INotifyPropertyChanged item in items)
             {
-                foreach (Object item in e.OldItems)
+                if (item != null)
                 {
-                    ((INotifyPropertyChanged)item).PropertyChanged -= ItemPropertyChanged;
+                    item.PropertyChanged -= new PropertyChangedEventHandler(item_PropertyChanged);
                 }
             }
         }
 
-        private void ItemPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void item_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            NotifyCollectionChangedEventArgs args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, sender, sender, IndexOf((T)sender));
-            OnCollectionChanged(args);
+            base.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
     }
 }
+

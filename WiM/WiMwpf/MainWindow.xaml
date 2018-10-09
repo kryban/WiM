@@ -193,7 +193,9 @@
                                 Orientation="Horizontal"
                                 VerticalAlignment="Center">
                                 <CheckBox
-                                    IsChecked="{Binding IsSelected, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListBoxItem}}}" />
+                                    IsChecked="{Binding IsSelected, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListBoxItem}}}" 
+                                    IsEnabled="{Binding IsEnabled, Mode=OneWay, RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListBoxItem}}}" 
+                                    />
                                 <TextBlock
                                     Text="{Binding Title}" />
                             </StackPanel>

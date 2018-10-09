@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -20,12 +21,18 @@ namespace WiMwpf
             tfsController = new TfsController(); //todo: refactor
 
             ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(SwitchSelector.Default);
-            
+            configuredTasksOrActivities.CollectionChanged += ConfiguredTasksOrActivities_CollectionChanged;
+
             DataContext = this;
 
-            EnableAllTaskCheckBoxes();
+            DisableAllTaskCheckBoxes();
 
             InitializeComponent();
+        }
+
+        private void ConfiguredTasksOrActivities_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            NotifyOfChange("ConfiguredTasksOrActivities");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -42,7 +49,7 @@ namespace WiMwpf
             set
             {
                 configuredTasksOrActivities = value;
-                NotifyOfChange("ConfiguredTasksOrActivities");
+                //NotifyOfChange("ConfiguredTasksOrActivities");
             }
         }
 
@@ -124,8 +131,8 @@ namespace WiMwpf
             {
                 KoppelLabelContent = $"Aan een {WrapperWorkItemType} mag geen Taak gekoppeld worden.";
                 Koppel_label.Foreground = System.Windows.Media.Brushes.Red;
-                DisableAllTaskCheckBoxes();
                 Koppel_button.IsEnabled = false;
+                DisableAllTaskCheckBoxes();
             }
         }
 
@@ -146,27 +153,6 @@ namespace WiMwpf
                 item.IsEnabled = false;
             }
         }
-
-        //private void SetVisibilityOfTaskCheckBoxes()
-        //{
-        //    foreach (var checkbox in AllTaskCheckBoxes())
-        //    {
-        //        if (checkbox.Content.ToString().Length < 1)
-        //            checkbox.Visibility = Visibility.Hidden;
-        //    }
-        //}
-
-        //private IEnumerable<CheckBox> AllTaskCheckBoxes()
-        //{
-        //    return WimMainChecks.Children.OfType<CheckBox>();
-        //}
-
-        //private bool AllowedToAddTaskToPbi()
-        //{
-        //    return workItemWrapper != null &&
-        //           WrapperWorkItemType != null &&
-        //          (WrapperWorkItemType == "Product Backlog Item" || WrapperWorkItemType == "Bug");
-        //}
 
         private void Koppel_button_Click(object sender, RoutedEventArgs e)
         {

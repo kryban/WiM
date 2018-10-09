@@ -16,7 +16,7 @@ namespace WiMcore
             set
             {
                 key = value;
-                //NotifyOfChange("Key");
+                NotifyChange("Key");
             }
         }
 
@@ -27,7 +27,7 @@ namespace WiMcore
             set
             {
                 title = value;
-                //NotifyOfChange("Title");
+                NotifyChange("Title");
             }
         }
 
@@ -38,7 +38,7 @@ namespace WiMcore
             set
             {
                 isSelected = value;
-                //NotifyOfChange("IsSelected");
+                NotifyChange("IsSelected");
             }
         }
 
@@ -49,7 +49,7 @@ namespace WiMcore
             set
             {
                 activityType = value;
-                //NotifyOfChange("ActivityType");
+                NotifyChange("ActivityType");
             }
         }
 
@@ -61,15 +61,15 @@ namespace WiMcore
             set
             {
                 isEnabled = value;
-                //NotifyOfChange("IsEnabled");
+                NotifyChange("IsEnabled");
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        //private void NotifyOfChange(string propertyName)
-        //{
-        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        //}
+        private void NotifyChange(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
