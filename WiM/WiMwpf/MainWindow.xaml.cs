@@ -42,8 +42,8 @@ namespace WiMwpf
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private CustomObservableCollection<ChildItem> configuredTasksOrActivities;
-        public CustomObservableCollection<ChildItem> ConfiguredTasksOrActivities
+        private List<ChildItem> configuredTasksOrActivities;
+        public List<ChildItem> ConfiguredTasksOrActivities
         {
             get { return configuredTasksOrActivities; }
             set
