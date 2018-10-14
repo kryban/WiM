@@ -25,7 +25,7 @@ namespace WiMwpf
             DataContext = this;
             workitemHelper = new WorkitemHelper(); //todo: refactor
 
-            EnableAllTaskCheckBoxes();
+            DisableAllTaskCheckBoxes();
 
 
             InitializeComponent();
