@@ -162,6 +162,9 @@
                                 Property="IsSelected"
                                 Value="{Binding IsSelected}" />
                             <Setter
+                                Property="IsEnabled"
+                                Value="{Binding IsEnabled}" />
+                            <Setter
                                 Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate
@@ -190,7 +193,9 @@
                                 Orientation="Horizontal"
                                 VerticalAlignment="Center">
                                 <CheckBox
-                                    IsChecked="{Binding IsSelected, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListBoxItem}}}" />
+                                    IsChecked="{Binding IsSelected, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListBoxItem}}}" 
+                                    IsEnabled="{Binding IsEnabled, Mode=OneWay, RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListBoxItem}}}" 
+                                    />
                                 <TextBlock
                                     Text="{Binding Title}" />
                             </StackPanel>
