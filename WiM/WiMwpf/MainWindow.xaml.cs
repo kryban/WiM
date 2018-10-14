@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -15,31 +14,29 @@ namespace WiMwpf
         private WorkItemWrapper workItemWrapper;
         private string searchTextBoxDefaultText = "pbi Id";
         private bool tacoSwitch = false;
+        private WorkitemHelper workitemHelper;
 
         public MainWindow()
         {
-            tfsController = new TfsController(); //todo: refactor
+            tfsController = new TfsController();
 
             ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(SwitchSelector.Default);
-            configuredTasksOrActivities.CollectionChanged += ConfiguredTasksOrActivities_CollectionChanged;
-
+            
             DataContext = this;
+            workitemHelper = new WorkitemHelper(); //todo: refactor
 
             DisableAllTaskCheckBoxes();
 
-            InitializeComponent();
-        }
 
-        private void ConfiguredTasksOrActivities_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            NotifyOfChange("ConfiguredTasksOrActivities");
+            InitializeComponent();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void NotifyOfChange(string propertyName)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private List<ChildItem> configuredTasksOrActivities;
@@ -49,7 +46,7 @@ namespace WiMwpf
             set
             {
                 configuredTasksOrActivities = value;
-                //NotifyOfChange("ConfiguredTasksOrActivities");
+                NotifyOfChange("ConfiguredTasksOrActivities");
             }
         }
 
@@ -115,12 +112,11 @@ namespace WiMwpf
         private void SearchWorkItemId_button_Click(object sender, RoutedEventArgs e)
         {
             workItemWrapper = tfsController.GetById(SearchedWorkItemId_textBox.Text);
-
             WrapperTitle = workItemWrapper.Title;
             WrapperWorkItemType = workItemWrapper.WorkItemType;
             WrapperWorkItemProjectName = workItemWrapper.WorkItemProjectName;
 
-            if (tfsController.AllowToAddToPbi(WrapperWorkItemType, workItemWrapper))
+            if (workitemHelper.AllowToAddToPbi(WrapperWorkItemType, workItemWrapper))
             {
                 KoppelLabelContent = "Koppel Taak";
                 Koppel_label.Foreground = System.Windows.Media.Brushes.Black;
@@ -131,28 +127,49 @@ namespace WiMwpf
             {
                 KoppelLabelContent = $"Aan een {WrapperWorkItemType} mag geen Taak gekoppeld worden.";
                 Koppel_label.Foreground = System.Windows.Media.Brushes.Red;
-                Koppel_button.IsEnabled = false;
                 DisableAllTaskCheckBoxes();
+                Koppel_button.IsEnabled = false;
             }
         }
 
         private void EnableAllTaskCheckBoxes()
         {
-            foreach (var item in ConfiguredTasksOrActivities)
+            foreach (var checkbox in ConfiguredTasksOrActivities)
             {
-                item.IsSelected = true;
-                item.IsEnabled = true;
+                checkbox.IsSelected = true;//.IsChecked = false;
+                                            // checkbox.IsEnabled = false;
             }
         }
 
         private void DisableAllTaskCheckBoxes()
         {
-            foreach(var item in ConfiguredTasksOrActivities)
+            foreach (var checkbox in ConfiguredTasksOrActivities)
             {
-                item.IsSelected = false;
-                item.IsEnabled = false;
+                checkbox.IsSelected = false;//.IsChecked = false;
+               // checkbox.IsEnabled = false;
             }
         }
+
+        private void SetVisibilityOfTaskCheckBoxes()
+        {
+            foreach (var checkbox in AllTaskCheckBoxes())
+            {
+                if (checkbox.Content.ToString().Length < 1)
+                    checkbox.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private IEnumerable<CheckBox> AllTaskCheckBoxes()
+        {
+            return WimMainChecks.Children.OfType<CheckBox>();
+        }
+
+        //private bool AllowedToAddTaskToPbi()
+        //{
+        //    return workItemWrapper != null &&
+        //           WrapperWorkItemType != null &&
+        //          (WrapperWorkItemType == "Product Backlog Item" || WrapperWorkItemType == "Bug");
+        //}
 
         private void Koppel_button_Click(object sender, RoutedEventArgs e)
         {
@@ -211,6 +228,11 @@ namespace WiMwpf
             ResultPopupTextBlock.Text = $"{aantalTakenToegevoegd} {taakTaken} toegevoegd.";
             ResultPopup.IsOpen = true;
 
+        }
+
+        private void CheckSameTaskExists(string title)
+        {
+            throw new NotImplementedException();
         }
 
         private void ResultPopupOK_button_Click(object sender, RoutedEventArgs e)
