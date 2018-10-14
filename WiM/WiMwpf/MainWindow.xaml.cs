@@ -25,6 +25,9 @@ namespace WiMwpf
             DataContext = this;
             workitemHelper = new WorkitemHelper(); //todo: refactor
 
+            EnableAllTaskCheckBoxes();
+
+
             InitializeComponent();
         }
 
@@ -131,19 +134,19 @@ namespace WiMwpf
 
         private void EnableAllTaskCheckBoxes()
         {
-            foreach (var checkbox in AllTaskCheckBoxes())
+            foreach (var checkbox in ConfiguredTasksOrActivities)
             {
-                checkbox.IsChecked = false;
-                checkbox.IsEnabled = true;
+                checkbox.IsSelected = true;//.IsChecked = false;
+                                            // checkbox.IsEnabled = false;
             }
         }
 
         private void DisableAllTaskCheckBoxes()
         {
-            foreach (var checkbox in AllTaskCheckBoxes())
+            foreach (var checkbox in ConfiguredTasksOrActivities)
             {
-                checkbox.IsChecked = false;
-                checkbox.IsEnabled = false;
+                checkbox.IsSelected = false;//.IsChecked = false;
+               // checkbox.IsEnabled = false;
             }
         }
 
