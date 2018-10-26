@@ -1,0 +1,51 @@
+{
+  "manifestVersion": 1,
+  "id": "DevDemoTfsExtensionForWiM",
+  "version": "0.0.1",
+  "name": "DevDemo Workitem Manager Extension Beta",
+  "publisher": "bandik",
+  "description": "A hub for adding multiple tasks at once",
+  "public": false,
+  "categories": [ "Plan and track" ],
+  "baseUri": "https://localhost:44378" ,
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "icons": {
+    "default": "images/extendLogo.png"
+  },
+  "contributions": [
+    {
+      "id": "ToFollow.WimExtensionBeta",
+      "type": "ms.vss-web.hub",
+      "description": "Adds a 'WiM Extension Beta hub to the Work hub group.",
+      "targets": [
+        "ms.vss-work-web.work-hub-group"
+      ],
+      "properties": {
+        "name": "WiM EXtension Beta",
+        "order": 99,
+        "uri": "WiMIndex.html"
+      }
+    }
+  ],
+  "scopes": [
+    "vso.work"
+  ],
+  "files": [
+    {
+      "path": "WiMIndex.html",
+      "addressable": true
+    },
+    {
+      "path": "node_modules/vss-web-extension-sdk/lib",
+      "addressable": true
+    },
+    {
+      "path": "images/extendLogo.png",
+      "addressable": true
+    }
+  ]
+}

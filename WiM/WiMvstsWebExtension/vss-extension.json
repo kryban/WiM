@@ -1,0 +1,51 @@
+{
+  "manifestVersion": 1,
+  "id": "WimTfsWebExtensionBetaDev",
+  "version": "0.0.3",
+  "name": "Dev Workitem Manager Extension Beta",
+  "publisher": "bandik",
+  "description": "Debug: A hub for adding multiple tasks at once",
+  "public": false,
+  "categories": [ "Plan and track" ],
+  "baseUri": "https://localhost:44328" ,
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "icons": {
+    "default": "images/logoHierarchical.png"
+  },
+  "contributions": [
+    {
+      "id": "Bandik.WimTfsWebExtensionBetaDev",
+      "type": "ms.vss-web.hub",
+      "description": "Debug: Adds a 'WiM Extension Beta hub to the Work hub group.",
+      "targets": [
+        "ms.vss-work-web.work-hub-group"
+      ],
+      "properties": {
+        "name": "DevDemo WiM Extension Beta",
+        "order": 99,
+        "uri": "WiMIndex.html"
+      }
+    }
+  ],
+  "scopes": [
+    "vso.work"
+  ],
+  "files": [
+    {
+      "path": "WiMIndex.html",
+      "addressable": true
+    },
+    {
+      "path": "node_modules/vss-web-extension-sdk/lib",
+      "addressable": true
+    },
+    {
+      "path": "images/logoHierarchical.png",
+      "addressable": true
+    }
+  ]
+}
