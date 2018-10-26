@@ -102,7 +102,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>60613</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://localhost:44328/</IISUrl>
+          <IISUrl>http://localhost:60613/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

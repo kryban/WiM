@@ -5,7 +5,6 @@
     <title>WorkitemManager</title>
     <script src="node_modules/vss-web-extension-sdk/lib/VSS.SDK.js"></script>
     <style>
-        <style >
         .open-existing-work-item, .open-existing-work-item {
             margin: 20px;
         }
@@ -24,28 +23,18 @@
     </style>
 </head>
 <body>
-    <script type="text/javascript">
-        VSS.init({
-            explicitNotifyLoaded: true,
-            usePlatformScripts: true
-        });    
-    </script>
 
-    <h1>Hello to ASP.NET WiM World</h1>
+
+    <h1>Hello to ASP.NET WiM World!!!005!!</h1>
 
     <div class="open-existing-work-item">
         <label for="existing-wit-id">Existing work item id:</label>
         <input id="existing-wit-id" value="2">
-        <Button id="existing-wit-button" type="button" value="Open..." onclick="OpenButtonClicked()">Open</Button>
+        <button id="existing-wit-button" onclick="idButtonClicked()" value="Open...">Open</button>
     </div>
 
-    <div>
-        <h4 id="existing-wit-text">nothing yet</h4>
-    </div>
+    <p id="toel">nothing yet</p>
 
-    <script type="text/javascript">
-        VSS.notifyLoadSucceeded();
-    </script>
     <script type="text/javascript">
 
         //VSS.require(["VSS/Service", "TFS/WorkItemTracking/RestClient"], function (VSS_Service, TFS_Wit_WebApi) {
@@ -54,11 +43,10 @@
         //    // ...
         //});
 
-        
-        function OpenButtonClicked() {
+       function idButtonClicked() {
                 var workitemID = document.getElementById("existing-wit-id").value;
-                document.getElementById("existing-wit-text").innerHTML = workitemID;
-        };
+                document.getElementById("toel").innerHTML = workitemID;
+            };
 //        document.getElementById("existing-wit-text").nodevalue = workitemid();
 
         //VSS.init({ usePlatformScripts: true, explicitNotifyLoaded: true });

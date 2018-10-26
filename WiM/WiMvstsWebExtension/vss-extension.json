@@ -1,13 +1,13 @@
 {
   "manifestVersion": 1,
   "id": "WimTfsWebExtensionBetaDev",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "name": "Dev Workitem Manager Extension Beta",
   "publisher": "bandik",
   "description": "Debug: A hub for adding multiple tasks at once",
   "public": false,
   "categories": [ "Plan and track" ],
-  "baseUri": "https://localhost:44328" ,
+  "baseUri": "http://localhost:60613" ,
   "targets": [
     {
       "id": "Microsoft.VisualStudio.Services"
