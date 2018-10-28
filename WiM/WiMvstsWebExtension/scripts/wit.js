@@ -26,13 +26,13 @@ VSS.require(["TFS/WorkItemTracking/RestClient"], // modulepath
         witClient = _restWitClient.getClient();
         
         //var projectNames = VSS.getWebContext().project.name;
-        var workitemTypes = witClient.getWorkItemTypes(VSS.getWebContext().project.name).then(
-            function (types)
-            {
-                var bar = JSON.stringify(types);
-                return types[0];
-            }
-        );
+        //var workitemTypes = witClient.getWorkItemTypes(VSS.getWebContext().project.name).then(
+        //    function (types)
+        //    {
+        //        var bar = JSON.stringify(types);
+        //        return types[0];
+        //    }
+        //);
     }
 );
 
