@@ -4,7 +4,8 @@
     usePlatformStyles: false
 });  
 
-var wi = "ttt";
+var wi = "defaultText";
+var witClient;
 
 var WorkItemObj =
 {
@@ -26,18 +27,9 @@ function MapWorkItemFields(witem, witemObject)
 
 VSS.require(["TFS/WorkItemTracking/RestClient"], // modulepath
     function (_restWitClient) {
-        var witClient = _restWitClient.getClient();
+        witClient = _restWitClient.getClient();
         
-        witClient.getWorkItem(3, ["System.Title","System.WorkItemType"]).then(
-            function (workitm)
-            {
-                  MapWorkItemFields(workitm, WorkItemObj);
-                  wi = WorkItemObj.Title;
-                  //wi = workitm.fields["System.Title"];//JSON.stringify(workitm);
-                  var foo = 1;
-            });
-
-//        var projectNames = VSS.getWebContext().project.name;
+        //var projectNames = VSS.getWebContext().project.name;
         var workitemTypes = witClient.getWorkItemTypes(VSS.getWebContext().project.name).then(
             function (types)
             {
@@ -52,9 +44,30 @@ VSS.require(["TFS/WorkItemTracking/RestClient"], // modulepath
 
 VSS.notifyLoadSucceeded();
 
-function OpenButtonClicked(obj) {
-    var workitemID = document.getElementById("existing-wit-id").value;
-   
-    document.getElementById("existing-wit-text").innerHTML = workitemID + "</br> " + wi;
-};
+async function GetWorkItem(client) {
+      await client.getWorkItem(3, ["System.Title", "System.WorkItemType"]).then(
+        function (workitm)
+        {
+            MapWorkItemToObject(workitm);
+        });
+}
 
+function MapWorkItemToObject(workit) {
+    MapWorkItemFields(workit, WorkItemObj);
+    //wi = workitm.fields["System.Title"];//JSON.stringify(workitm);
+    wi = WorkItemObj.Title;
+    var foo = 1;
+}
+
+async function OpenButtonClicked() {
+    var workitemID = document.getElementById("existing-wit-id").value;
+
+    await GetWorkItem(witClient);
+
+    UpdateTextField(workitemID);
+}
+
+
+function UpdateTextField(workitemID) {
+    document.getElementById("existing-wit-text").innerHTML = workitemID + "</br> " + wi;
+}
