@@ -69,6 +69,8 @@
   <ItemGroup>
     <Content Include="images\extendLogo.png" />
     <Content Include="images\logoHierarchical.png" />
+    <Content Include="LessonsLearned.txt" />
+    <Content Include="scripts\wit.js" />
     <Content Include="Web.config" />
     <Content Include="WiMIndex.html" />
   </ItemGroup>
