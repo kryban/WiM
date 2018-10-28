@@ -18,10 +18,6 @@ var WorkItemObj =
     WorkItemTaskActivity: null,
 };
 
-function MapWorkItemFields(witem, witemObject)
-{
-    witemObject.Title = witem.fields["System.Title"];
-};
 
 // https://docs.microsoft.com/en-us/azure/devops/extend/reference/client/api/tfs/workitemtracking/restclient/workitemtrackinghttpclient2_1?view=vsts
 
@@ -35,39 +31,50 @@ VSS.require(["TFS/WorkItemTracking/RestClient"], // modulepath
             {
                 var bar = JSON.stringify(types);
                 return types[0];
-                //var bar2 = 1;
             }
         );
-        var foro = witClient;
     }
 );
 
 VSS.notifyLoadSucceeded();
 
-async function GetWorkItem(client) {
-      await client.getWorkItem(3, ["System.Title", "System.WorkItemType"]).then(
+async function GetWorkItem(client, id) 
+{
+    await client.getWorkItem(parseInt(id), ["System.Title", "System.WorkItemType"]).then(
         function (workitm)
         {
+            var foo = JSON.stringify(workitm);
             MapWorkItemToObject(workitm);
-        });
+        },
+        function (rejectReason)
+        {
+            var bar = rejectReason; //JSON.stringify(rejectReason);
+            WorkItemObj.Title = "No work item found with id " + id + ". </br> Reason: " + rejectReason.message;          
+        }
+    );
 }
 
-function MapWorkItemToObject(workit) {
+function MapWorkItemToObject(workit) 
+{
     MapWorkItemFields(workit, WorkItemObj);
-    //wi = workitm.fields["System.Title"];//JSON.stringify(workitm);
-    wi = WorkItemObj.Title;
-    var foo = 1;
 }
 
-async function OpenButtonClicked() {
+function MapWorkItemFields(witem, witemObject)
+{
+    witemObject.Title = witem.fields["System.Title"];
+};
+
+async function OpenButtonClicked() 
+{
     var workitemID = document.getElementById("existing-wit-id").value;
 
-    await GetWorkItem(witClient);
-
+    await GetWorkItem(witClient, workitemID);
     UpdateTextField(workitemID);
 }
 
 
-function UpdateTextField(workitemID) {
+function UpdateTextField(workitemID)
+{
+    wi = WorkItemObj.Title;
     document.getElementById("existing-wit-text").innerHTML = workitemID + "</br> " + wi;
 }
