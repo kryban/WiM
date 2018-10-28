@@ -16,8 +16,8 @@ var WorkItemObj =
     WorkItemIterationPath: null,
     WorkItemAreaPath: null,
     WorkItemTaskActivity: null,
+    TasksAllowed: false
 };
-
 
 // https://docs.microsoft.com/en-us/azure/devops/extend/reference/client/api/tfs/workitemtracking/restclient/workitemtrackinghttpclient2_1?view=vsts
 
@@ -43,13 +43,14 @@ async function GetWorkItem(client, id)
     await client.getWorkItem(parseInt(id), ["System.Title", "System.WorkItemType"]).then(
         function (workitm)
         {
-            var foo = JSON.stringify(workitm);
+            //var foo = JSON.stringify(workitm);
             MapWorkItemToObject(workitm);
         },
         function (rejectReason)
         {
-            var bar = rejectReason; //JSON.stringify(rejectReason);
-            WorkItemObj.Title = "No work item found with id " + id + ". </br> Reason: " + rejectReason.message;          
+            //var bar = rejectReason; //JSON.stringify(rejectReason);
+            WorkItemObj.Title = "No work item found with id " + id + ". </br> Reason: " + rejectReason.message;    
+            MapToEmptyWorkItemObject();
         }
     );
 }
@@ -59,10 +60,32 @@ function MapWorkItemToObject(workit)
     MapWorkItemFields(workit, WorkItemObj);
 }
 
+function MapToEmptyWorkItemObject()
+{
+    //WorkItemObj.Id = null;
+    //WorkItemObj.Title = null;
+    WorkItemObj.WorkItemType = null;
+    WorkItemObj.WorkItemProjectName = null;
+    WorkItemObj.WorkItemIterationPath= null;
+    WorkItemObj.WorkItemAreaPath = null;
+    WorkItemObj.WorkItemTaskActivity = null;
+    WorkItemObj.TasksAllowed= false;
+}
+
 function MapWorkItemFields(witem, witemObject)
 {
     witemObject.Title = witem.fields["System.Title"];
-};
+    witemObject.WorkItemType = witem.fields["System.WorkItemType"];
+    witemObject.TasksAllowed = CompareWorkItemType(witem.fields["System.WorkItemType"]);
+}
+
+function CompareWorkItemType(type)
+{
+    var bug = "Bug";
+    var productBacklogItem = "Product Backlog Item";
+
+    return (type.localeCompare(bug) === 0 || type.localeCompare(productBacklogItem) === 0);
+}
 
 async function OpenButtonClicked() 
 {
@@ -72,9 +95,17 @@ async function OpenButtonClicked()
     UpdateTextField(workitemID);
 }
 
-
 function UpdateTextField(workitemID)
 {
     wi = WorkItemObj.Title;
     document.getElementById("existing-wit-text").innerHTML = workitemID + "</br> " + wi;
+
+    if (!WorkItemObj.TasksAllowed)
+    {
+        document.getElementById("existing-wit-text").style.color = "Red";
+    }
+    else
+    {
+        document.getElementById("existing-wit-text").style.color = "Black";
+    }
 }
