@@ -13,4 +13,19 @@
     <PackageReference Include="SpecFlow.NUnit" Version="3.0.220" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Taken.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Taken.feature</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Taken.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Taken.feature.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
 </Project>
