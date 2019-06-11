@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WiMwpf.Properties
+namespace WiM.Wpf.Properties
 {
 
 

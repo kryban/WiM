@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WiMcore.Config
+namespace WiM.Core.Config
 {
     public class WorkItemTemplateSection : ConfigurationSection
     {

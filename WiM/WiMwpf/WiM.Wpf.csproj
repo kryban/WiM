@@ -118,9 +118,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WiMcore\WiMcore.csproj">
+    <ProjectReference Include="..\WiMcore\WiM.Core.csproj">
       <Project>{7c8791ee-1486-47f1-8fad-c579612e0651}</Project>
-      <Name>WiMcore</Name>
+      <Name>WiM.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WiMcore
+namespace WiM.Core
 {
     public class ChildItem: INotifyPropertyChanged
     {

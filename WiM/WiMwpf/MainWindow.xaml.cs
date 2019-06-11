@@ -4,9 +4,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using WiMcore;
+using WiM.Core;
 
-namespace WiMwpf
+namespace WiM.Wpf
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {

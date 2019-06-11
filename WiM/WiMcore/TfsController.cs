@@ -9,7 +9,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using System.Collections.Generic;
 //using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
-namespace WiMcore
+namespace WiM.Core
 {
     public class TfsController
     {

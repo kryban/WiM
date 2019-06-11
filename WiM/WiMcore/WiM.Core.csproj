@@ -7,8 +7,8 @@
     <ProjectGuid>{7C8791EE-1486-47F1-8FAD-C579612E0651}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WiMcore</RootNamespace>
-    <AssemblyName>WiMcore</AssemblyName>
+    <RootNamespace>WiM.Core</RootNamespace>
+    <AssemblyName>WiM.Core</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

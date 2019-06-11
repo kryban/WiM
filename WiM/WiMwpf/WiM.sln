@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2035
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiMwpf", "WiMwpf.csproj", "{D22F9A13-5BCB-4712-BCE5-456C68744CBA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiM.Wpf", "WiM.Wpf.csproj", "{D22F9A13-5BCB-4712-BCE5-456C68744CBA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiMcore", "..\WiMcore\WiMcore.csproj", "{7C8791EE-1486-47F1-8FAD-C579612E0651}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiM.Core", "..\WiMcore\WiM.Core.csproj", "{7C8791EE-1486-47F1-8FAD-C579612E0651}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiMvstsWebExtension", "..\WiMvstsWebExtension\WiMvstsWebExtension.csproj", "{44F0820D-6C7D-492C-83BE-BF0A1CF148A5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiM.VstsWebExtension", "..\WiMvstsWebExtension\WiM.VstsWebExtension.csproj", "{44F0820D-6C7D-492C-83BE-BF0A1CF148A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

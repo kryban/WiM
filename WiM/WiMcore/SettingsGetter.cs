@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using WiMcore.Config;
+using WiM.Core.Config;
 
-namespace WiMcore
+namespace WiM.Core
 {
     public static class SettingsGetter
     {
