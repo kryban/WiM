@@ -141,6 +141,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChildItem.cs" />
+    <Compile Include="ITfsController.cs" />
+    <Compile Include="Repositories\IWitApi.cs" />
+    <Compile Include="Repositories\IWorkitemRepository.cs" />
+    <Compile Include="Repositories\WitApi.cs" />
+    <Compile Include="Repositories\WorkitemRepository.cs" />
     <Compile Include="WorkitemHelper.cs" />
     <Compile Include="Config\TaskElement.cs" />
     <Compile Include="Config\TaskTemplateElementCollection.cs" />

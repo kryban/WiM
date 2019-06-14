@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using WiM.Core;
+using WiM.Core.Repositories;
 
 namespace WiM.Wpf
 {
@@ -18,7 +19,7 @@ namespace WiM.Wpf
 
         public MainWindow()
         {
-            tfsController = new TfsController();
+            tfsController = new TfsController(new WorkitemRepository());
 
             ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(SwitchSelector.Default);
             

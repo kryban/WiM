@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace WiM.Core
 {
-    public class Workitem
-    {
+//    public class Workitem
+//    {
         ////[JsonProperty(PropertyName = "id")]
         //public string Id { get; set; }
 
@@ -77,5 +77,5 @@ namespace WiM.Core
 
 
 
-    }
+//    }
 }
