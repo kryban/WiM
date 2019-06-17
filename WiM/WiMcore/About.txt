@@ -1,0 +1,8 @@
+﻿
+## Workitem manager
+
+Met de Workitem Manager is het mogelijk om aan een PBI of Bug in VSTS een aantal vooraf gedefinieerde taken toe te voegen. 
+
+Het aantal taken en de omschrijvingen ervan worden in configuratie gedefinieerd. 
+
+

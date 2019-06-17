@@ -5,5 +5,6 @@ namespace WiM.Core.Repositories
     public interface IWitApi
     {
         WorkItem GetWorkItemById(int id);
+        WorkItem CreateTaskAndLinkToWorkItem(WorkItemWrapper workitemToCreate, int linkedWorkitemId, string linkedWorkItemProjectName);
     }
 }

@@ -34,12 +34,12 @@
                 <MenuItem
                     Header="_Switch">
                     <MenuItem
-                        Name="MenuItem_TacoSwitch"
-                        Header="_Taco Switch"
-                        Click="MenuItem_TacoSwitch_Click" />
+                        Name="MenuItem_XtremeSwitch"
+                        Header="_Xtreme"
+                        Click="MenuItem_XtremeSwitch_Click" />
                     <MenuItem
                         Name="MenuItem_ReguliereTaken"
-                        Header="_Reguliere Taken"
+                        Header="_Committers"
                         Click="MenuItem_ReguliereTaken_Click" />
                 </MenuItem>
             </Menu>

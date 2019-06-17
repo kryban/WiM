@@ -1,7 +1,0 @@
-﻿- een extension is niets anders dan een website wat in een iframe in tfs geladen wordt.
-- Een extension kan gedebugged worden zonder elke keer een nieuwe versie te moeten installeren.
-	- minimaal iisepxpress is nodig, wat vanuit vs debug al aanwezig is.
-	- in de manifest neem je een baseurl op, de url is de url die vs geeft bij debug van het project
-	- na installatie laadt tfs (obv de baseUri) de pagina uit localhost in de iframe van tfs
-=============================
-

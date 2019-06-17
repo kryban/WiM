@@ -36,5 +36,11 @@ namespace WiM.Core.Repositories
 
             return wi;
         }
+
+        public WorkItem CreateTaskAndLinkToWorkItem(WorkItemWrapper workitemToCreate, int linkedWorkitemId,
+            string linkedWorkItemProjectName)
+        {
+            return witApi.CreateTaskAndLinkToWorkItem(workitemToCreate, linkedWorkitemId, linkedWorkItemProjectName);
+        }
     }
 }

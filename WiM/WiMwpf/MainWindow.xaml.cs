@@ -14,14 +14,15 @@ namespace WiM.Wpf
         private TfsController tfsController;
         private WorkItemWrapper workItemWrapper;
         private string searchTextBoxDefaultText = "pbi Id";
-        private bool tacoSwitch = false;
+        //private bool tacoSwitch = false;
+        public Scrumteam scrumteam;
         private WorkitemHelper workitemHelper;
 
         public MainWindow()
         {
             tfsController = new TfsController(new WorkitemRepository());
 
-            ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(SwitchSelector.Default);
+            ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(Scrumteam.Xtreme.ToString());
             
             DataContext = this;
             workitemHelper = new WorkitemHelper(); //todo: refactor
@@ -198,20 +199,15 @@ namespace WiM.Wpf
             foreach (var item in ConfiguredTasksOrActivities.Where(s => s.IsSelected))
             {
                 WorkItemWrapper newTask = new WorkItemWrapper();
-                if (tacoSwitch)
+
+                newTask.Title = item.Title;
+                newTask.WorkItemIterationPath = workItemWrapper.WorkItemIterationPath;
+                newTask.WorkItemAreaPath = workItemWrapper.WorkItemAreaPath;
+                newTask.WorkItemType = "Task";
+
+                if (scrumteam == Scrumteam.Xtreme)
                 {
-                    newTask.Title = item.Title;
-                    newTask.WorkItemIterationPath = workItemWrapper.WorkItemIterationPath;
-                    newTask.WorkItemAreaPath = workItemWrapper.WorkItemAreaPath;
                     newTask.WorkItemTaskActivity = item.ActivityType;
-                    newTask.WorkItemType = "Task";
-                }
-                else
-                {
-                    newTask.Title = item.Title;
-                    newTask.WorkItemIterationPath = workItemWrapper.WorkItemIterationPath;
-                    newTask.WorkItemAreaPath = workItemWrapper.WorkItemAreaPath;
-                    newTask.WorkItemType = "Task";
                 }
 
                 WorkItemWrapper result = tfsController.CreateTaskAndLinkToWorkItem(newTask, Convert.ToInt32(workItemWrapper.Id), WrapperWorkItemProjectName);
@@ -241,16 +237,23 @@ namespace WiM.Wpf
             ResultPopup.IsOpen = false;
         }
 
-        private void MenuItem_TacoSwitch_Click(object sender, RoutedEventArgs e)
+        private void MenuItem_XtremeSwitch_Click(object sender, RoutedEventArgs e)
         {
-            tacoSwitch = true;
-            ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(SwitchSelector.Xtreme);
+            scrumteam = Scrumteam.Xtreme;
+            ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(scrumteam.ToString());
         }
 
         private void MenuItem_ReguliereTaken_Click(object sender, RoutedEventArgs e)
         {
-            tacoSwitch = false;
-            ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(SwitchSelector.Default);
+            scrumteam = Scrumteam.Committers;
+            ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(scrumteam.ToString());
+        }
+
+        public enum Scrumteam
+        {
+            Default,
+            Xtreme,
+            Committers,
         }
     }
 }
