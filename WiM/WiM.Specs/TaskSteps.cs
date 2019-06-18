@@ -6,6 +6,7 @@ using Moq;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using System.Collections.Generic;
 using NUnit.Framework;
+using WiM.Core.Enums;
 
 namespace WiM.Specs
 {
@@ -39,7 +40,7 @@ namespace WiM.Specs
         [When(@"i press search")]
         public void WhenIPressSearch()
         {
-            TfsController sut = new TfsController(workitemRepo.Object);
+            TfsController sut = new TfsController(workitemRepo.Object, Team.Committers);
             workItemWrapper = sut.GetById(1);
         }
 

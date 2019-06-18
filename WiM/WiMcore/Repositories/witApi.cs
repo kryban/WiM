@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 
 namespace WiM.Core.Repositories
 {
-    class WitApi : IWitApi
+    public class WitApi : IWitApi
     {
         Uri tfsUri;
         VssClientCredentials defaultCredentials;

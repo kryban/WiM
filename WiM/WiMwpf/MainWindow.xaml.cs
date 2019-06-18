@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using WiM.Core;
 using WiM.Core.Repositories;
+using WiM.Core.Enums;
 
 namespace WiM.Wpf
 {
@@ -14,21 +15,20 @@ namespace WiM.Wpf
         private TfsController tfsController;
         private WorkItemWrapper workItemWrapper;
         private string searchTextBoxDefaultText = "pbi Id";
-        //private bool tacoSwitch = false;
-        public Scrumteam scrumteam;
+        public Team scrumteam;
         private WorkitemHelper workitemHelper;
 
         public MainWindow()
         {
-            tfsController = new TfsController(new WorkitemRepository());
+            scrumteam = Team.Xtreme;
 
-            ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(Scrumteam.Xtreme.ToString());
+            tfsController = new TfsController(new WorkitemRepository(new WitApi()), scrumteam);
+            ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(scrumteam.ToString());
             
             DataContext = this;
             workitemHelper = new WorkitemHelper(); //todo: refactor
 
             EnableAllTaskCheckBoxes();
-
 
             InitializeComponent();
         }
@@ -114,7 +114,9 @@ namespace WiM.Wpf
         private void SearchWorkItemId_button_Click(object sender, RoutedEventArgs e)
         {
             workItemWrapper = tfsController.GetById(SearchedWorkItemId_textBox.Text);
+
             WrapperTitle = workItemWrapper.Title;
+
             WrapperWorkItemType = workItemWrapper.WorkItemType;
             WrapperWorkItemProjectName = workItemWrapper.WorkItemProjectName;
 
@@ -195,26 +197,9 @@ namespace WiM.Wpf
         private void ConfirmPopupOK_button_Click(object sender, RoutedEventArgs e)
         {
             int aantalTakenToegevoegd = 0;
+            IEnumerable<ChildItem> geselecteerdeTaken = ConfiguredTasksOrActivities.Where(s => s.IsSelected);
 
-            foreach (var item in ConfiguredTasksOrActivities.Where(s => s.IsSelected))
-            {
-                WorkItemWrapper newTask = new WorkItemWrapper();
-
-                newTask.Title = item.Title;
-                newTask.WorkItemIterationPath = workItemWrapper.WorkItemIterationPath;
-                newTask.WorkItemAreaPath = workItemWrapper.WorkItemAreaPath;
-                newTask.WorkItemType = "Task";
-
-                if (scrumteam == Scrumteam.Xtreme)
-                {
-                    newTask.WorkItemTaskActivity = item.ActivityType;
-                }
-
-                WorkItemWrapper result = tfsController.CreateTaskAndLinkToWorkItem(newTask, Convert.ToInt32(workItemWrapper.Id), WrapperWorkItemProjectName);
-
-                if (result != null)
-                    aantalTakenToegevoegd++;
-            }
+            aantalTakenToegevoegd = tfsController.VoegGeselecteerdeTakenToe(workItemWrapper, geselecteerdeTaken);
 
             string taakTaken = aantalTakenToegevoegd == 1 ? "taak" : "taken";
 
@@ -224,7 +209,6 @@ namespace WiM.Wpf
 
             ResultPopupTextBlock.Text = $"{aantalTakenToegevoegd} {taakTaken} toegevoegd.";
             ResultPopup.IsOpen = true;
-
         }
 
         private void CheckSameTaskExists(string title)
@@ -239,21 +223,14 @@ namespace WiM.Wpf
 
         private void MenuItem_XtremeSwitch_Click(object sender, RoutedEventArgs e)
         {
-            scrumteam = Scrumteam.Xtreme;
+            scrumteam = Team.Xtreme;
             ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(scrumteam.ToString());
         }
 
         private void MenuItem_ReguliereTaken_Click(object sender, RoutedEventArgs e)
         {
-            scrumteam = Scrumteam.Committers;
+            scrumteam = Team.Committers;
             ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(scrumteam.ToString());
-        }
-
-        public enum Scrumteam
-        {
-            Default,
-            Xtreme,
-            Committers,
         }
     }
 }

@@ -141,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChildItem.cs" />
+    <Compile Include="Enums\Team.cs" />
     <Compile Include="ITfsController.cs" />
     <Compile Include="Repositories\IWitApi.cs" />
     <Compile Include="Repositories\IWorkitemRepository.cs" />
