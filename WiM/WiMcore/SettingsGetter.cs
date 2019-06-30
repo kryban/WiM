@@ -12,13 +12,13 @@ namespace WiM.Core
         public static string ApiCreateTask { get { return TfsUrl + ConfigurationManager.AppSettings[nameof(ApiCreateTask)]; } }
         public static string ApiWorkitemUrl { get { return TfsUrl + ConfigurationManager.AppSettings[nameof(ApiWorkitemUrl)]; } }
 
-        public static List<ChildItem> GetChildItemsFromSection(string switchSelector)
+        public static List<ChildItem> GetChildItemsFromSection(string team)
         {
             try
             {
                 if (ConfigurationManager.GetSection("workItemTemplateSection") is WorkItemTemplateSection section)
                 {
-                    var template = section.WorkItemTemplates.Single(t => t.Switch == switchSelector);
+                    var template = section.WorkItemTemplates.Single(t => t.Switch == team);
 
                     return template.TaskTemplateElements.Select(t =>
                         new ChildItem {Key = t.Title, Title = t.Title, ActivityType = t.ActivityType}).ToList();

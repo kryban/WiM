@@ -116,7 +116,6 @@ namespace WiM.Wpf
             workItemWrapper = tfsController.GetById(SearchedWorkItemId_textBox.Text);
 
             WrapperTitle = workItemWrapper.Title;
-
             WrapperWorkItemType = workItemWrapper.WorkItemType;
             WrapperWorkItemProjectName = workItemWrapper.WorkItemProjectName;
 
@@ -129,7 +128,7 @@ namespace WiM.Wpf
             }
             else
             {
-                KoppelLabelContent = $"Aan een {WrapperWorkItemType} mag geen Taak gekoppeld worden.";
+                KoppelLabelContent = $"Aan de type \"{WrapperWorkItemType}\" mag geen Taak gekoppeld worden.";
                 Koppel_label.Foreground = System.Windows.Media.Brushes.Red;
                 DisableAllTaskCheckBoxes();
                 Koppel_button.IsEnabled = false;
@@ -150,7 +149,7 @@ namespace WiM.Wpf
             foreach (var checkbox in ConfiguredTasksOrActivities)
             {
                 checkbox.IsSelected = false;//.IsChecked = false;
-               // checkbox.IsEnabled = false;
+                //checkbox.IsEnabled = false;
             }
         }
 
@@ -221,16 +220,21 @@ namespace WiM.Wpf
             ResultPopup.IsOpen = false;
         }
 
-        private void MenuItem_XtremeSwitch_Click(object sender, RoutedEventArgs e)
-        {
-            scrumteam = Team.Xtreme;
-            ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(scrumteam.ToString());
-        }
+        //private void MenuItem_Xtreme_Click(object sender, RoutedEventArgs e)
+        //{
+        //    ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(Team.Xtreme.ToString());
+        //}
 
-        private void MenuItem_ReguliereTaken_Click(object sender, RoutedEventArgs e)
+        //private void MenuItem_Committers_Click(object sender, RoutedEventArgs e)
+        //{
+        //    ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(Team.Committers.ToString());
+        //}
+
+        private void MenuItem_Team_Click(object sender, RoutedEventArgs e)
         {
-            scrumteam = Team.Committers;
-            ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(scrumteam.ToString());
+            MenuItem panel = sender as MenuItem;
+            string teamNaam = panel.Header.ToString();
+            ConfiguredTasksOrActivities = SettingsGetter.GetChildItemsFromSection(teamNaam);
         }
     }
 }

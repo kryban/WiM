@@ -34,13 +34,13 @@
                 <MenuItem
                     Header="_Switch">
                     <MenuItem
-                        Name="MenuItem_XtremeSwitch"
-                        Header="_Xtreme"
-                        Click="MenuItem_XtremeSwitch_Click" />
+                        Name="MenuItem_Xtreme"
+                        Header="Xtreme"
+                        Click="MenuItem_Team_Click" />
                     <MenuItem
-                        Name="MenuItem_ReguliereTaken"
-                        Header="_Committers"
-                        Click="MenuItem_ReguliereTaken_Click" />
+                        Name="MenuItem_Committers"
+                        Header="Committers"
+                        Click="MenuItem_Team_Click" />
                 </MenuItem>
             </Menu>
             <StackPanel></StackPanel>
