@@ -20,6 +20,9 @@ namespace WiM.Wpf
 
         public MainWindow()
         {
+            Teams = SettingsGetter.GetTeamNamesFromSection();
+
+            // todo: geen enums straks
             scrumteam = Team.Xtreme;
 
             tfsController = new TfsController(new WorkitemRepository(new WitApi()), scrumteam);
@@ -39,6 +42,17 @@ namespace WiM.Wpf
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private List<string> teams { get; set; }
+        public List<string> Teams
+        {
+            get { return teams; }
+            set
+            {
+                teams = value;
+                NotifyOfChange("Teams");
+            }
         }
 
         private List<ChildItem> configuredTasksOrActivities;

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace WiM.Core.Config
 {
-    public class WorkItemTemplateElementCollection : ConfigurationElementCollection, IEnumerable<WorkItemTemplateElement>
+    public class TeamElementCollection : ConfigurationElementCollection, IEnumerable<TeamElement>
     {
-        private const string PropertyName = "workItemTemplate";
+        private const string PropertyName = "team";
 
         public override ConfigurationElementCollectionType CollectionType =>
             ConfigurationElementCollectionType.BasicMapAlternate;
@@ -18,20 +18,20 @@ namespace WiM.Core.Config
 
         protected override ConfigurationElement CreateNewElement()
         {
-            return new WorkItemTemplateElement();
+            return new TeamElement();
         }
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return ((WorkItemTemplateElement) element).Switch;
+            return ((TeamElement)element).Name;
         }
 
-        public WorkItemTemplateElement this[int index] => (WorkItemTemplateElement) BaseGet(index);
+        public TeamElement this[int index] => (TeamElement)BaseGet(index);
 
-        public new IEnumerator<WorkItemTemplateElement> GetEnumerator()
+        public new IEnumerator<TeamElement> GetEnumerator()
         {
             return Enumerable.Range(0, Count).Select(i => this[i]).GetEnumerator();
         }
-        }
 
+    }
 }

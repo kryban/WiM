@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using WiM.Core.Config;
@@ -30,6 +31,25 @@ namespace WiM.Core
             }
 
             return new List<ChildItem>();
+        }
+
+        public static List<string> GetTeamNamesFromSection()
+        {
+            List<string> retval = new List<string>();
+            try
+            {
+                if(ConfigurationManager.GetSection("teamSection") is TeamSection section)
+                {
+                    retval = section.Teams.Select(t => t.Name).ToList();
+                }
+            }
+            catch (Exception)
+            {
+
+                return retval;
+            }
+
+            return retval;
         }
     }
 }
