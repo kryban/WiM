@@ -8,12 +8,10 @@ namespace WiM.Core
     public class TfsController : ITfsController
     {
         private IWorkitemRepository workitemRepo;
-        private Team team;
 
         public TfsController(IWorkitemRepository workitemRepository, Team team)
         {
             workitemRepo = workitemRepository;
-            this.team = team;
         }
 
         public WorkItemWrapper CreateTaskAndLinkToWorkItem(WorkItemWrapper workitemToCreate, int linkedWorkitemId, string linkedWorkItemProjectName)
@@ -42,11 +40,7 @@ namespace WiM.Core
                 newTask.WorkItemIterationPath = workItemWrapper.WorkItemIterationPath;
                 newTask.WorkItemAreaPath = workItemWrapper.WorkItemAreaPath;
                 newTask.WorkItemType = "Task";
-
-                if (team == Team.Xtreme)
-                {
-                    newTask.WorkItemTaskActivity = item.ActivityType;
-                }
+                newTask.WorkItemTaskActivity = item.ActivityType;
 
                 WorkItemWrapper result = CreateTaskAndLinkToWorkItem(newTask, Convert.ToInt32(workItemWrapper.Id), workItemWrapper.WorkItemProjectName);
 

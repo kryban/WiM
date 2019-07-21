@@ -29,32 +29,15 @@
             Grid.ColumnSpan="3"
             Background="Transparent">
             
-            <!--<Menu
-                DockPanel.Dock="Top"
-                Background="Transparent">
-                <MenuItem Header="_TeamSwitch">
-                    <MenuItem
-                        Name="MenuItem_Xtreme"
-                        Header="Xtreme"
-                        Click="MenuItem_Team_Click" />
-                    <MenuItem
-                        Name="MenuItem_Committers"
-                        Header="Committers"
-                        Click="MenuItem_Team_Click" />
-                </MenuItem>
-            </Menu>-->
+            <Menu DockPanel.Dock="top" Background="Transparent">
+                <MenuItem Header="_TeamSwitch" ItemsSource="{Binding Teams}" Background="White">
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="{x:Type MenuItem}">
+                            <Setter Property="MenuItem.Header" Value="{Binding}"/>
+                            <EventSetter Event="Click" Handler="MenuItem_Team_Click"/>
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
 
-            <Menu DockPanel.Dock="Top" Background="Transparent">
-                <MenuItem Header="_TeamSwitch">
-                
-                    <ItemsControl ItemsSource="{Binding Teams}" x:Name="TeamsItemsControlName">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <MenuItem Header="{Binding}" Click="MenuItem_Team_Click" />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    
                 </MenuItem>
             </Menu>
 
