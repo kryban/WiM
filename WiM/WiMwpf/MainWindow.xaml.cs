@@ -99,10 +99,12 @@ namespace WiM.Wpf
             }
         }
 
+
         private string koppelLabelContent = "Koppel Taak";
+
         public string KoppelLabelContent
         {
-            get { return koppelLabelContent; }
+            get => koppelLabelContent;
             set
             {
                 koppelLabelContent = value;
@@ -167,19 +169,19 @@ namespace WiM.Wpf
             }
         }
 
-        private void SetVisibilityOfTaskCheckBoxes()
-        {
-            foreach (var checkbox in AllTaskCheckBoxes())
-            {
-                if (checkbox.Content.ToString().Length < 1)
-                    checkbox.Visibility = Visibility.Hidden;
-            }
-        }
+        //private void SetVisibilityOfTaskCheckBoxes()
+        //{
+        //    foreach (var checkbox in AllTaskCheckBoxes())
+        //    {
+        //        if (checkbox.Content.ToString().Length < 1)
+        //            checkbox.Visibility = Visibility.Hidden;
+        //    }
+        //}
 
-        private IEnumerable<CheckBox> AllTaskCheckBoxes()
-        {
-            return WimMainChecks.Children.OfType<CheckBox>();
-        }
+        //private IEnumerable<CheckBox> AllTaskCheckBoxes()
+        //{
+        //    return WimMainChecks.Children.OfType<CheckBox>();
+        //}
 
         //private bool AllowedToAddTaskToPbi()
         //{
