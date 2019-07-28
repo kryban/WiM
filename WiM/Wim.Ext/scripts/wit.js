@@ -26,6 +26,15 @@ function MapWorkItemFields(witemObject, witem )
 
 var witClient;
 
+VSS.init({
+    // Our extension explicitly notifies the host when we're done loading
+    explicitNotifyLoaded: true,
+
+    // We are using some Azure DevOps Services APIs, so we need the module loader to load them in
+    usePlatformScripts: true,
+    usePlatformStyles: true
+});
+
 VSS.require(["TFS/WorkItemTracking/RestClient"], // modulepath
     function (_restWitClient) {
         witClient = _restWitClient.getClient();
@@ -52,7 +61,6 @@ VSS.require(["TFS/WorkItemTracking/RestClient"], // modulepath
     }
 );
 
-VSS.notifyLoadSucceeded();
 
 function OpenConfiguratieDialoog()
 {
@@ -63,9 +71,9 @@ function OpenConfiguratieDialoog()
 
         // Show dialog
         var dialogOptions = {
-            title: "Dit is een 800x600 dialoog.",
-            width: 800,
-            height: 600
+            title: "Dit is een 200x75 dialoog.",
+            width: 200,
+            height: 75
         };
 
         dialogService.openDialog(contributionId, dialogOptions);

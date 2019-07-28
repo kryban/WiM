@@ -71,6 +71,8 @@
     <Content Include="HelloWorld.html" />
     <Content Include="images\logo.png" />
     <Content Include="images\logoHierarchical.png" />
+    <Content Include="scripts\tasks.js" />
+    <Content Include="scripts\menubar.js" />
     <Content Include="scripts\wit.js" />
     <Content Include="SDK\scripts\VSS.SDK.js" />
     <Content Include="Test.html" />
