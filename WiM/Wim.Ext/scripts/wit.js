@@ -87,26 +87,4 @@ function OpenButtonClicked(obj)
     OpenConfiguratieDialoog("Open button clicked.");
 }
 
-function SelectedTasksButtonClicked(obj)
-{
-    var tasksForm = document.getElementsByName("checkedtasks");
-    i = 0; 
-
-    tasksForm.forEach(
-        function (element) {
-            if (element.checked)
-            {
-                i++;
-                AddTaskToWorkitem();
-            }
-        }
-    );
-
-    OpenConfiguratieDialoog("Selected tasks button clicked. "+i);
-}
-
-function AddTaskToWorkitem()
-{
-
-}
 

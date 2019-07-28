@@ -59,19 +59,43 @@ function LoadTasks(tasks)
     });
 }
 
-function ChangeSelected()
+function ChangeSelected(obj)
 {
-    var checkAllElement = document.getElementById("tasks-check-all-checkbox");
-    var checked = checkAllElement.getAttribute("checked");
+    var tasks = document.getElementsByName("checkedtasks");
 
-    if (checked)
+    if (obj.checked)
     {
-        //alert(checked);
+        tasks.forEach(function (element) {
+            element.toggleAttribute("checked");
+        });
     }
     else
     {
-        //alert("unhecked");
+        tasks.forEach(function (element) {
+            element.removeAttribute("checked");
+        });
     }
+}
+
+function SelectedTasksButtonClicked(obj) {
+    var tasksForm = document.getElementsByName("checkedtasks");
+    i = 0;
+
+    tasksForm.forEach(
+        function (element) {
+            if (element.checked) {
+                i++;
+                AddTaskToWorkitem();
+            }
+        }
+    );
+
+    OpenConfiguratieDialoog("Selected tasks button clicked. " + i);
+}
+
+function AddTaskToWorkitem()
+{
+
 }
 
 // default start
