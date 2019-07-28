@@ -1,0 +1,55 @@
+{
+  "manifestVersion": 1,
+  "id": "WimDevOpExtension",
+  "version": "0.0.9",
+  "name": "WorkitemManagerExtension",
+  "baseUri": "https://localhost:44367",
+  "publisher": "bandik",
+  "description": " A hub for adding multiple tasks at once (beta)",
+  "public": false,
+  "categories": [ "Plan and track" ],
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "icons": {
+    "default": "images/logoHierarchical.png"
+  },
+  "contributions": [
+    {
+      "id": "Bandik.WimDevOpExtension.beta",
+      "type": "ms.vss-web.hub",
+      "description": "Adds a 'WiM Extension Beta hub to the Work hub group. (beta)",
+      "targets": [
+        "ms.vss-work-web.work-hub-group"
+      ],
+      "properties": {
+        "name": "WiM",
+        "order": 99,
+        "uri": "Test.html"
+      }
+    }
+  ],
+  "scopes": [
+    "vso.work"
+  ],
+  "files": [
+    {
+      "path": "Test.html",
+      "addressable": true
+    },
+    {
+      "path": "SDK/scripts",
+      "addressable": true
+    },
+    {
+      "path": "scripts",
+      "addressable": true
+    },
+    {
+      "path": "images/logoHierarchical.png",
+      "addressable": true
+    }
+  ]
+}

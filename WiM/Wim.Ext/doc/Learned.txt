@@ -1,0 +1,11 @@
+﻿1. Wat is een extensie ? 
+	Een HTML pagina wat via Extension Points in een Iframe geladen wordt. 
+	Op welke punten DevOps uitgebreid kan worden ( extension points) staat vast. 
+
+2. Debugbaar maken van de extensie
+	In de manifest BaseUrl opnemen, zodat DevOps daarvandaan de pagina laadt. 
+	De Url is de https url van de Asp.net applicatie wat vs automatisch geeft. (project properties)
+	De start url in het zelfde project moet dat zijn de URL in devops van de extensie. (De Url nadat je op de extensie geklikt hebt)
+
+
+
