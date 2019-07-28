@@ -55,12 +55,20 @@
         </div>
 
         <div id="tasks">
-            <fieldset class="checkbox" id="taskCheckboxes" type="checkbox">
 
-                <legend>Voeg taken toe: </legend>
-                </br>
+            <div id="tasks">
+                Voeg taken toe: </br></br>
+            </div>
+            <div id="tasks-check-all">
+                <input type="checkbox" id="tasks-check-all-checkbox" name="checkall" checked="false" onclick="ChangeSelected()" />
+                <label for="tasks-check-all-checkbox">All</label><br /><br />
+            </div>
 
-            </fieldset>
+            <form name="tasksForm">
+                <fieldset class="checkbox" id="selectedTasks" type="checkbox"></fieldset>
+            </form>
+
+            <Button type="button" name="selectedTasksButton" onclick="SelectedTasksButtonClicked()">Zetten</Button>
         </div>
 
         <div id="combo-container"></div>

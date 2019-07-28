@@ -27,18 +27,18 @@ var CommittersTasks =
 
 function LoadTasks(tasks)
 {
-    var taskFieldSet = document.getElementById("taskCheckboxes");
+    var taskFieldSet = document.getElementById("selectedTasks");
 
     while (taskFieldSet.firstChild) {
         taskFieldSet.removeChild(taskFieldSet.firstChild);
     }
 
-    var breakNode = document.createElement("br");
-    var legendNode = document.createElement("legend");
-    legendNode.innerHTML = "Voeg taken toe";
+    //var breakNode = document.createElement("br");
+    //var legendNode = document.createElement("legend");
+    //legendNode.innerHTML = "Voeg taken toe";
 
-    taskFieldSet.appendChild(legendNode);
-    taskFieldSet.appendChild(breakNode);
+    //taskFieldSet.appendChild(legendNode);
+    //taskFieldSet.appendChild(breakNode);
 
     tasks.forEach(function (element)
     {
@@ -46,7 +46,8 @@ function LoadTasks(tasks)
         inputNode.setAttribute("type", "checkbox");
         inputNode.setAttribute("id", element.id);
         inputNode.setAttribute("value", element.id);
-        inputNode.setAttribute("checked", "true");
+        inputNode.setAttribute("checked","true");
+        inputNode.setAttribute("name", "checkedtasks");
 
         var labelNode = document.createElement("label");
         labelNode.setAttribute("for", element.id);
@@ -56,6 +57,21 @@ function LoadTasks(tasks)
         taskFieldSet.appendChild(labelNode);
         taskFieldSet.appendChild(document.createElement("br"));
     });
+}
+
+function ChangeSelected()
+{
+    var checkAllElement = document.getElementById("tasks-check-all-checkbox");
+    var checked = checkAllElement.getAttribute("checked");
+
+    if (checked)
+    {
+        //alert(checked);
+    }
+    else
+    {
+        //alert("unhecked");
+    }
 }
 
 // default start

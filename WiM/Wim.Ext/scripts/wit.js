@@ -62,7 +62,7 @@ VSS.require(["TFS/WorkItemTracking/RestClient"], // modulepath
 );
 
 
-function OpenConfiguratieDialoog()
+function OpenConfiguratieDialoog(title)
 {
     VSS.getService(VSS.ServiceIds.Dialog).then(function (dialogService) {
         var extensionCtx = VSS.getExtensionContext();
@@ -71,8 +71,8 @@ function OpenConfiguratieDialoog()
 
         // Show dialog
         var dialogOptions = {
-            title: "Dit is een 200x75 dialoog.",
-            width: 200,
+            title: title,
+            width: 400,
             height: 75
         };
 
@@ -84,6 +84,29 @@ function OpenButtonClicked(obj)
 {
     var workitemID = document.getElementById("existing-wit-id").value;
     document.getElementById("existing-wit-text").innerHTML = workitemID + "</br> " + wi;
-    OpenConfiguratieDialoog();
+    OpenConfiguratieDialoog("Open button clicked.");
+}
+
+function SelectedTasksButtonClicked(obj)
+{
+    var tasksForm = document.getElementsByName("checkedtasks");
+    i = 0; 
+
+    tasksForm.forEach(
+        function (element) {
+            if (element.checked)
+            {
+                i++;
+                AddTaskToWorkitem();
+            }
+        }
+    );
+
+    OpenConfiguratieDialoog("Selected tasks button clicked. "+i);
+}
+
+function AddTaskToWorkitem()
+{
+
 }
 
