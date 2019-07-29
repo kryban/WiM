@@ -77,6 +77,7 @@
     <Resource Include="images\tree1_32.png" />
     <Resource Include="images\tree1_64.png" />
     <Resource Include="images\icon.png" />
+    <Content Include="images\logo_wigo4it.png" />
     <Content Include="scripts\tasks.js" />
     <Content Include="scripts\menubar.js" />
     <Content Include="scripts\wit.js" />

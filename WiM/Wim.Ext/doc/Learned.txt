@@ -7,5 +7,8 @@
 	De Url is de https url van de Asp.net applicatie wat vs automatisch geeft. (project properties)
 	De start url in het zelfde project moet dat zijn de URL in devops van de extensie. (De Url nadat je op de extensie geklikt hebt)
 
-
+3. Icoon in linkermenu 
+	Om een icon ook in de linkermenu te krijgen, moet het icon.png heten en 32x32 groot zijn
+	Misschien nog experimenteren met 16x16
+	Via de manifest in de package sluiten.
 
