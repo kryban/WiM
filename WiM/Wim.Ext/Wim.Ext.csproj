@@ -71,6 +71,12 @@
     <Content Include="HelloWorld.html" />
     <Content Include="images\logo.png" />
     <Content Include="images\logoHierarchical.png" />
+    <Resource Include="images\tree1.ico" />
+    <Resource Include="images\tree1_128.png" />
+    <Resource Include="images\tree1_16.png" />
+    <Resource Include="images\tree1_32.png" />
+    <Resource Include="images\tree1_64.png" />
+    <Resource Include="images\icon.png" />
     <Content Include="scripts\tasks.js" />
     <Content Include="scripts\menubar.js" />
     <Content Include="scripts\wit.js" />

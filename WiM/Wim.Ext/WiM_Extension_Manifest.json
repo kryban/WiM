@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "WimDevOpExtension",
-  "version": "0.0.11",
+  "version": "0.0.13",
   "name": "WorkitemManagerExtension",
   "baseUri": "https://localhost:44367",
   "publisher": "bandik",
@@ -14,7 +14,7 @@
     }
   ],
   "icons": {
-    "default": "images/logoHierarchical.png"
+    "default": "images/tree1.ico"
   },
   "contributions": [
     {
@@ -27,7 +27,13 @@
       "properties": {
         "name": "WiM",
         "order": 99,
-        "uri": "Test.html"
+        "uri": "Test.html",
+        "iconAsset": "bandik.WimDevOpExtension/images/icon.png",
+        "_sharedData": {
+          "assets": [
+            "bandik.WimDevOpExtension/images/icon.png"
+          ]
+        }
       }
     }
   ],
@@ -50,6 +56,15 @@
     {
       "path": "images/logoHierarchical.png",
       "addressable": true
+    },
+    {
+      "path": "images/tree1_128.png",
+      "addressable": true
+    },
+    {
+      "path": "images/icon.png",
+      "addressable": true
     }
+
   ]
 }

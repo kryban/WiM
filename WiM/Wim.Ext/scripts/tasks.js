@@ -47,7 +47,7 @@ function LoadTasks(tasks)
         inputNode.setAttribute("id", element.id);
         inputNode.setAttribute("value", element.id);
         inputNode.setAttribute("checked","true");
-        inputNode.setAttribute("name", "checkedtasks");
+        inputNode.setAttribute("name", "taskcheckbox");
 
         var labelNode = document.createElement("label");
         labelNode.setAttribute("for", element.id);
@@ -61,18 +61,23 @@ function LoadTasks(tasks)
 
 function ChangeSelected(obj)
 {
-    var tasks = document.getElementsByName("checkedtasks");
+    var tasks = document.getElementsByName("taskcheckbox");
 
     if (obj.checked)
     {
         tasks.forEach(function (element) {
-            element.toggleAttribute("checked");
+            if (!element.checked)
+            {
+                element.toggleAttribute("checked");
+            }
         });
     }
     else
     {
         tasks.forEach(function (element) {
-            element.removeAttribute("checked");
+            if (element.checked) {
+                element.toggleAttribute("checked");
+            }
         });
     }
 }
