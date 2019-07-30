@@ -77,7 +77,7 @@ function menuBarAction(command) {
             LoadTasks(CommittersTasks);
             break;
         case "test":
-            LoadTasksObject(testTasks);
+            LoadTasks(testTasks);
             break;
         default:
             break;
