@@ -25,6 +25,37 @@ var CommittersTasks =
         { title: "DOD controle", id: "dodcontrole", activityType: "Requirements" }
     ];
 
+var testTasks = new Map();
+testTasks.set("bouw", { title: "TestBouw", id: "bouw", activityType: "Development" });
+testTasks.set("test",{ title: "TestTest", id: "test", activityType: "Testing" });
+testTasks.set("codereview",{ title: "TEestCode Review", id: "codereview", activityType: "Development" });
+
+function LoadTasksObject(testTasks) {
+    var taskFieldSet = document.getElementById("selectedTasks");
+
+    while (taskFieldSet.firstChild)
+    {
+        taskFieldSet.removeChild(taskFieldSet.firstChild);
+    }
+
+    testTasks.forEach(function (element) {
+        var inputNode = document.createElement("input");
+        inputNode.setAttribute("type", "checkbox");
+        inputNode.setAttribute("id", element.id);
+        inputNode.setAttribute("value", element.id);
+        inputNode.setAttribute("checked", "true");
+        inputNode.setAttribute("name", "taskcheckbox");
+
+        var labelNode = document.createElement("label");
+        labelNode.setAttribute("for", element.id);
+        labelNode.innerHTML = element.title;
+
+        taskFieldSet.appendChild(inputNode);
+        taskFieldSet.appendChild(labelNode);
+        taskFieldSet.appendChild(document.createElement("br"));
+    });
+}
+
 function LoadTasks(tasks)
 {
     var taskFieldSet = document.getElementById("selectedTasks");
@@ -59,7 +90,7 @@ function LoadTasks(tasks)
     });
 }
 
-function ChangeSelected(obj)
+function CheckUnckeck(obj)
 {
     var tasks = document.getElementsByName("taskcheckbox");
 
@@ -83,8 +114,9 @@ function ChangeSelected(obj)
 }
 
 function SelectedTasksButtonClicked(obj) {
-    var tasksForm = document.getElementsByName("checkedtasks");
-    i = 0;
+
+    var tasksForm = document.getElementsByName("taskcheckbox");
+    var i = 0;
 
     tasksForm.forEach(
         function (element) {

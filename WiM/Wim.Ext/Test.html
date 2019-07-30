@@ -60,21 +60,21 @@
                 Voeg taken toe: </br></br>
             </div>
             <div id="tasks-check-all">
-                <input type="checkbox" id="tasks-check-all-checkbox" name="checkall" checked="false" onclick="ChangeSelected(this)" />
+                <input type="checkbox" id="tasks-check-all-checkbox" name="checkall" checked="false" onclick="CheckUnckeck(this)" />
                 <label for="tasks-check-all-checkbox">All</label><br /><br />
             </div>
 
             <form name="tasksForm">
                 <fieldset class="checkbox" id="selectedTasks" type="checkbox"></fieldset>
             </form>
-
+            </br>
             <Button type="button" name="selectedTasksButton" onclick="SelectedTasksButtonClicked()">Zetten</Button>
         </div>
 
         <div id="combo-container"></div>
 
-        <script src="scripts/tasks.js"></script>
         <script src="scripts/menubar.js"></script>
+        <script src="scripts/tasks.js"></script>
         <script src="scripts/wit.js"></script>
 
     </div>

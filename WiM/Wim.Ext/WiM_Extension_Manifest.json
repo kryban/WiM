@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "WimDevOpExtension",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "name": "WorkitemManagerExtension",
   "baseUri": "https://localhost:44367",
   "publisher": "bandik",

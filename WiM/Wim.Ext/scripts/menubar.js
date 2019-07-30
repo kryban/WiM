@@ -10,7 +10,7 @@ VSS.require(["VSS/Controls", "VSS/Controls/Menus"], function (Controls, Menus) {
             id: "menu-setting", text: "Settings", icon: "icon-settings", childItems:
                 [{
                     id: "switch", text: "Switch", childItems:
-                        [{ id: "xtreme", text: "Xtreme" }, { id: "committers", text: "Committers" }]
+                        [{ id: "xtreme", text: "Xtreme" }, { id: "committers", text: "Committersss" }, { id: "test", text: "Test" }]
                 },
                 {
                     id: "manage-teams", text: "Manage teams", childItems:
@@ -71,15 +71,15 @@ VSS.require(["VSS/Controls", "VSS/Controls/Menus"], function (Controls, Menus) {
 function menuBarAction(command) {
     switch (command) {
         case "xtreme":
-            //alert("Xtreme!");
             LoadTasks(XtremeTasks);
             break;
         case "committers":
-            //alert("Committers");
             LoadTasks(CommittersTasks);
             break;
+        case "test":
+            LoadTasksObject(testTasks);
+            break;
         default:
-            //alert("Default");
             break;
     }
 }
