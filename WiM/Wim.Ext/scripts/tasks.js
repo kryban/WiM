@@ -1,59 +1,42 @@
-﻿var XtremeTasks = new Map();
-XtremeTasks.set("kickoff", { title: "Kick-off", id: "kickoff", activityType: "Requirements" });
-XtremeTasks.set("ucr", { title: "UC/UCR", id: "ucr", activityType: "Requirements" });
-XtremeTasks.set("ucrreview", { title: "UC/UCR Review", id: "ucrreview", activityType: "Requirements" });
-XtremeTasks.set("code", { title: "Code", id: "code", activityType: "Development" });
-XtremeTasks.set("codereview", { title: "Code Review", id: "codereview", activityType: "Development" });
-XtremeTasks.set("test", { title: "Test", id: "test", activityType: "Testing" });
-XtremeTasks.set("testreview", { title: "Test Review", id: "testreview", activityType: "Testing" });
-XtremeTasks.set("regressietestsaanmakenaanpassen", { title: "Regressietests aanmaken/aanpassen", id: "regressietestsaanmakenaanpassen", activityType: "Testing" });
-XtremeTasks.set("wijzigingsverslagreview", { title: "Wijzigingsverslag + Review", id: "wijzigingsverslagreview", activityType: "Documentation" });
-XtremeTasks.set("releasenotes", { title: "Releasenotes", id: "releasenotes", activityType: "Documentation" });
-XtremeTasks.set("revoewdcument", { title: "Reviewdocument", id: "revoewdcument", activityType: "Documentation" });
-XtremeTasks.set("stuurdataaanvragen", { title: "Stuurdata aanvragen", id: "stuurdataaanvragen", activityType: "Development" });
-XtremeTasks.set("sonarmeldingen", { title: "Sonarmeldingen", id: "sonarmeldingen", activityType: "Development" });
+﻿
+//todo: refactor naar nette objecten
+var XtremeTasks = [
+    { title: "Kick-off", id: "kickoff", activityType: "Requirements" },
+    { title: "UC/UCR", id: "ucr", activityType: "Requirements" },
+    { title: "UC/UCR Review", id: "ucrreview", activityType: "Requirements" },
+    { title: "Code", id: "code", activityType: "Development" },
+    { title: "Code Review", id: "codereview", activityType: "Development" },
+    { title: "Test", id: "test", activityType: "Testing" },
+    { title: "Test Review", id: "testreview", activityType: "Testing" },
+    { title: "Regressietests aanmaken/aanpassen", id: "regressietestsaanmakenaanpassen", activityType: "Testing" },
+    { title: "Wijzigingsverslag + Review", id: "wijzigingsverslagreview", activityType: "Documentation" },
+    { title: "Releasenotes", id: "releasenotes", activityType: "Documentation" },
+    { title: "Reviewdocument", id: "revoewdcument", activityType: "Documentation" },
+    { title: "Stuurdata aanvragen", id: "stuurdataaanvragen", activityType: "Development" },
+    { title: "Sonarmeldingen", id: "sonarmeldingen", activityType: "Development" }
+];
 
-var CommittersTasks = new Map();
-CommittersTasks.set("bouw", { title: "Bouw", id: "bouw", activityType: "Development" });
-CommittersTasks.set("test", { title: "Test", id: "test", activityType: "Testing" });
-CommittersTasks.set("codereview", { title: "Code Review", id: "codereview", activityType: "Development" });
-CommittersTasks.set("wijzigingsverslag", { title: "Wijzigingsverslag", id: "wijzigingsverslag", activityType: "Documentation" });
-CommittersTasks.set("releasenotes", { title: "Releasenotes", id: "releasenotes", activityType: "Documentation" });
-CommittersTasks.set("dodcontrole", { title: "DOD controle", id: "dodcontrole", activityType: "Requirements" });
+var CommittersTasks = [
+    { title: "Bouw", id: "bouw", activityType: "Development" },
+    { title: "Test", id: "test", activityType: "Testing" },
+    { title: "Code Review", id: "codereview", activityType: "Development" },
+    { title: "Wijzigingsverslag", id: "wijzigingsverslag", activityType: "Documentation" },
+    { title: "Releasenotes", id: "releasenotes", activityType: "Documentation" },
+    { title: "DOD controle", id: "dodcontrole", activityType: "Requirements" }
+];
 
-var testTasks = new Map();
-testTasks.set("bouw", { title: "TestBouw", id: "bouw", activityType: "Development" });
-testTasks.set("test",{ title: "TestTest", id: "test", activityType: "Testing" });
-testTasks.set("codereview",{ title: "TEestCode Review", id: "codereview", activityType: "Development" });
+var testTasks = [
+    { title: "TestBouw", id: "bouw", activityType: "Development" },
+    { title: "TestTest", id: "test", activityType: "Testing" },
+    { title: "TEestCode Review", id: "codereview", activityType: "Development" }
+]
 
-function LoadTasksObject(testTasks) {
-    var taskFieldSet = document.getElementById("selectedTasks");
+var selectedTeam;
 
-    while (taskFieldSet.firstChild)
-    {
-        taskFieldSet.removeChild(taskFieldSet.firstChild);
-    }
-
-    testTasks.forEach(function (element) {
-        var inputNode = document.createElement("input");
-        inputNode.setAttribute("type", "checkbox");
-        inputNode.setAttribute("id", element.id);
-        inputNode.setAttribute("value", element.id);
-        inputNode.setAttribute("checked", "true");
-        inputNode.setAttribute("name", "taskcheckbox");
-
-        var labelNode = document.createElement("label");
-        labelNode.setAttribute("for", element.id);
-        labelNode.innerHTML = element.title;
-
-        taskFieldSet.appendChild(inputNode);
-        taskFieldSet.appendChild(labelNode);
-        taskFieldSet.appendChild(document.createElement("br"));
-    });
-}
-
-function LoadTasks(tasks)
+function LoadTasks(tasks, teamnaam)
 {
+    SetPageTitle(teamnaam);
+
     var taskFieldSet = document.getElementById("selectedTasks");
 
     while (taskFieldSet.firstChild) {
@@ -84,6 +67,12 @@ function LoadTasks(tasks)
         taskFieldSet.appendChild(labelNode);
         taskFieldSet.appendChild(document.createElement("br"));
     });
+}
+
+function SetPageTitle(teamnaam) {
+    selectedTeam = teamnaam;
+    var pageTitleText = "Workitem Manager for Team " + selectedTeam.charAt(0).toUpperCase() + selectedTeam.slice(1);
+    document.getElementById("pageTitle").innerHTML = pageTitleText;
 }
 
 function CheckUnckeck(obj)
@@ -118,20 +107,36 @@ function SelectedTasksButtonClicked(obj) {
         function (element) {
             if (element.checked) {
                 i++;
-                AddTaskToWorkitem();
+                var task = FindTask(element);
+                AddTaskToWorkitem(task);
             }
         }
     );
 
-    OpenConfiguratieDialoog("Selected tasks button clicked. " + i);
+    OpenConfiguratieDialoog("Tasks added: " + i);
 }
 
-function AddTaskToWorkitem()
-{
+function FindTask(selection) {
 
+    var retval;
+
+    XtremeTasks.forEach(
+        function (element) {
+            if (element.id === selection.id)
+            {
+                retval = element;
+            }
+        });
+
+    return retval;
+}
+
+function AddTaskToWorkitem(task)
+{
+    OpenConfiguratieDialoog("Adding task: " + task.title);
 }
 
 // default start
-LoadTasks(XtremeTasks);
+LoadTasks(XtremeTasks, "xtreme");
 
 VSS.notifyLoadSucceeded();
