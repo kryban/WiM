@@ -1,6 +1,6 @@
 ﻿
 //todo: refactor naar nette objecten
-var XtremeTasks = [
+var xtremeTasks = [
     { title: "Kick-off", id: "kickoff", activityType: "Requirements" },
     { title: "UC/UCR", id: "ucr", activityType: "Requirements" },
     { title: "UC/UCR Review", id: "ucrreview", activityType: "Requirements" },
@@ -16,7 +16,7 @@ var XtremeTasks = [
     { title: "Sonarmeldingen", id: "sonarmeldingen", activityType: "Development" }
 ];
 
-var CommittersTasks = [
+var committersTasks = [
     { title: "Bouw", id: "bouw", activityType: "Development" },
     { title: "Test", id: "test", activityType: "Testing" },
     { title: "Code Review", id: "codereview", activityType: "Development" },
@@ -120,7 +120,7 @@ function FindTask(selection) {
 
     var retval;
 
-    XtremeTasks.forEach(
+    xtremeTasks.forEach(
         function (element) {
             if (element.id === selection.id)
             {
@@ -137,6 +137,6 @@ function AddTaskToWorkitem(task)
 }
 
 // default start
-LoadTasks(XtremeTasks, "xtreme");
+LoadTasks(xtremeTasks, "xtreme");
 
 VSS.notifyLoadSucceeded();

@@ -67,6 +67,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Configuration_Team.html" />
     <Content Include="doc\Learned.txt" />
     <Content Include="HelloWorld.html" />
     <Content Include="images\logo.png" />
@@ -78,6 +79,7 @@
     <Resource Include="images\tree1_64.png" />
     <Resource Include="images\icon.png" />
     <Content Include="images\logo_wigo4it.png" />
+    <Content Include="scripts\settings.js" />
     <Content Include="scripts\tasks.js" />
     <Content Include="scripts\menubar.js" />
     <Content Include="scripts\wit.js" />

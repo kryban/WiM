@@ -2,7 +2,9 @@
 VSS.require(["VSS/Controls", "VSS/Controls/Menus"], function (Controls, Menus) {
     var container = $(".menu-bar");
 
-
+    // todo: menuitems moeten op basis van configuratie bij elkaar gegenereerd worden. 
+    // dus eerst configs ophalen (https://docs.microsoft.com/en-us/azure/devops/extend/develop/data-storage?view=azure-devops&viewFallbackFrom=vsts)
+    // en vervolgens op basis van de opgehaalde data onderstaande string gegenereren.
     var menuItems = [
         {
             id: "menu-setting", text: "Settings", icon: "icon-settings", childItems:
@@ -40,13 +42,16 @@ VSS.require(["VSS/Controls", "VSS/Controls/Menus"], function (Controls, Menus) {
 function menuBarAction(command) {
     switch (command) {
         case "xtreme":
-            LoadTasks(XtremeTasks, command);
+            LoadTasks(xtremeTasks, command);
             break;
         case "committers":
-            LoadTasks(CommittersTasks, command);
+            LoadTasks(committersTasks, command);
             break;
         case "test":
             LoadTasks(testTasks, command);
+            break;
+        case "add-new-team":
+            ConfigureTeams(command);
             break;
         default:
             break;
