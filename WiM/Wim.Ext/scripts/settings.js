@@ -3,6 +3,8 @@
 
 function ConfigureTeams(command) {
 
+    //OpenTeamSettingsDialogAdvanced(command);
+    //OpenTeamSettingsDialog(command);
     OpenConfiguratieDialoog(command);
 }
 
