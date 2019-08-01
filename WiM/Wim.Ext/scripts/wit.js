@@ -71,9 +71,9 @@ function OpenConfiguratieDialoog(title)
 
         // Show dialog
         var dialogOptions = {
-            title: title,
-            width: 400,
-            height: 75
+            title: title
+            ,width: 500
+            //,height: 75
         };
 
         dialogService.openDialog(contributionId, dialogOptions);

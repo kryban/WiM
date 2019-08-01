@@ -1,8 +1,9 @@
 ﻿
-https://docs.microsoft.com/en-us/azure/devops/extend/develop/data-storage?view=azure-devops&viewFallbackFrom=vsts
+//https://docs.microsoft.com/en-us/azure/devops/extend/develop/data-storage?view=azure-devops&viewFallbackFrom=vsts
 
 function ConfigureTeams(command) {
 
+    OpenConfiguratieDialoog(command);
 }
 
 function GetTeamSettings() {
