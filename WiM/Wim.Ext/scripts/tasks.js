@@ -103,11 +103,13 @@ function SelectedTasksButtonClicked(obj) {
     var tasksForm = document.getElementsByName("taskcheckbox");
     var i = 0;
 
+    var tasks = FindTeamTaskCollection();
+
     tasksForm.forEach(
         function (element) {
             if (element.checked) {
                 i++;
-                var task = FindTask(element);
+                var task = FindTask(xtremeTasks, element);
                 AddTaskToWorkitem(task);
             }
         }
@@ -116,11 +118,16 @@ function SelectedTasksButtonClicked(obj) {
     OpenConfiguratieDialoog("Tasks added: " + i);
 }
 
-function FindTask(selection) {
+function FindTeamTaskCollection() {
+    // todo
+    // finsd tasks sets baes on teamname
+}
+
+function FindTask(tasks, selection) {
 
     var retval;
 
-    xtremeTasks.forEach(
+    tasks.forEach(
         function (element) {
             if (element.id === selection.id)
             {
