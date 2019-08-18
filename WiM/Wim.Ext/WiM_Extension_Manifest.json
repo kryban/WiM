@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "WimDevOpExtension",
-  "version": "0.0.21",
+  "version": "0.0.23",
   "name": "WorkitemManagerExtension",
   "baseUri": "https://localhost:44367",
   "publisher": "bandik",
@@ -37,12 +37,12 @@
       }
     },
     {
-      "id": "teamsettings-form",
+      "id": "Bandik.WimDevOpExtension.teamsettings-form",
       "type": "ms.vss-web.control",
       "description": "The content to be displayed in the Team Settings dialog",
       "targets": [],
       "properties": {
-        "uri": "settings_team.html"
+        "uri": "teamsettings-form.html"
       }
     }
   ],
@@ -55,7 +55,7 @@
       "addressable": true
     },
     {
-      "path": "Settings_Team.html",
+      "path": "teamsettings-form.html",
       "addressable": true
     },
     {
