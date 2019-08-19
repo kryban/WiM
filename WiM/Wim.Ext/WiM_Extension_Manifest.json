@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "WimDevOpExtension",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "name": "WorkitemManagerExtension",
   "baseUri": "https://localhost:44367",
   "publisher": "bandik",
@@ -43,6 +43,15 @@
       "targets": [],
       "properties": {
         "uri": "teamsettings-form.html"
+      }
+    },
+    {
+      "id": "Bandik.WimDevOpExtension.manage-teams",
+      "type": "ms.vss-web.control",
+      "description": "The content to be displayed in the Manage Teams dialog",
+      "targets": [],
+      "properties": {
+        "uri": "manage-teams.html"
       }
     }
   ],

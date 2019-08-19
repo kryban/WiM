@@ -4,23 +4,7 @@
     <meta charset="utf-8" />
     <title>Settings</title>
     <script src="SDK/scripts/VSS.SDK.js"></script>
-    <style>
-        .open-existing-work-item, .open-existing-work-item, #vss-bandik-extension, #vss-bandik-extension-config {
-            margin: 20px;
-        }
 
-        .work-item-types {
-            width: 200px;
-            display: inline-block;
-            margin-left: 5px;
-            margin-right: 5px;
-            vertical-align: bottom;
-        }
-
-        #existing-wit-id {
-            border: 1px solid #DDD;
-        }
-    </style>
 </head>
 <body>
     <div id="vss-bandik-extension-config">
@@ -46,9 +30,26 @@
 <html>
 <head>
     <script src="sdk/scripts/VSS.SDK.js"></script>
+    <style>
+        .open-existing-work-item, .open-existing-work-item, #vss-bandik-extension, #vss-bandik-extension-config {
+            margin: 20px;
+        }
+
+        .work-item-types {
+            width: 200px;
+            display: inline-block;
+            margin-left: 5px;
+            margin-right: 5px;
+            vertical-align: bottom;
+        }
+
+        #existing-wit-id {
+            border: 1px solid #DDD;
+        }
+    </style>
 </head>
 <body>
-    <h2 id="header">Register nowww</h2>
+    <h2 id="header">Add new team</h2>
     <!-- //////////////////// -->
 
     <div class="input_fields_container_part">
@@ -57,6 +58,7 @@
             <button class="btn btn-sm btn-primary add_more_button">Add More Fields</button>
         </div>
     </div>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
@@ -72,7 +74,7 @@
                         '<input type="text" name="taskTitle"/>' +
                         '<input type="text" name="taskId"/>' +
                         '<input type="text" name="taskActivityType"/>' +
-                        '<a href="#" class="remove_field" style="margin-left:10px;">Remove</a>' +
+                        '<a href="#" class="remove_field" style="margin-left:10px;">Verwijder</a>' +
                         '</div>'); //add input field
                 }
             });
@@ -83,7 +85,7 @@
     </script>
 
     <!-- //////////////////// -->
-    <p>
+    <!--<p>
         <label>Name:</label>
         <input id="inpName" />
     </p>
@@ -94,7 +96,7 @@
     <p>
         <label>Email address:</label>
         <input id="inpEmail" />
-    </p>
+    </p>-->
 
     <script src="scripts/settings.js"></script>
     <script src="scripts/menubar.js"></script>
