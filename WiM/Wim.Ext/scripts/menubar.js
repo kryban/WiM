@@ -14,7 +14,7 @@ VSS.require(["VSS/Controls", "VSS/Controls/Menus"], function (Controls, Menus){
     //GetTeams();
 
     var teams = [team1, team2, team3];
-    //var teams = configuredTeams;
+    var foo = configuredTeams;
 
     var teamMenuItems = [];
 

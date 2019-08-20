@@ -19,7 +19,6 @@ function OpenConfiguratieDialoog(title) {
         var extensionCtx = VSS.getExtensionContext();
 
         // Build absolute contribution ID for dialogContent
-        //var contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".teamsettings-form";
         var contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".manage-teams";
 
         // Show dialog
@@ -81,23 +80,13 @@ function DeleteTeams() {
     DeleteAllTeamSettings();
 }
 
-
 function CreateTeams() {
     console.log("CreateTeams() executing");
     SetTeamSettingsNew("Xtreme");
+    SetTeamSettingsNew("Committers");
+    SetTeamSettingsNew("Test");
+    SetTeamSettingsNew("NieuweTest");
     console.log("CreateTeamsNew() executed.")
-    //SetTeamSettings("Committers");
-    //SetTeamSettings("Test");
-    //SetTeamSettings("NieuweTest");
-    //console.log("CreateTeams() executing");
-
-    //promises = [];
-    //promises.push(SetTeamSettingsNew("Xtreme"));
-    //promises.push(SetTeamSettingsNew("Committers"));
-    //promises.push(SetTeamSettingsNew("Test"));
-    //promises.push(SetTeamSettingsNew("NieuweTest"));
-
-    //Promise.all(promises).then(console.log("CreateTeamsNew() executed."));
 }
 
 
@@ -121,24 +110,49 @@ function DeleteAllTeamSettings() {
     });
 }
 
+var configuredTeams = [];
+var result;
+
 function SetTeamSettingsNew(teamName) {
 
     VSS.getService(VSS.ServiceIds.ExtensionData).then(
         function (dataservice) {
-            getExistingSettings(dataservice, function () {
-                checkIfExistBeforeAdding(docsNew, teamName, function () {
-                    if (result !== undefined) {
-                        addSetting(dataservice, teamName);
-                    }
-                });
-            });
+            dataservice.getDocuments(TeamSettingsCollectionName).then(
+                function (docs) {
+                    console.log("GetAllTeamSettingsNew :" + docs.length);
 
+                    docs.forEach(
+                        function (element) {
+                            configuredTeams.push(element);
+                        }
+                    );
+
+                    //////////////////
+                    result = configuredTeams.find(obj => obj.text === teamName);
+                    console.log("checkNew: " + result);
+
+                    if (typeof result === 'undefined') {
+
+                        var newDoc = {
+                            text: teamName
+                        };
+
+                        dataservice.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
+                            // Even if no ID was passed to createDocument, one will be generated
+                            console.log("SetTeamSetting (CreateTeamsNew) : " + doc.text);
+                        });
+
+                        console.log("SettingNew NOT exists.");
+                    }
+
+                    console.log("SettingNew ALREADY exists.");
+                    //////////////////
+                }
+            );
         });
 }
 
-var docsNew = [];
-
-function getExistingSettings(dataservice, callback) {
+function getExistingSettings(dataservice) {
 
     dataservice.getDocuments(TeamSettingsCollectionName).then(
         function (docs) {
@@ -146,21 +160,16 @@ function getExistingSettings(dataservice, callback) {
 
             docs.forEach(
                 function (element) {
-                    docsNew.push(element);
+                    configuredTeams.push(element);
                 }
             );
         }
     );
-
-    callback();
 }
 
-var result;
-
-function checkIfExistBeforeAdding(docs, teamName, callback) {
-    result = docs.find(obj => { return obj.text === teamName; });
+function checkIfExistBeforeAdding(docs, teamName) {
+    result = docs.find(obj => obj.text === teamName); 
     console.log("checkNew: " + result);
-    callback();
 }
 
 function addSetting(dataService, teamName) {
@@ -176,13 +185,13 @@ function addSetting(dataService, teamName) {
     console.log("SettingNEw NOT exists.");
 }
 
-some_3secs_function(some_value, function () {
-        some_5secs_function(other_value, function () {
-                some_8secs_function(third_value, function () {
-                        //All three functions have completed, in order.
-        });
-    });
-});
+//some_3secs_function(some_value, function () {
+//        some_5secs_function(other_value, function () {
+//                some_8secs_function(third_value, function () {
+//                        //All three functions have completed, in order.
+//        });
+//    });
+//});
 
 
 function SetTeamSettings(teamName) {
@@ -206,7 +215,7 @@ function SetTeamSettings(teamName) {
             );
         });
 
-        if (result === undefined) {
+        if (typeof result === 'undefined') {
             console.log("Setting exists.");
         }
         else {
@@ -236,8 +245,6 @@ function GetTeamSettings() {
         });
     });
 }
-
-var configuredTeams = [];
 
 function GetAllTeamSettings() {
     // Get data service
