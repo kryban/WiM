@@ -86,9 +86,12 @@ function CreateTeams() {
     SetTeamSettingsNew("Committers");
     SetTeamSettingsNew("Test");
     SetTeamSettingsNew("NieuweTest");
-    console.log("CreateTeamsNew() executed.")
+    console.log("CreateTeamsNew() executed.");
 }
 
+function executeInOrder(callback) {
+    callback();
+}
 
 function GetTeams() {
     console.log("GetTeams() executed");
@@ -120,7 +123,7 @@ function SetTeamSettingsNew(teamName) {
             dataservice.getDocuments(TeamSettingsCollectionName).then(
                 function (docs) {
                     console.log("GetAllTeamSettingsNew :" + docs.length);
-
+                    configuredTeams = [];
                     docs.forEach(
                         function (element) {
                             configuredTeams.push(element);
@@ -147,6 +150,7 @@ function SetTeamSettingsNew(teamName) {
 
                     console.log("SettingNew ALREADY exists.");
                     //////////////////
+
                 }
             );
         });
@@ -246,24 +250,21 @@ function GetTeamSettings() {
     });
 }
 
+var foo = [];
+
 function GetAllTeamSettings() {
+
+
     // Get data service
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
         // Get all document under the collection
         dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
             //console.log("There areee " + docs.length + " in the collection in GetAllTeamSettings function.");
             console.log("GetAllTeamSettings :" + docs.length);
-            docs.forEach(
-                function (element) {
-                    configuredTeams.push(element);
-                }
-            );
+
+            foo = docs;
         });
-
-        console.log("Set configuredTeams: " + configuredTeams.length);
     });
-
-    return configuredTeams;
 }
 
 function ChangeTeamSettings() {
