@@ -259,3 +259,11 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/WiM/Wim.Ext/bandik.WimDevOpExtension-0.0.24.vsix
+/WiM/Wim.Ext/bandik.WimDevOpExtension-0.0.23.vsix
+/WiM/Wim.Ext/bandik.WimDevOpExtension-0.0.22.vsix
+/WiM/Wim.Ext/bandik.WimDevOpExtension-0.0.21.vsix
+/WiM/Wim.Ext/bandik.WimDevOpExtension-0.0.20.vsix
+/WiM/Wim.Ext/bandik.WimDevOpExtension-0.0.19.vsix
+/WiM/Wim.Ext/bandik.WimDevOpExtension-0.0.18.vsix
+/WiM/Wim.Ext/bandik.WimDevOpExtension-0.0.17.vsix
