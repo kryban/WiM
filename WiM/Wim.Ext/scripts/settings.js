@@ -16,6 +16,8 @@ function ConfigureTeams(command) {
 function OpenConfiguratieDialoog(title) {
 
     VSS.getService(VSS.ServiceIds.Dialog).then(function (dialogService) {
+
+        var teamsForm; 
         var extensionCtx = VSS.getExtensionContext();
 
         // Build absolute contribution ID for dialogContent
@@ -25,10 +27,32 @@ function OpenConfiguratieDialoog(title) {
         var dialogOptions = {
             title: "Add new team: "
             //width: 300
-            ,height: 400
+            , height: 500
+            //, okText: "OK"
+            , cancelText: "Annuleer" 
+            , getDialogResult: function () {
+                // Get the result from registrationForm object
+                return teamsForm ? teamsForm.getFormData() : null;
+              }
+            , okCallback: function (result) {
+                // Log the result to the console
+                console.log("OK knop is ingedrukt: " + JSON.stringify(result));
+            }
         };
 
-        dialogService.openDialog(contributionId, dialogOptions);
+        dialogService.openDialog(contributionId, dialogOptions).then(
+            function (dialog) {
+
+                dialog
+                    .getContributionInstance(contributionId)
+                    .then((instance) => {
+                        teamsForm = instance;
+                    }
+                );
+
+                dialog.updateOkButton(true);
+            }
+        );
     });
 
     // advanced
