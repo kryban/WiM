@@ -31,40 +31,8 @@
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            var max_fields_limit = 7; 
-            var x = 0; 
-            $('.voeg_toe').click(function (e) { 
-                e.preventDefault();
-                if (x < max_fields_limit) { 
-                    x++; 
-                    var inputId = "teamNaam" + x;
-                    //$('.input_fields_container_part').append('<div><input type="text" name="tags"/><a href="#" class="remove_field" style="margin-left:10px;">Remove</a></div>');
-                    $('.input_fields_container_part').append(
-                        '<div>' +
-                        '<input type="text" name="teamNaam" id="' + inputId + '"/>' +
-                        '<a href="#" class="remove_field" style="margin-left:10px;">Verwijder</a>' +
-                        '</div>'); 
-                }
-            });
-            $('.input_fields_container_part').on("click", ".remove_field", function (e) { 
-                e.preventDefault(); $(this).parent('div').remove(); x--;
-            })
-        });
-
-        // Get data service
-        VSS.getService(VSS.ServiceIds.ExtensionData)
-            .then(function (dataService) {
-            // Set value in user scope
-            dataService.setValue("userScopedKey", 12345, { scopeType: "User" })
-                .then(function (value) {
-                    console.log("User scoped key value is " + value);
-                });
-            });
-
-    </script>
-
+    
+    <script src="scripts/manage-teams.js"></script>
     <script src="scripts/settings.js"></script>
     <script src="scripts/wit.js"></script>
 

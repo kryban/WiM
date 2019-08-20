@@ -24,8 +24,8 @@ function OpenConfiguratieDialoog(title) {
         // Show dialog
         var dialogOptions = {
             title: "Add new team: "
-            //width: 300,
-            //height: 200
+            //width: 300
+            ,height: 400
         };
 
         dialogService.openDialog(contributionId, dialogOptions);
@@ -263,6 +263,8 @@ function GetAllTeamSettings() {
             console.log("GetAllTeamSettings :" + docs.length);
 
             foo = docs;
+
+            return docs;
         });
     });
 }
