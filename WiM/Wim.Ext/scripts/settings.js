@@ -32,7 +32,7 @@ function OpenConfiguratieDialoog(title) {
             , cancelText: "Annuleer" 
             , getDialogResult: function () {
                 // Get the result from registrationForm object
-                return teamsForm ? teamsForm.getFormData() : null;
+                return "hoihoi";// teamsForm ? teamsForm.getFormData() : null;
               }
             , okCallback: function (result) {
                 // Log the result to the console
