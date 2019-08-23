@@ -32,11 +32,13 @@ function OpenConfiguratieDialoog(title) {
             , cancelText: "Annuleer" 
             , getDialogResult: function () {
                 // Get the result from registrationForm object
-                return "hoihoi";// teamsForm ? teamsForm.getFormData() : null;
+                console.log("getDialogResult(): " + teamsForm);
+                return SaveChanges(teamsForm);
+                //return foo;
               }
             , okCallback: function (result) {
                 // Log the result to the console
-                console.log("OK knop is ingedrukt: " + JSON.stringify(result));
+                console.log("okCallback(): " + result);//JSON.stringify(result));
             }
         };
 
@@ -44,9 +46,9 @@ function OpenConfiguratieDialoog(title) {
             function (dialog) {
 
                 dialog
-                    .getContributionInstance(contributionId)
-                    .then((instance) => {
-                        teamsForm = instance;
+                    .getContributionInstance("Bandik.WimDevOpExtension.manage-teams")
+                    .then(function(manageTeamsinstance) {
+                        teamsForm = manageTeamsinstance;
                     }
                 );
 
@@ -99,8 +101,13 @@ function OpenConfiguratieDialoog(title) {
     //});
 }
 
+function SaveChanges(result) {
+    console.log("SaveChanges(result): " + result);
+    return ("Returned from SaveChanges function: " + result);
+}
+
 function DeleteTeams() {
-    console.log("DeleteTeams() executed.");
+    console.log("DeleteTeams().");
     DeleteAllTeamSettings();
 }
 

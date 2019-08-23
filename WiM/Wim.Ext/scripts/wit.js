@@ -84,6 +84,8 @@ function OpenTeamSettingsDialog(title)
 
 function OpenTeamSettingsDialogAdvanced(title)
 {
+    console.log("OpenTeamSettingsDialogAdvanced()");
+
     VSS.getService(VSS.ServiceIds.Dialog).then(function (dialogService) {
         var registrationForm;
         var extensionCtx = VSS.getExtensionContext();
@@ -105,7 +107,7 @@ function OpenTeamSettingsDialogAdvanced(title)
 
         dialogService.openDialog(contributionId, dialogOptions).then(function (dialog) {
             // Get registrationForm instance which is registered in registrationFormContent.html
-            dialog.getContributionInstance("teamsettings-form").then(function (teamSettingsFormInstance) {
+            dialog.getContributionInstance(contributionId).then(function (teamSettingsFormInstance) {
 
                 // Keep a reference of registration form instance (to be used above in dialog options)
                 registrationForm = teamSettingsFormInstance;

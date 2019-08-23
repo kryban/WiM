@@ -30,6 +30,65 @@
 <html>
 <head>
     <script src="sdk/scripts/VSS.SDK.js"></script>
+
+    <script src="scripts/settings.js"></script>
+    <script src="scripts/menubar.js"></script>
+    <script src="scripts/tasks.js"></script>
+    <script src="scripts/wit.js"></script>
+
+    <script>
+        VSS.init();
+        var registrationForm = (function () {
+            var callbacks = [];
+
+            function inputChanged() {
+                // Execute registered callbacks
+                for (var i = 0; i < callbacks.length; i++) {
+                    callbacks[i](isValid());
+                }
+            }
+
+            function isValid() {
+                // Check whether form is valid or not
+                return true; // !!(name.value) && !!(dateOfBirth.value) && !!(email.value);
+            }
+
+            function getFormData() {
+                // Get form values
+                return "getFormData() in teamsettings-form.html";
+                //{
+                //    name: name.value,
+                //    dateOfBirth: dateOfBirth.value,
+                //    email: email.value
+                //};
+            }
+
+            //var name = document.getElementById("inpName");
+            //var dateOfBirth = document.getElementById("inpDob");
+            //var email = document.getElementById("inpEmail");
+
+            //name.addEventListener("change", inputChanged);
+            //dateOfBirth.addEventListener("change", inputChanged);
+            //email.addEventListener("change", inputChanged);
+
+            return {
+                isFormValid: function () {
+                    return isValid();
+                },
+                getFormData: function () {
+                    return getFormData();
+                },
+                attachFormChanged: function (cb) {
+                    callbacks.push(cb);
+                }
+            };
+        })();
+
+        // Register form object to be used across this extension
+        console.log("VSS.Resgister(): " + registrationForm);
+        VSS.register("Bandik.WimDevOpExtension.teamsettings-form", registrationForm);
+
+    </script>
     <style>
         .open-existing-work-item, .open-existing-work-item, #vss-bandik-extension, #vss-bandik-extension-config {
             margin: 20px;
@@ -49,7 +108,7 @@
     </style>
 </head>
 <body>
-    <h2 id="header">Add new team</h2>
+    <h2 id="header">Add new teammm</h2>
     <!-- //////////////////// -->
 
     <div class="input_fields_container_part">
@@ -97,62 +156,6 @@
         <label>Email address:</label>
         <input id="inpEmail" />
     </p>-->
-
-    <script src="scripts/settings.js"></script>
-    <script src="scripts/menubar.js"></script>
-    <script src="scripts/tasks.js"></script>
-    <script src="scripts/wit.js"></script>
-
-    <script>
-        VSS.init();
-        var registrationForm = (function () {
-            var callbacks = [];
-
-            function inputChanged() {
-                // Execute registered callbacks
-                for (var i = 0; i < callbacks.length; i++) {
-                    callbacks[i](isValid());
-                }
-            }
-
-            function isValid() {
-                // Check whether form is valid or not
-                return !!(name.value) && !!(dateOfBirth.value) && !!(email.value);
-            }
-
-            function getFormData() {
-                // Get form values
-                return {
-                    name: name.value,
-                    dateOfBirth: dateOfBirth.value,
-                    email: email.value
-                };
-            }
-
-            var name = document.getElementById("inpName");
-            var dateOfBirth = document.getElementById("inpDob");
-            var email = document.getElementById("inpEmail");
-
-            name.addEventListener("change", inputChanged);
-            dateOfBirth.addEventListener("change", inputChanged);
-            email.addEventListener("change", inputChanged);
-
-            return {
-                isFormValid: function () {
-                    return isValid();
-                },
-                getFormData: function () {
-                    return getFormData();
-                },
-                attachFormChanged: function (cb) {
-                    callbacks.push(cb);
-                }
-            };
-        })();
-
-        // Register form object to be used across this extension
-        VSS.register("teamsettings-form", teamSettingsForm);
-    </script>
 
 </body>
 </html>

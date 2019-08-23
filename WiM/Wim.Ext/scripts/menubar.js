@@ -133,6 +133,7 @@ function menuBarAction(command) {
             LoadTasks(testTasks, command);
             break;
         case "add-new-team":
+            //OpenTeamSettingsDialogAdvanced("titeltje");
             ConfigureTeams(command);
             break;
         default:

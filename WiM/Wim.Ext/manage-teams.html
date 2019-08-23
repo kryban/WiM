@@ -2,6 +2,10 @@
 <html>
 <head>
     <script src="sdk/scripts/VSS.SDK.js"></script>
+    
+    <script src="scripts/settings.js"></script>
+    <script src="scripts/wit.js"></script>
+
     <style>
         .open-existing-work-item, .open-existing-work-item, #vss-bandik-extension, #vss-bandik-extension-config {
             margin: 20px;
@@ -30,11 +34,17 @@
         </div>
     </div>
 
+    <script>
+        var formData = "foo-manage-teams-form-data-at-the-bottom";
+
+        // Register form object to be used across this extension
+        console.log("VSS.Register() teams-form: " + formData);
+        VSS.register("Bandik.WimDevOpExtension.manage-teams", formData);
+
+    </script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    
     <script src="scripts/manage-teams.js"></script>
-    <script src="scripts/settings.js"></script>
-    <script src="scripts/wit.js"></script>
 
 </body>
 </html>

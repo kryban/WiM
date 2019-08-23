@@ -12,3 +12,9 @@
 	Misschien nog experimenteren met 16x16
 	Via de manifest in de package sluiten.
 
+4. Instantie van een dialog opvragen
+	Om instantie van een dialog object op te kunnen vragen via dialogservice.getConstributionInstance(...), 
+	dan moet het eerst geregistreerd worden in de HTML van de dialog met VSS.register(contrinutionId, data);
+	LET OP dat je eerst de VSS.register uitvoert, VOORDAT je dialogservice.getConstributionInstance(...) wordt gedaan.
+	
+
