@@ -46,7 +46,7 @@ function OpenConfiguratieDialoog(title) {
             function (dialog) {
 
                 dialog
-                    .getContributionInstance("Bandik.WimDevOpExtension.manage-teams")
+                    .getContributionInstance("Bandik.WimDevOpExtension.teamsettings-form")
                     .then(function(manageTeamsinstance) {
                         teamsForm = manageTeamsinstance;
                     }

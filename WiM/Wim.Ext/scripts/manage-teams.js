@@ -22,6 +22,7 @@
         $(this).parent('div').remove();
         x--;
     });
+
 });
 
 VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
@@ -45,5 +46,61 @@ VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
     });
 });
 
+//var formDataa = "pietjepuk-external";
 
+//// Register form object to be used across this extension
+//console.log("VSS.Register() pietjepuk: " + formDataa);
+//VSS.register("pietjepukk", formDataa);
 
+function GatherFormInfo() {
+    console.log("GatherFormInfo()");
+
+    VSS.init();
+    var registrationForm = (function () {
+        var callbacks = [];
+
+        function inputChanged() {
+            // Execute registered callbacks
+            for (var i = 0; i < callbacks.length; i++) {
+                callbacks[i](isValid());
+            }
+        }
+
+        function isValid() {
+            // Check whether form is valid or not
+            return !!(name.value) && !!(dateOfBirth.value) && !!(email.value);
+        }
+
+        function getFormData() {
+            // Get form values
+            return {
+                name: name.value,
+                dateOfBirth: dateOfBirth.value,
+                email: email.value
+            };
+        }
+
+        var name = document.getElementById("inpName");
+        var dateOfBirth = document.getElementById("inpDob");
+        var email = document.getElementById("inpEmail");
+
+        name.addEventListener("change", inputChanged);
+        dateOfBirth.addEventListener("change", inputChanged);
+        email.addEventListener("change", inputChanged);
+
+        return {
+            isFormValid: function () {
+                return isValid();
+            },
+            getFormData: function () {
+                return getFormData();
+            },
+            attachFormChanged: function (cb) {
+                callbacks.push(cb);
+            }
+        };
+    })();
+
+    // Register form object to be used across this extension
+    VSS.register("Bandik.WimDevOpExtension.teamsettings-form", registrationForm);
+}

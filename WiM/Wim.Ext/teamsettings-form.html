@@ -1,150 +1,11 @@
-﻿<!--<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>Settings</title>
-    <script src="SDK/scripts/VSS.SDK.js"></script>
-
-</head>
-<body>
-    <div id="vss-bandik-extension-config">
-        <h1 id="pageTitle"> Configure Teams </h1>
-
-        <div class="open-existing-work-item">
-            <label for="existing-wit-id">Team naam:</label>
-            <input id="existing-wit-id" value="1">
-            <Button id="existing-wit-button" type="button" value="Open..." onclick="OpenButtonClicked()">Open</Button>
-        </div>
-
-        <script src="scripts/menubar.js"></script>
-        <script src="scripts/tasks.js"></script>
-        <script src="scripts/wit.js"></script>
-        <script src="scripts/settings.js"></script>
-
-    </div>
-
-</body>
-</html>-->
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <script src="sdk/scripts/VSS.SDK.js"></script>
-
-    <script src="scripts/settings.js"></script>
-    <script src="scripts/menubar.js"></script>
-    <script src="scripts/tasks.js"></script>
-    <script src="scripts/wit.js"></script>
-
-    <script>
-        VSS.init();
-        var registrationForm = (function () {
-            var callbacks = [];
-
-            function inputChanged() {
-                // Execute registered callbacks
-                for (var i = 0; i < callbacks.length; i++) {
-                    callbacks[i](isValid());
-                }
-            }
-
-            function isValid() {
-                // Check whether form is valid or not
-                return true; // !!(name.value) && !!(dateOfBirth.value) && !!(email.value);
-            }
-
-            function getFormData() {
-                // Get form values
-                return "getFormData() in teamsettings-form.html";
-                //{
-                //    name: name.value,
-                //    dateOfBirth: dateOfBirth.value,
-                //    email: email.value
-                //};
-            }
-
-            //var name = document.getElementById("inpName");
-            //var dateOfBirth = document.getElementById("inpDob");
-            //var email = document.getElementById("inpEmail");
-
-            //name.addEventListener("change", inputChanged);
-            //dateOfBirth.addEventListener("change", inputChanged);
-            //email.addEventListener("change", inputChanged);
-
-            return {
-                isFormValid: function () {
-                    return isValid();
-                },
-                getFormData: function () {
-                    return getFormData();
-                },
-                attachFormChanged: function (cb) {
-                    callbacks.push(cb);
-                }
-            };
-        })();
-
-        // Register form object to be used across this extension
-        console.log("VSS.Resgister(): " + registrationForm);
-        VSS.register("Bandik.WimDevOpExtension.teamsettings-form", registrationForm);
-
-    </script>
-    <style>
-        .open-existing-work-item, .open-existing-work-item, #vss-bandik-extension, #vss-bandik-extension-config {
-            margin: 20px;
-        }
-
-        .work-item-types {
-            width: 200px;
-            display: inline-block;
-            margin-left: 5px;
-            margin-right: 5px;
-            vertical-align: bottom;
-        }
-
-        #existing-wit-id {
-            border: 1px solid #DDD;
-        }
-    </style>
 </head>
 <body>
-    <h2 id="header">Add new teammm</h2>
-    <!-- //////////////////// -->
-
-    <div class="input_fields_container_part">
-        <div>
-            <input type="text" name="tags">
-            <button class="btn btn-sm btn-primary add_more_button">Add More Fields</button>
-        </div>
-    </div>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            var max_fields_limit = 8; //set limit for maximum input fields
-            var x = 1; //initialize counter for text box
-            $('.add_more_button').click(function (e) { //click event on add more fields button having class add_more_button
-                e.preventDefault();
-                if (x < max_fields_limit) { //check conditions
-                    x++; //counter increment
-                    //$('.input_fields_container_part').append('<div><input type="text" name="tags"/><a href="#" class="remove_field" style="margin-left:10px;">Remove</a></div>'); //add input field
-                    $('.input_fields_container_part').append(
-                        '<div>' +
-                        '<input type="text" name="taskTitle"/>' +
-                        '<input type="text" name="taskId"/>' +
-                        '<input type="text" name="taskActivityType"/>' +
-                        '<a href="#" class="remove_field" style="margin-left:10px;">Verwijder</a>' +
-                        '</div>'); //add input field
-                }
-            });
-            $('.input_fields_container_part').on("click", ".remove_field", function (e) { //user click on remove text links
-                e.preventDefault(); $(this).parent('div').remove(); x--;
-            })
-        });
-    </script>
-
-    <!-- //////////////////// -->
-    <!--<p>
+    <h2 id="header">TeamSettingsVoorbeeld</h2>
+    <p>
         <label>Name:</label>
         <input id="inpName" />
     </p>
@@ -155,7 +16,11 @@
     <p>
         <label>Email address:</label>
         <input id="inpEmail" />
-    </p>-->
-
+    </p>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="scripts/manage-teams.js"></script>
+    <script>
+        GatherFormInfo();
+    </script>
 </body>
 </html>
