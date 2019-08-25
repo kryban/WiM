@@ -1,41 +1,39 @@
 ﻿
 //todo: refactor naar nette objecten
-var xtremeTasks = [
-    { title: "Kick-off", id: "kickoff", activityType: "Requirements" },
-    { title: "UC/UCR", id: "ucr", activityType: "Requirements" },
-    { title: "UC/UCR Review", id: "ucrreview", activityType: "Requirements" },
-    { title: "Code", id: "code", activityType: "Development" },
-    { title: "Code Review", id: "codereview", activityType: "Development" },
-    { title: "Test", id: "test", activityType: "Testing" },
-    { title: "Test Review", id: "testreview", activityType: "Testing" },
-    { title: "Regressietests aanmaken/aanpassen", id: "regressietestsaanmakenaanpassen", activityType: "Testing" },
-    { title: "Wijzigingsverslag + Review", id: "wijzigingsverslagreview", activityType: "Documentation" },
-    { title: "Releasenotes", id: "releasenotes", activityType: "Documentation" },
-    { title: "Reviewdocument", id: "revoewdcument", activityType: "Documentation" },
-    { title: "Stuurdata aanvragen", id: "stuurdataaanvragen", activityType: "Development" },
-    { title: "Sonarmeldingen", id: "sonarmeldingen", activityType: "Development" }
-];
 
-var committersTasks = [
-    { title: "Bouw", id: "bouw", activityType: "Development" },
-    { title: "Test", id: "test", activityType: "Testing" },
-    { title: "Code Review", id: "codereview", activityType: "Development" },
-    { title: "Wijzigingsverslag", id: "wijzigingsverslag", activityType: "Documentation" },
-    { title: "Releasenotes", id: "releasenotes", activityType: "Documentation" },
-    { title: "DOD controle", id: "dodcontrole", activityType: "Requirements" }
+var allTasks = [
+    { owner: "xtreme", title: "Kick-off", id: "kickoff", activityType: "Requirements" },
+    { owner: "xtreme", title: "UC/UCR", id: "ucr", activityType: "Requirements" },
+    { owner: "xtreme", title: "UC/UCR Review", id: "ucrreview", activityType: "Requirements" },
+    { owner: "xtreme", title: "Code", id: "code", activityType: "Development" },
+    { owner: "xtreme", title: "Code Review", id: "codereview", activityType: "Development" },
+    { owner: "xtreme", title: "Test", id: "test", activityType: "Testing" },
+    { owner: "xtreme", title: "Test Review", id: "testreview", activityType: "Testing" },
+    { owner: "xtreme", title: "Regressietests aanmaken/aanpassen", id: "regressietestsaanmakenaanpassen", activityType: "Testing" },
+    { owner: "xtreme", title: "Wijzigingsverslag + Review", id: "wijzigingsverslagreview", activityType: "Documentation" },
+    { owner: "xtreme", title: "Releasenotes", id: "releasenotes", activityType: "Documentation" },
+    { owner: "xtreme", title: "Reviewdocument", id: "revoewdcument", activityType: "Documentation" },
+    { owner: "xtreme", title: "Stuurdata aanvragen", id: "stuurdataaanvragen", activityType: "Development" },
+    { owner: "xtreme", title: "Sonarmeldingen", id: "sonarmeldingen", activityType: "Development" },
+    { owner: "committers", title: "Bouw", id: "bouw", activityType: "Development" },
+    { owner: "committers", title: "Test", id: "test", activityType: "Testing" },
+    { owner: "committers", title: "Code Review", id: "codereview", activityType: "Development" },
+    { owner: "committers", title: "Wijzigingsverslag", id: "wijzigingsverslag", activityType: "Documentation" },
+    { owner: "committers", title: "Releasenotes", id: "releasenotes", activityType: "Documentation" },
+    { owner: "committers", title: "DOD controle", id: "dodcontrole", activityType: "Requirements" },
+    { owner: "test", title: "TestBouw", id: "bouw", activityType: "Development" },
+    { owner: "test", title: "TestTest", id: "test", activityType: "Testing" },
+    { owner: "test", title: "TEestCode Review", id: "codereview", activityType: "Development" }
 ];
-
-var testTasks = [
-    { title: "TestBouw", id: "bouw", activityType: "Development" },
-    { title: "TestTest", id: "test", activityType: "Testing" },
-    { title: "TEestCode Review", id: "codereview", activityType: "Development" }
-]
 
 var selectedTeam;
 
-function LoadTasks(tasks, teamnaam)
+function LoadTasks(teamnaam)
 {
-    SetPageTitle(teamnaam);
+    var substringVanaf = "team_".length;
+    var parsedTeamnaam = teamnaam.substring(substringVanaf);
+
+    SetPageTitle(parsedTeamnaam);
 
     var taskFieldSet = document.getElementById("selectedTasks");
 
@@ -50,23 +48,27 @@ function LoadTasks(tasks, teamnaam)
     //taskFieldSet.appendChild(legendNode);
     //taskFieldSet.appendChild(breakNode);
 
-    tasks.forEach(function (element)
-    {
-        var inputNode = document.createElement("input");
-        inputNode.setAttribute("type", "checkbox");
-        inputNode.setAttribute("id", element.id);
-        inputNode.setAttribute("value", element.id);
-        inputNode.setAttribute("checked","true");
-        inputNode.setAttribute("name", "taskcheckbox");
+    console.log("LoadTasks()");
+    var teamTasks = allTasks.filter(function (x) { return x.owner === parsedTeamnaam; });
 
-        var labelNode = document.createElement("label");
-        labelNode.setAttribute("for", element.id);
-        labelNode.innerHTML = element.title;
-
-        taskFieldSet.appendChild(inputNode);
-        taskFieldSet.appendChild(labelNode);
-        taskFieldSet.appendChild(document.createElement("br"));
-    });
+    teamTasks.forEach(
+        function (element)
+        {
+            var inputNode = document.createElement("input");
+            inputNode.setAttribute("type", "checkbox");
+            inputNode.setAttribute("id", element.id);
+            inputNode.setAttribute("value", element.id);
+            inputNode.setAttribute("checked","true");
+            inputNode.setAttribute("name", "taskcheckbox");
+    
+            var labelNode = document.createElement("label");
+            labelNode.setAttribute("for", element.id);
+            labelNode.innerHTML = element.title;
+    
+            taskFieldSet.appendChild(inputNode);
+            taskFieldSet.appendChild(labelNode);
+            taskFieldSet.appendChild(document.createElement("br"));
+        });
 }
 
 function SetPageTitle(teamnaam) {
@@ -144,6 +146,6 @@ function AddTaskToWorkitem(task)
 }
 
 // default start
-LoadTasks(xtremeTasks, "xtreme");
+LoadTasks("team_xtreme");
 
 VSS.notifyLoadSucceeded();

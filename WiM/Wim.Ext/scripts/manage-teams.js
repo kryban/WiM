@@ -197,11 +197,11 @@ function teamInpChangeHandler() {
     //MaakMenu();
 
     // Get navigation service
-    VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService) {
-        // Reload whole page
-        console.log("navigationService.reload()");
-        navigationService.reload();
-    });
+    //VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService) {
+    //    // Reload whole page
+    //    console.log("navigationService.reload()");
+    //    navigationService.reload();
+    //});
 
     console.log("teamInpChangeHandler() :" + retVal);
 

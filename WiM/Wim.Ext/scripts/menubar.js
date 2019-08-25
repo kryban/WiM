@@ -34,17 +34,22 @@ function CreateMenuBar(Controls, Menus) {
             bar = docs;
 
             var teamMenuItems = [];
+            var teamTasksMenuItems = [];
 
             bar.forEach(
                 function (element) {
                     teamMenuItems.push(
-                        { id: element.text.toLowerCase(), text: element.text }
+                        { id: "team_"+element.text.toLowerCase(), text: element.text }
                     );
+                    teamTasksMenuItems.push(
+                        { id: "tasks_"+element.text.toLowerCase(), text: element.text }
+                    );
+
                 }
             );
 
             var teamItemsStringified = JSON.stringify(teamMenuItems);
-
+            var teamTasksItemsStringified = JSON.stringify(teamTasksMenuItems);
 
             // docs worden gegroepeerd op basis van Collections
             // teams behoren tot de collection Wim
@@ -69,7 +74,7 @@ function CreateMenuBar(Controls, Menus) {
                 '},' +
                 '{' +
                 '"id": "configure-team-tasks", "text": "Configure team tasks", "childItems":' +
-                teamTaskItems +
+                teamTasksItemsStringified +
                 '}' +
                 ']' +
                 '},' +
@@ -124,23 +129,41 @@ function CreateMenuBar(Controls, Menus) {
 
 // the center of all actions binded to menu items based on their names
 function menuBarAction(command) {
-    switch (command) {
-        case "xtreme":
-            LoadTasks(xtremeTasks, command);
-            break;
-        case "committers":
-            LoadTasks(committersTasks, command);
-            break;
-        case "test":
-            LoadTasks(testTasks, command);
-            break;
-        case "add-new-team":
-            //OpenTeamSettingsDialogAdvanced("titeltje");
-            ConfigureTeams(command);
-            break;
-        default:
-            break;
+
+    if (command.startsWith("team_")) {
+        LoadTasks(command);
     }
+    else if (command === "add-new-team") {
+        ConfigureTeams(command);
+    }
+    else if (command.startsWith("tasks_")) {
+        console.log("teamtasks");
+    }
+    //else {
+    //    console.log("configure-team-tasks");
+    //}
+
+    //switch (command) {
+    //    //case "xtreme":
+    //    //    LoadTasks(xtremeTasks, command);
+    //    //    break;
+    //    //case "committers":
+    //    //    LoadTasks(committersTasks, command);
+    //    //    break;
+    //    //case "test":
+    //    //    LoadTasks(testTasks, command);
+    //    //    break;
+    //    case "add-new-team":
+    //        //OpenTeamSettingsDialogAdvanced("titeltje");
+    //        ConfigureTeams(command);
+    //        break;
+    //    case "configure-team-tasks":
+    //        //OpenTeamSettingsDialogAdvanced("titeltje");
+    //        console.log("configure-team-tasks");
+    //        break;
+    //    default:
+    //        LoadTasks(command);
+    //}
 }
 
 VSS.notifyLoadSucceeded();

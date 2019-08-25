@@ -43,6 +43,12 @@ function OpenConfiguratieDialoog(title) {
             , okCallback: function (result) {
                 // Log the result to the console
                 console.log("okCallback(): ");//JSON.stringify(result));
+
+                VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService) {
+                    // Reload whole page
+                    console.log("navigationService.reload()");
+                    navigationService.reload();
+                });
             }
         };
 
