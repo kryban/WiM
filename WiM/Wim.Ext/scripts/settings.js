@@ -12,12 +12,15 @@ function ConfigureTeams(command) {
     //OpenTeamSettingsDialog(command);
     OpenConfiguratieDialoog(command);
 }
+var teamsForm; 
+var extenralSetted;
 
 function OpenConfiguratieDialoog(title) {
 
+    var boo;
+
     VSS.getService(VSS.ServiceIds.Dialog).then(function (dialogService) {
 
-        var teamsForm; 
         var extensionCtx = VSS.getExtensionContext();
 
         // Build absolute contribution ID for dialogContent
@@ -32,13 +35,14 @@ function OpenConfiguratieDialoog(title) {
             , cancelText: "Annuleer" 
             , getDialogResult: function () {
                 // Get the result from registrationForm object
+
                 console.log("getDialogResult(): " + teamsForm);
                 return SaveChanges(teamsForm);
                 //return foo;
               }
             , okCallback: function (result) {
                 // Log the result to the console
-                console.log("okCallback(): " + result);//JSON.stringify(result));
+                console.log("okCallback(): ");//JSON.stringify(result));
             }
         };
 
@@ -56,58 +60,16 @@ function OpenConfiguratieDialoog(title) {
             }
         );
     });
-
-    // advanced
-    //VSS.getService(VSS.ServiceIds.Dialog).then(
-    //    function (dialogService) {
-    //        var registrationForm;
-    //        var extensionCtx = VSS.getExtensionContext();
-    //        var contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".teamsettings-form";
-
-    //        var dialogOptions = {
-    //            title: "Teamsettings Form: " + title +" --" + contributionId,
-    //            width: 800,
-    //            height: 600,
-    //            getDialogResult: function () {
-    //                // Get the result from registrationForm object
-    //                return registrationForm ? registrationForm.getFormData() : null;
-    //            },
-    //            okCallback: function (result) {
-    //                // Log the result to the console
-    //                console.log(JSON.stringify(result));
-    //            }
-    //        };
-
-    //        dialogService.openDialog(contributionId, dialogOptions).then(
-    //            function (dialog) {
-    //                // Get registrationForm instance which is registered in registrationFormContent.html
-    //                dialog.getContributionInstance("teamsettings-form").then(
-    //                    function (teamSettingsFormInstance) {
-
-    //                        // Keep a reference of registration form instance (to be used above in dialog options)
-    //                        registrationForm = teamSettingsFormInstance;
-
-    //                        // Subscribe to form input changes and update the Ok enabled state
-    //                        registrationForm.attachFormChanged(function (isValid) {
-    //                            dialog.updateOkButton(isValid);
-    //                        });
-
-    //                        // Set the initial ok enabled state
-    //                        registrationForm.isFormValid().then(function (isValid) {
-    //                            dialog.updateOkButton(isValid);
-    //                        });
-    //                    });
-    //            });
-    //});
 }
 
 function SaveChanges(result) {
     console.log("SaveChanges(result): " + result);
+
     return ("Returned from SaveChanges function: " + result);
 }
 
-function DeleteTeams() {
-    console.log("DeleteTeams().");
+function DeleteCurrentTeams() {
+    console.log("DeleteCurrentTeams()");
     DeleteAllTeamSettings();
 }
 
@@ -131,13 +93,15 @@ function GetTeams() {
 
 function DeleteAllTeamSettings() {
 
+    console.log("DeleteAllTeamSettings()");
+
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
         // Get all document under the collection
         dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
             //console.log("There are " + docs.length + " in the collection.");
             docs.forEach(
                 function (element) {
-                    DeleteTeamSettings(dataService, element.id);
+                    DeleteTeamSettings(dataService, element.id, element.text);
                 }
             );
         });
@@ -148,6 +112,8 @@ var configuredTeams = [];
 var result;
 
 function SetTeamSettingsNew(teamName) {
+
+    console.log("SetTeamSettingsNew(): " + teamName);
 
     VSS.getService(VSS.ServiceIds.ExtensionData).then(
         function (dataservice) {
@@ -281,7 +247,7 @@ function GetTeamSettings() {
     });
 }
 
-var foo = [];
+//var foo = [];
 
 function GetAllTeamSettings() {
 
@@ -293,7 +259,7 @@ function GetAllTeamSettings() {
             //console.log("There areee " + docs.length + " in the collection in GetAllTeamSettings function.");
             console.log("GetAllTeamSettings :" + docs.length);
 
-            foo = docs;
+            //foo = docs;
 
             return docs;
         });
@@ -317,7 +283,9 @@ function ChangeTeamSettings() {
 }
 
 
-function DeleteTeamSettings(dservice, docId) {
+function DeleteTeamSettings(dservice, docId, docText) {
+
+    console.log("DeleteTeamSettings() " + docId + " " + docText);
 
     if (dservice !== null) {
         dservice.deleteDocument(TeamSettingsCollectionName, docId).then(function () {

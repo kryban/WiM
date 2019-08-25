@@ -1,16 +1,20 @@
 ﻿
-VSS.require(["VSS/Controls", "VSS/Controls/Menus"], function (Controls, Menus){
+//DeleteCurrentTeams();
+//CreateTeams();
 
-    //DeleteTeams();
-    CreateTeams();
-    GetAllTeamSettings();
-    //GetTeams();
+MaakMenu();
 
-    CreateMenuBar(Controls, Menus, foo);
+function MaakMenu() {
+    VSS.require(["VSS/Controls", "VSS/Controls/Menus"], function(Controls, Menus) {
 
-});
+        //DeleteCurrentTeams();
+        //GetAllTeamSettings();
+        //GetTeams();
+        CreateMenuBar(Controls, Menus);
+    });
+}
 
-function CreateMenuBar(Controls, Menus, foo) {
+function CreateMenuBar(Controls, Menus) {
     var container = $(".menu-bar");
 
     //var team1 = { text: "Xtreme" };
@@ -114,8 +118,6 @@ function CreateMenuBar(Controls, Menus, foo) {
             };
 
             var menubar = Controls.create(Menus.MenuBar, container, menubarOptions);
-
-
         });
     });
 }
