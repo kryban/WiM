@@ -12,7 +12,7 @@ function ConfigureTeams(command) {
     //OpenTeamSettingsDialog(command);
     OpenConfiguratieDialoog(command);
 }
-var teamsForm; 
+var teamsForm = ["yo","yi"]; 
 var extenralSetted;
 
 function OpenConfiguratieDialoog(title) {

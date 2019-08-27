@@ -1,6 +1,6 @@
 ﻿
-//DeleteCurrentTeams();
-//CreateTeams();
+DeleteCurrentTeams();
+CreateTeams();
 
 MaakMenu();
 

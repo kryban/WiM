@@ -77,7 +77,7 @@ function teamInpChangeHandler() {
             for (var i = 0; i < c.length; i++) {
 
                 var teamnaam = c[i].value;
-
+                teamsForm.push(teamnaam);
 
                 console.log("GetAllTeamSettingsNewInline :" + docs.length);
                 //configuredTeams = [];
@@ -104,6 +104,10 @@ function teamInpChangeHandler() {
                 console.log("SettingNewInline NOT exists.");
 
             }
+
+            // probeersel
+            console.log("VSS.Register() teams-form: " + teamsForm);
+            VSS.register("Bandik.WimDevOpExtension.manage-teams", teamsForm);
 
                     //// Get data service
                     //VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
