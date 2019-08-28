@@ -26,7 +26,12 @@
     </style>
 </head>
 <body>
-    <h2 id="header">Manage tasks</h2>
+    <h3 id="header">Team</h3>
+    <select id="teamSelect">
+    </select>
+
+
+    <h3 id="header">Manage tasks</h3>
 
     <div class="tasks_input_fields_container_part" id="taskInputFields">
         <div>
@@ -40,11 +45,42 @@
     <script src="scripts/tasks.js"></script>
 
     <script>
-            formData = "foo-manage-tasks-form-data-at-the-bottom";
+        //var min = 12;
+        //var max = 100;
+        var select = document.getElementById('teamSelect');
 
-            //// Register form object to be used across this extension
-            console.log("VSS.Register() teams-form: " + formData);
-            VSS.register("Bandik.WimDevOpExtension.manage-tasks", formData);
+        VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
+            dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+        
+                var x = 0;
+
+        // only teams setting. Not other settings
+                var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
+                console.log("Initial load team settings : " + teamDocs.length + " out of " + docs.length + " settings.");
+
+                teamDocs.forEach(
+                    function (element) {
+                        var inputId = "teamNaam" + x;
+                        x++;
+
+                        var opt = document.createElement('option');
+                        opt.value = element.text;
+                        opt.innerHTML = element.text;
+                        select.appendChild(opt);
+                    }
+                );
+
+                VSS.notifyLoadSucceeded();
+            });
+
+    VSS.notifyLoadSucceeded();
+});
+
+        var formData = "foo-manage-tasks-form-data-at-the-bottom";
+
+        //// Register form object to be used across this extension
+        console.log("VSS.Register() teams-form: " + formData);
+        VSS.register("manage-tasks", formData);
 
     </script>
 

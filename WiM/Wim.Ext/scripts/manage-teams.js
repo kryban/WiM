@@ -30,9 +30,13 @@
 VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
 
     dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-        console.log("GetAllTeamSettings :" + docs.length);
+        
         var x = 0;
-        docs.forEach(
+
+        // only teams setting. Not other settings
+        var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
+        console.log("Initial load team settings : " + teamDocs.length + " out of " + docs.length +" settings.");
+        teamDocs.forEach(
             function (element) {
                 var inputId = "teamNaam" + x;
                 x++;
@@ -43,8 +47,10 @@ VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
                     '</div>');
             }
         );
+        VSS.notifyLoadSucceeded();
 
     });
+    VSS.notifyLoadSucceeded();
 });
 
 
@@ -56,7 +62,10 @@ function teamInpChangeHandler() {
 
         dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
 
-            docs.forEach(
+            // delete only teams setting. Not other settings
+            var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
+
+            teamDocs.forEach(
                 function (element) {
 
                     dataService.deleteDocument(TeamSettingsCollectionName, element.id).then(function (service) {
@@ -70,10 +79,11 @@ function teamInpChangeHandler() {
                 var teamnaam = c[i].value;
                 teamsForm.push(teamnaam);
 
-                console.log("teamInpChangeHandler() :" + docs.length);
-                console.log("teamInpChangeHandler(): " + teamnaam);
+                console.log("teamInpChangeHandler() :" + teamDocs.length);
+                console.log("teamInpChangeHandler() : " + teamnaam);
 
                 var newDoc = {
+                    type: "team",
                     text: teamnaam
                 };
 
@@ -85,8 +95,9 @@ function teamInpChangeHandler() {
                 console.log("teamInpChangeHandler(). Setting NOT exists.");
 
             }
+            VSS.notifyLoadSucceeded();
         });
-
+        VSS.notifyLoadSucceeded();
     });
 
     console.log("teamInpChangeHandler() ended :");

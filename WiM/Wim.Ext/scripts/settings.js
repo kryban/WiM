@@ -43,6 +43,7 @@ function OpenTeamsConfiguratieDialoog(title) {
                     // Reload whole page
                     console.log("navigationService.reload()");
                     navigationService.reload();
+                    VSS.notifyLoadSucceeded();
                 });
             }
         };
@@ -58,8 +59,11 @@ function OpenTeamsConfiguratieDialoog(title) {
                 );
 
                 dialog.updateOkButton(true);
+                VSS.notifyLoadSucceeded();
             }
         );
+
+        VSS.notifyLoadSucceeded();
     });
 }
 
@@ -99,7 +103,10 @@ function DeleteAllTeamSettings() {
                     DeleteTeamSettings(dataService, element.id, element.text);
                 }
             );
+            VSS.notifyLoadSucceeded();
         });
+
+        VSS.notifyLoadSucceeded();
     });
 }
 
@@ -130,6 +137,7 @@ function SetTeamSettingsNew(teamName) {
                     if (typeof result === 'undefined') {
 
                         var newDoc = {
+                            type: "team",
                             text: teamName
                         };
 
@@ -144,8 +152,11 @@ function SetTeamSettingsNew(teamName) {
                     console.log("SettingNew ALREADY exists.");
                     //////////////////
 
+                    VSS.notifyLoadSucceeded();
                 }
             );
+
+            VSS.notifyLoadSucceeded();
         });
 }
 
@@ -160,6 +171,7 @@ function getExistingSettings(dataservice) {
                     configuredTeams.push(element);
                 }
             );
+            VSS.notifyLoadSucceeded();
         }
     );
 }
@@ -210,7 +222,8 @@ function SetTeamSettings(teamName) {
                     temp.push(element);
                 }
             );
-        });
+                VSS.notifyLoadSucceeded();
+            });
 
         if (typeof result === 'undefined') {
             console.log("Setting exists.");
@@ -218,6 +231,7 @@ function SetTeamSettings(teamName) {
         else {
             // Prepare document first
             var newDoc = {
+                type: "team",
                 text: teamName
             };
 
@@ -228,7 +242,7 @@ function SetTeamSettings(teamName) {
 
             console.log("Setting NOT exists.");
         }
-              
+        VSS.notifyLoadSucceeded();
     });
 }
 
@@ -239,7 +253,9 @@ function GetTeamSettings() {
         dataService.getDocument(TeamSettingsCollectionName, "MyDocumentId").then(function (doc) {
             // Assuming document has a property named foo
             console.log("Doc foo: " + doc.foo);
+            VSS.notifyLoadSucceeded();
         });
+        VSS.notifyLoadSucceeded();
     });
 }
 
@@ -256,9 +272,10 @@ function GetAllTeamSettings() {
             console.log("GetAllTeamSettings :" + docs.length);
 
             //foo = docs;
-
+            VSS.notifyLoadSucceeded();
             return docs;
         });
+        VSS.notifyLoadSucceeded();
     });
 }
 
@@ -274,7 +291,9 @@ function ChangeTeamSettings() {
 
         dataService.setDocument(TeamSettingsCollectionName, myDoc).then(function (doc) {
             console.log("Doc id: " + doc.id);
+            VSS.notifyLoadSucceeded();
         });
+        VSS.notifyLoadSucceeded();
     });
 }
 
@@ -286,6 +305,7 @@ function DeleteTeamSettings(dservice, docId, docText) {
     if (dservice !== null) {
         dservice.deleteDocument(TeamSettingsCollectionName, docId).then(function () {
             console.log("Doc verwijderd");
+            VSS.notifyLoadSucceeded();
         });
     }
 
@@ -295,7 +315,9 @@ function DeleteTeamSettings(dservice, docId, docText) {
         // Delete document
         dataService.deleteDocument(TeamSettingsCollectionName, docId).then(function () {
             console.log("Doc verwijderddd");
+            VSS.notifyLoadSucceeded();
         });
+        VSS.notifyLoadSucceeded();
     });
 }
 

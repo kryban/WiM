@@ -43,19 +43,24 @@ VSS.require(["TFS/WorkItemTracking/RestClient"], // modulepath
             .then(
                 function (workitmResult) {
                     MapWorkItemFields(WorkItemObj, workitmResult);
-                wi = WorkItemObj.Title;
-                //wi = workitm.fields["System.Title"];//JSON.stringify(workitm);
-                var foo = 1;
+                    wi = WorkItemObj.Title;
+                    //wi = workitm.fields["System.Title"];//JSON.stringify(workitm);
+                    var foo = 1;
+
+                    VSS.notifyLoadSucceeded();
             });
 
         //        var projectNames = VSS.getWebContext().project.name;
         var workitemTypes = witClient.getWorkItemTypes(VSS.getWebContext().project.name)
             .then(
                 function (types) {
-                var bar = JSON.stringify(types);
-                return types[0];
+                    var bar = JSON.stringify(types);
+
+                    VSS.notifyLoadSucceeded();
+
+                    return types[0];
                 //var bar2 = 1;
-            }
+                }
         );
         var foro = witClient;
     }
@@ -79,6 +84,8 @@ function OpenTeamSettingsDialog(title)
         };
 
         dialogService.openDialog(contributionId, dialogOptions);
+
+        VSS.notifyLoadSucceeded();
     });
 }
 
@@ -123,6 +130,8 @@ function OpenTeamSettingsDialogAdvanced(title)
                 });
             });
         });
+
+        VSS.notifyLoadSucceeded();
     });
 }
 

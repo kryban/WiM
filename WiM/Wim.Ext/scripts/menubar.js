@@ -88,7 +88,9 @@ function CreateMenuBar(Controls, Menus) {
             };
 
             var menubar = Controls.create(Menus.MenuBar, container, menubarOptions);
+            VSS.notifyLoadSucceeded();
         });
+        VSS.notifyLoadSucceeded();
     });
 }
 

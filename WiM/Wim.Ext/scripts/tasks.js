@@ -2,34 +2,34 @@
 //todo: refactor naar nette objecten
 
 var allTasks = [
-    { owner: "xtreme", title: "Kick-off", id: "kickoff", activityType: "Requirements" },
-    { owner: "xtreme", title: "UC/UCR", id: "ucr", activityType: "Requirements" },
-    { owner: "xtreme", title: "UC/UCR Review", id: "ucrreview", activityType: "Requirements" },
-    { owner: "xtreme", title: "Code", id: "code", activityType: "Development" },
-    { owner: "xtreme", title: "Code Review", id: "codereview", activityType: "Development" },
-    { owner: "xtreme", title: "Test", id: "test", activityType: "Testing" },
-    { owner: "xtreme", title: "Test Review", id: "testreview", activityType: "Testing" },
-    { owner: "xtreme", title: "Regressietests aanmaken/aanpassen", id: "regressietestsaanmakenaanpassen", activityType: "Testing" },
-    { owner: "xtreme", title: "Wijzigingsverslag + Review", id: "wijzigingsverslagreview", activityType: "Documentation" },
-    { owner: "xtreme", title: "Releasenotes", id: "releasenotes", activityType: "Documentation" },
-    { owner: "xtreme", title: "Reviewdocument", id: "revoewdcument", activityType: "Documentation" },
-    { owner: "xtreme", title: "Stuurdata aanvragen", id: "stuurdataaanvragen", activityType: "Development" },
-    { owner: "xtreme", title: "Sonarmeldingen", id: "sonarmeldingen", activityType: "Development" },
-    { owner: "committers", title: "Bouw", id: "bouw", activityType: "Development" },
-    { owner: "committers", title: "Test", id: "test", activityType: "Testing" },
-    { owner: "committers", title: "Code Review", id: "codereview", activityType: "Development" },
-    { owner: "committers", title: "Wijzigingsverslag", id: "wijzigingsverslag", activityType: "Documentation" },
-    { owner: "committers", title: "Releasenotes", id: "releasenotes", activityType: "Documentation" },
-    { owner: "committers", title: "DOD controle", id: "dodcontrole", activityType: "Requirements" },
-    { owner: "test", title: "TestBouw", id: "bouw", activityType: "Development" },
-    { owner: "test", title: "TestTest", id: "test", activityType: "Testing" },
-    { owner: "test", title: "TEestCode Review", id: "codereview", activityType: "Development" }
+    { type: "task", owner: "xtreme", title: "Kick-off", id: "kickoff", activityType: "Requirements" },
+    { type: "task", owner: "xtreme", title: "UC/UCR", id: "ucr", activityType: "Requirements" },
+    { type: "task", owner: "xtreme", title: "UC/UCR Review", id: "ucrreview", activityType: "Requirements" },
+    { type: "task", owner: "xtreme", title: "Code", id: "code", activityType: "Development" },
+    { type: "task", owner: "xtreme", title: "Code Review", id: "codereview", activityType: "Development" },
+    { type: "task", owner: "xtreme", title: "Test", id: "test", activityType: "Testing" },
+    { type: "task", owner: "xtreme", title: "Test Review", id: "testreview", activityType: "Testing" },
+    { type: "task", owner: "xtreme", title: "Regressietests aanmaken/aanpassen", id: "regressietestsaanmakenaanpassen", activityType: "Testing" },
+    { type: "task", owner: "xtreme", title: "Wijzigingsverslag + Review", id: "wijzigingsverslagreview", activityType: "Documentation" },
+    { type: "task", owner: "xtreme", title: "Releasenotes", id: "releasenotes", activityType: "Documentation" },
+    { type: "task", owner: "xtreme", title: "Reviewdocument", id: "revoewdcument", activityType: "Documentation" },
+    { type: "task", owner: "xtreme", title: "Stuurdata aanvragen", id: "stuurdataaanvragen", activityType: "Development" },
+    { type: "task", owner: "xtreme", title: "Sonarmeldingen", id: "sonarmeldingen", activityType: "Development" },
+    { type: "task", owner: "committers", title: "Bouw", id: "bouw", activityType: "Development" },
+    { type: "task", owner: "committers", title: "Test", id: "test", activityType: "Testing" },
+    { type: "task", owner: "committers", title: "Code Review", id: "codereview", activityType: "Development" },
+    { type: "task", owner: "committers", title: "Wijzigingsverslag", id: "wijzigingsverslag", activityType: "Documentation" },
+    { type: "task", owner: "committers", title: "Releasenotes", id: "releasenotes", activityType: "Documentation" },
+    { type: "task", owner: "committers", title: "DOD controle", id: "dodcontrole", activityType: "Requirements" },
+    { type: "task", owner: "test", title: "TestBouw", id: "bouw", activityType: "Development" },
+    { type: "task", owner: "test", title: "TestTest", id: "test", activityType: "Testing" },
+    { type: "task", owner: "test", title: "TEestCode Review", id: "codereview", activityType: "Development" }
 ];
 
 //tasks_input_fields_container_part
 $(document).ready(function () {
 
-    console.log("dcument.Ready()");
+    console.log("document.Ready()");
 
     var max_fields_limit = 27;
     var x = 0;
@@ -63,6 +63,10 @@ VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
         console.log("GetAllTeamSettings :" + docs.length);
         var x = 0;
 
+        // only teams setting. Not other settings
+        var teamTaskDocs = docs.filter(function (d) { return d.type === 'task'; });
+        console.log("Initial load task settings : " + teamTaskDocs.length + " out of " + docs.length + " settings.");
+
         allTasks.forEach(
             function (element) {
                 var inputId = "teamNaam" + x;
@@ -70,14 +74,15 @@ VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
 
                 $('.tasks_input_fields_container_part').append(
                     '<div>' +
-                    '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value="' + element.title + '" />' +
+                    '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value=" firstTimeRendered' + element.title + '" />' +
                     '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="' + element.activityType + '" />' +
                     '<a href="#" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
                     '</div>');
             }
         );
-
+        VSS.notifyLoadSucceeded();
     });
+    VSS.notifyLoadSucceeded();
 });
 
 function ConfigureTasks(teamnaam) {
@@ -130,8 +135,11 @@ function OpenTaskConfiguratieDialoog(teamNaam) {
                     );
 
                 dialog.updateOkButton(true);
+
+                VSS.notifyLoadSucceeded();
             }
         );
+        VSS.notifyLoadSucceeded();
     });
 }
 
