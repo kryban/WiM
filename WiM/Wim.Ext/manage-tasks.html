@@ -27,7 +27,8 @@
 </head>
 <body>
     <h3 id="header">Team</h3>
-    <select id="teamSelect">
+    <select id="teamSelect" >
+        
     </select>
 
 
@@ -47,34 +48,45 @@
     <script>
         //var min = 12;
         //var max = 100;
-        var select = document.getElementById('teamSelect');
+        //var select = document.getElementById('teamSelect');
+
+        $("#sort").change(function () {
+
+            alert('Selected value: ' + $(this).val());
+        });
 
         VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
             dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-        
+
                 var x = 0;
 
-        // only teams setting. Not other settings
+                // only teams setting. Not other settings
                 var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
                 console.log("Initial load team settings : " + teamDocs.length + " out of " + docs.length + " settings.");
 
                 teamDocs.forEach(
                     function (element) {
+
                         var inputId = "teamNaam" + x;
                         x++;
 
-                        var opt = document.createElement('option');
-                        opt.value = element.text;
-                        opt.innerHTML = element.text;
-                        select.appendChild(opt);
+                        $('#teamSelect').append(
+                            '<option class="teamSelectOption" id="' + inputId + '" value="' + element.text + '" onchange="TeamSelectedHandler(this)">' + element.text + '</option>'
+                        );
+
+                        
                     }
                 );
 
                 VSS.notifyLoadSucceeded();
             });
 
-    VSS.notifyLoadSucceeded();
-});
+            VSS.notifyLoadSucceeded();
+        });
+
+        function TeamSelectedHandler(obj) {
+            console.log("TeamSelectedHandler() clicked: " +obj);
+        }
 
         var formData = "foo-manage-tasks-form-data-at-the-bottom";
 
