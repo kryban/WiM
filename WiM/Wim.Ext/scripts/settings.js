@@ -10,14 +10,12 @@ function ConfigureTeams(command) {
 
     //OpenTeamSettingsDialogAdvanced(command);
     //OpenTeamSettingsDialog(command);
-    OpenConfiguratieDialoog(command);
+    OpenTeamsConfiguratieDialoog(command);
 }
 var teamsForm = ["yo","yi"]; 
 var extenralSetted;
 
-function OpenConfiguratieDialoog(title) {
-
-    var boo;
+function OpenTeamsConfiguratieDialoog(title) {
 
     VSS.getService(VSS.ServiceIds.Dialog).then(function (dialogService) {
 
@@ -35,14 +33,11 @@ function OpenConfiguratieDialoog(title) {
             , cancelText: "Annuleer" 
             , getDialogResult: function () {
                 // Get the result from registrationForm object
-
-                console.log("getDialogResult(): " + teamsForm);
-                return SaveChanges(teamsForm);
-                //return foo;
+                //console.log("getDialogResult(): " + teamsForm);
               }
             , okCallback: function (result) {
                 // Log the result to the console
-                console.log("okCallback(): ");//JSON.stringify(result));
+                //console.log("okCallback(): ");//JSON.stringify(result));
 
                 VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService) {
                     // Reload whole page
@@ -66,12 +61,6 @@ function OpenConfiguratieDialoog(title) {
             }
         );
     });
-}
-
-function SaveChanges(result) {
-    console.log("SaveChanges(result): " + result);
-
-    return ("Returned from SaveChanges function: " + result);
 }
 
 function DeleteCurrentTeams() {
@@ -115,6 +104,7 @@ function DeleteAllTeamSettings() {
 }
 
 var configuredTeams = [];
+
 var result;
 
 function SetTeamSettingsNew(teamName) {

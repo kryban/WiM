@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "WimDevOpExtension",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "name": "WorkitemManagerExtension",
   "baseUri": "https://localhost:44367",
   "publisher": "bandik",
@@ -52,6 +52,15 @@
       "targets": [],
       "properties": {
         "uri": "manage-teams.html"
+      }
+    },
+    {
+      "id": "Bandik.WimDevOpExtension.manage-tasks",
+      "type": "ms.vss-web.control",
+      "description": "The content to be displayed in the Manage Tasks dialog",
+      "targets": [],
+      "properties": {
+        "uri": "manage-tasks.html"
       }
     }
   ],

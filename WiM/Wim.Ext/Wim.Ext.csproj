@@ -65,6 +65,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="manage-tasks.html" />
     <Content Include="manage-teams.html" />
     <Content Include="scripts\manage-teams.js" />
     <Content Include="teamsettings-form.html" />

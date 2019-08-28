@@ -26,6 +26,115 @@ var allTasks = [
     { owner: "test", title: "TEestCode Review", id: "codereview", activityType: "Development" }
 ];
 
+//tasks_input_fields_container_part
+$(document).ready(function () {
+
+    console.log("dcument.Ready()");
+
+    var max_fields_limit = 27;
+    var x = 0;
+
+    $('.voeg_task_toe').click(function (e) {
+        e.preventDefault();
+        if (x < max_fields_limit) {
+            x++;
+            var inputId = "taskNaam" + x;
+
+            $('.tasks_input_fields_container_part').append(
+                '<div>' +
+                '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value="... taskNaam ... "/>' +
+                '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="... taskActivityType ... "/>' +
+                '<a href="#" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
+                '</div>');
+        }
+    });
+
+    $('.tasks_input_fields_container_part').on("click", ".remove_task_field", function (e) {
+        e.preventDefault();
+        $(this).parent('div').remove();
+        teamInpChangeHandler();
+        x--;
+    });
+});
+
+VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
+
+    dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+        console.log("GetAllTeamSettings :" + docs.length);
+        var x = 0;
+
+        allTasks.forEach(
+            function (element) {
+                var inputId = "teamNaam" + x;
+                x++;
+
+                $('.tasks_input_fields_container_part').append(
+                    '<div>' +
+                    '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value="' + element.title + '" />' +
+                    '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="' + element.activityType + '" />' +
+                    '<a href="#" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
+                    '</div>');
+            }
+        );
+
+    });
+});
+
+function ConfigureTasks(teamnaam) {
+    var substringVanaf = "tasks_".length;
+    var parsedTeamnaam = teamnaam.substring(substringVanaf);
+    console.log("LoadTaskManagementDialog() : " + parsedTeamnaam);
+
+    OpenTaskConfiguratieDialoog(parsedTeamnaam);
+}
+
+function OpenTaskConfiguratieDialoog(teamNaam) {
+
+    VSS.getService(VSS.ServiceIds.Dialog).then(function (dialogService) {
+
+        // Build absolute contribution ID for dialogContent
+        var extensionCtx = VSS.getExtensionContext();
+        var contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".manage-tasks";
+
+        // Show dialog
+        var dialogOptions = {
+            title: "Add new task "
+            //width: 300
+            , height: 500
+            //, okText: "OK"
+            , cancelText: "Annuleer"
+            , getDialogResult: function () {
+                // Get the result from registrationForm object
+                //console.log("getDialogResult(): " + teamsForm);
+            }
+            , okCallback: function (result) {
+                // Log the result to the console
+                //console.log("okCallback(): ");//JSON.stringify(result));
+
+                VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService) {
+                    // Reload whole page
+                    console.log("navigationService.reload()");
+                    navigationService.reload();
+                });
+            }
+        };
+
+        dialogService.openDialog(contributionId, dialogOptions).then(
+            function (dialog) {
+
+                dialog
+                    .getContributionInstance("Bandik.WimDevOpExtension.manage-tasks")
+                    .then(function (manageTeamsinstance) {
+                        teamsForm = manageTeamsinstance;
+                    }
+                    );
+
+                dialog.updateOkButton(true);
+            }
+        );
+    });
+}
+
 var selectedTeam;
 
 function LoadTasks(teamnaam)
@@ -37,6 +146,7 @@ function LoadTasks(teamnaam)
 
     var taskFieldSet = document.getElementById("selectedTasks");
 
+    // eerst alles verwijderen
     while (taskFieldSet.firstChild) {
         taskFieldSet.removeChild(taskFieldSet.firstChild);
     }
@@ -51,6 +161,7 @@ function LoadTasks(teamnaam)
     console.log("LoadTasks()");
     var teamTasks = allTasks.filter(function (x) { return x.owner === parsedTeamnaam; });
 
+    // nu alles weer opbouwen
     teamTasks.forEach(
         function (element)
         {

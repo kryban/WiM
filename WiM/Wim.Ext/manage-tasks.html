@@ -5,7 +5,6 @@
 
     <script src="scripts/settings.js"></script>
     <script src="scripts/menubar.js"></script>
-    <script src="scripts/tasks.js"></script>
     <script src="scripts/wit.js"></script>
 
     <style>
@@ -27,24 +26,25 @@
     </style>
 </head>
 <body>
-    <h2 id="header">Manage teams</h2>
+    <h2 id="header">Manage tasks</h2>
 
-    <div class="input_fields_container_part" id="teamInputFields">
+    <div class="tasks_input_fields_container_part" id="taskInputFields">
         <div>
             <!--<input type="text" name="tags">-->
-            <button class="btn btn-sm btn-primary voeg_toe">Voeg toe</button>
+            <button class="btn btn-sm btn-primary voeg_task_toe">Voeg toe</button>
         </div>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="scripts/manage-teams.js"></script>
+    <script src="scripts/tasks.js"></script>
 
     <script>
-        formData = "foo-manage-teams-form-data-at-the-bottom";
+            formData = "foo-manage-tasks-form-data-at-the-bottom";
 
-        // Register form object to be used across this extension
-        console.log("VSS.Register() teams-form: " + formData);
-        VSS.register("Bandik.WimDevOpExtension.manage-teams", formData);
+            //// Register form object to be used across this extension
+            console.log("VSS.Register() teams-form: " + formData);
+            VSS.register("Bandik.WimDevOpExtension.manage-tasks", formData);
 
     </script>
 
