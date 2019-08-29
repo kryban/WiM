@@ -57,33 +57,47 @@ $(document).ready(function () {
     });
 });
 
-VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
+function LoadTeamTasks()
+{
+    VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
 
-    dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-        console.log("GetAllTeamSettings :" + docs.length);
-        var x = 0;
+        dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+            console.log("GetAllTeamSettings :" + docs.length);
+            var x = 0;
 
-        // only teams setting. Not other settings
-        var teamTaskDocs = docs.filter(function (d) { return d.type === 'task'; });
-        console.log("Initial load task settings : " + teamTaskDocs.length + " out of " + docs.length + " settings.");
+            // only team task setting. Not other settings
+            //var teamTaskDocs = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam.toLowerCase(); });
+            var teamTasks = allTasks.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
 
-        allTasks.forEach(
-            function (element) {
-                var inputId = "teamNaam" + x;
-                x++;
+            console.log("Initial load task settings : " + teamTasks.length + " out of " + allTasks.length + " settings.");
 
-                $('.tasks_input_fields_container_part').append(
-                    '<div>' +
-                    '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value=" firstTimeRendered' + element.title + '" />' +
-                    '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="' + element.activityType + '" />' +
-                    '<a href="#" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
-                    '</div>');
-            }
-        );
+            console.log('LoadTeamTasks() : Empty current tasks list.');
+
+            var taskRowDivs = $('div.taskRow');
+            taskRowDivs.remove();
+            
+            console.log('LoadTeamTasks() : Build new list with ' + teamTasks.length + ' items.');
+
+            teamTasks.forEach(
+                function (element) {
+                    var inputId = "teamNaam" + x;
+                    x++;
+
+                    $('.tasks_input_fields_container_part').append(
+                        '<div class="taskRow">' +
+                        '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value=" firstTimeRendered' + element.title + '" />' +
+                        '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="' + element.activityType + '" />' +
+                        '<a href="#" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
+                        '</div>');
+                }
+            );
+            VSS.notifyLoadSucceeded();
+        });
         VSS.notifyLoadSucceeded();
     });
-    VSS.notifyLoadSucceeded();
-});
+}
+
+LoadTeamTasks();
 
 function ConfigureTasks(teamnaam) {
     var substringVanaf = "tasks_".length;

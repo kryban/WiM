@@ -55,8 +55,10 @@
         //$('#teamSelect').change(TeamSelectedHandler(this));
 
         function TeamSelectedHandler(obj) {
-            selectedTeam = obj.value; //$(this).val();
+            selectedTeam = obj.value.toLowerCase();; //$(this).val();
             console.log('TeamSelectedHandler() clicked: ' + selectedTeam);
+            LoadTeamTasks();
+            console.log('LoadTeamTasks();');
         }
 
         VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
