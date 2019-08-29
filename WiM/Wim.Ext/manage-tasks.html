@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="sdk/scripts/VSS.SDK.js"></script>
 
     <script src="scripts/settings.js"></script>
@@ -27,13 +28,13 @@
 </head>
 <body>
     <h3 id="header">Team</h3>
-    <select id="teamSelect" >
-        
+    <select id="teamSelect" onchange="TeamSelectedHandler(this)">
     </select>
 
+    <!--<h3 id="header">Cars</h3>
+    <div class="sample-container"></div>-->
 
     <h3 id="header">Manage tasks</h3>
-
     <div class="tasks_input_fields_container_part" id="taskInputFields">
         <div>
             <!--<input type="text" name="tags">-->
@@ -41,7 +42,6 @@
         </div>
     </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="scripts/manage-teams.js"></script>
     <script src="scripts/tasks.js"></script>
 
@@ -50,10 +50,14 @@
         //var max = 100;
         //var select = document.getElementById('teamSelect');
 
-        $("#sort").change(function () {
+        var selectedTeam; 
 
-            alert('Selected value: ' + $(this).val());
-        });
+        //$('#teamSelect').change(TeamSelectedHandler(this));
+
+        function TeamSelectedHandler(obj) {
+            selectedTeam = obj.value; //$(this).val();
+            console.log('TeamSelectedHandler() clicked: ' + selectedTeam);
+        }
 
         VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
             dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
@@ -73,8 +77,6 @@
                         $('#teamSelect').append(
                             '<option class="teamSelectOption" id="' + inputId + '" value="' + element.text + '" onchange="TeamSelectedHandler(this)">' + element.text + '</option>'
                         );
-
-                        
                     }
                 );
 
@@ -84,10 +86,6 @@
             VSS.notifyLoadSucceeded();
         });
 
-        function TeamSelectedHandler(obj) {
-            console.log("TeamSelectedHandler() clicked: " +obj);
-        }
-
         var formData = "foo-manage-tasks-form-data-at-the-bottom";
 
         //// Register form object to be used across this extension
@@ -96,7 +94,56 @@
 
     </script>
 
+    <!--<script>
+        ///////////////////////////////////////////////////////
+        VSS.require(["VSS/Controls", "VSS/Controls/Combos"], function (Controls, Combos) {
+            console.log("sTART BUILDING cOMBObOX()");
+            var container = $(".sample-container");
+            var makeOptions =
+            {
+                width: "400px",
+                source: ["Aston Martin", "Audi (3)", "Bentley", "BMW (2)", "Bugatti",
+                        "Ferrari", "Ford", "Honda", "Hyundai", "Kia", "Lamborghini",
+                        "Land Rover", "Lotus", "Maserati", "Mazda", "Mercedes",
+                        "Mitsubishi", "Nissan", "Porsche", "Toyota", "Volkswagen", "Volvo"],
+                change: function () {
+                    var selected = this.getText();
+                    if (selected.indexOf("Audi") === 0)
+                    {
+                        modelCombo.setSource(["A3", "A4", "Q7"]);
+                        modelCombo.setMode("drop");
+                    }
+                    else if (selected.indexOf("BMW") === 0)
+                    {
+                        modelCombo.setSource(["325", "X5"]);
+                        modelCombo.setMode("drop");
+                    }
+                    else
+                    {
+                        modelCombo.setMode("text");
+                    }
 
+                    modelCombo.setText("");
+                }
+            };
+
+            var modelOptions =
+            {
+                width: "400px",
+                mode: "text"
+            };
+
+            // Create the combo in a container element
+            //$("<label />").text("Make:").appendTo(container);
+            var makeCombo = Controls.create(Combos.Combo, container, makeOptions);
+
+            // Create the combo in a container element
+            //$("<label />").text("Model:").appendTo(container);
+            var modelCombo = Controls.create(Combos.Combo, container, modelOptions);
+        });
+            ///////////////////////////////////////////////////////
+
+    </script>-->
 
 </body>
 </html>
