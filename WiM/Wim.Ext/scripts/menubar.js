@@ -99,7 +99,7 @@ function menuBarAction(command) {
 
     // all element ids begin with "team_", so we know user wants to switch teams
     if (command.startsWith("team_")) {
-        LoadTasks(command);
+        LoadTasksOnMainWindow(command);
     }
 
     else if (command === "add-new-team") {
