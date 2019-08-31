@@ -32,7 +32,7 @@ function LoadAllTasksIntoConfig()
 
         dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
             // delete only tasks setting. Not other settings
-            var taskDocs = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam.toLowerCase(); });
+            var taskDocs = docs.filter(function (d) { return d.type === 'task'});
 
             taskDocs.forEach(
                 function (element) {

@@ -22,7 +22,7 @@ function CreateMenuBar(Controls, Menus) {
 
             console.log("CreateMenuBar() - getDocuments :" + docs.length);
 
-            bar = docs;
+            bar = docs.filter(function (d) { return d.type === 'team'; });
 
             var teamMenuItems = [];
             var teamTasksMenuItems = [];
