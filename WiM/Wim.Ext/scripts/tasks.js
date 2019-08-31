@@ -1,5 +1,5 @@
 ﻿
-//todo: refactor naar nette objecten
+//LoadAllTasksIntoConfig();
 
 var allTasks = [
     { type: "task", owner: "xtreme", title: "Kick-off", id: "kickoff", activityType: "Requirements" },
@@ -25,6 +25,47 @@ var allTasks = [
     { type: "task", owner: "test", title: "TestTest", id: "test", activityType: "Testing" },
     { type: "task", owner: "test", title: "TEestCode Review", id: "codereview", activityType: "Development" }
 ];
+
+function LoadAllTasksIntoConfig()
+{
+    VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
+
+        dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+            // delete only tasks setting. Not other settings
+            var taskDocs = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam.toLowerCase(); });
+
+            taskDocs.forEach(
+                function (element) {
+
+                    dataService.deleteDocument(TeamSettingsCollectionName, element.id).then(function (service) {
+                        console.log("LoadAllTasksIntoConfig(): Task docs verwijderd");
+                    });
+                }
+            );
+
+            allTasks.forEach(
+                function (element) {
+                    var newDoc = {
+                        type: element.type,
+                        owner: element.owner,
+                        title: element.title,
+                        id: element.taskId,
+                        activityType: element.activityType
+                    };
+
+                    dataService.createDocument(TeamSettingsCollectionName, newDoc).then(
+                        function (doc)
+                        {
+                            console.log("LoadAllTasksIntoConfig() CreateDocument : " + doc.id);
+                    });
+
+                    VSS.notifyLoadSucceeded();
+                });
+
+         VSS.notifyLoadSucceeded();
+        });
+    });
+}
 
 //tasks_input_fields_container_part
 $(document).ready(function () {
@@ -68,8 +109,8 @@ function taskInpChangeHandler() {
         dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
 
             // delete only tasks setting. Not other settings
-            //var taskDocs = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
-            var taskDocs = allTasks.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
+            var taskDocs = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
+            //var taskDocs = allTasks.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
 
             taskDocs.forEach(
                 function (element) {
@@ -80,21 +121,16 @@ function taskInpChangeHandler() {
                 }
             );
 
-            //var taskForm = [];
-
-            for (var i = 0; i < c.length; i++) {
-
-                //    { type: "task", owner: "test", title: "TestTest", id: "test", activityType: "Testing" },
+            for (var i = 0; i < c.length; i++)
+            {
                 var taskRij = c[i];
-                //taskForm.push(teamnaam);
-
+ 
                 var taskTitle = taskRij.childNodes[0].value;
                 var taskActivityType = taskRij.childNodes[1].value;
                 var taskOwner = selectedTeam;
                 var taskId = taskOwner.toLowerCase() + taskTitle.toLowerCase().replace(/\s+/g, '');
 
                 console.log("taskInpChangeHandler() :" + taskDocs.length);
-                console.log("taskInpChangeHandler() : " + taskRij);
 
                 var newDoc = {
                     type: "task",
@@ -104,13 +140,12 @@ function taskInpChangeHandler() {
                     activityType: taskActivityType 
                 };
 
-                //dataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
-                //    // Even if no ID was passed to createDocument, one will be generated
-                //    console.log("teamInpChangeHandler() CreateDocument : " + doc.text);
-                //});
+                dataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
+                    // Even if no ID was passed to createDocument, one will be generated
+                    console.log("teamInpChangeHandler() CreateDocument : " + doc.text);
+                });
 
-                console.log("adding new doc: " + newDoc)
-                console.log("teamInpChangeHandler(). Setting NOT exists. ");
+                console.log("teamInpChangeHandler() : adding new doc - " + newDoc.taskId);
 
             }
             VSS.notifyLoadSucceeded();
@@ -119,7 +154,6 @@ function taskInpChangeHandler() {
     });
 
     console.log("teamInpChangeHandler() ended :");
-
 }
 
 function LoadTeamTasks()
@@ -131,8 +165,8 @@ function LoadTeamTasks()
             var x = 0;
 
             // only team task setting. Not other settings
-            //var teamTaskDocs = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam.toLowerCase(); });
-            var teamTasks = allTasks.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
+            var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam.toLowerCase(); });
+            //var teamTasks = allTasks.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
 
             console.log("Initial load task settings : " + teamTasks.length + " out of " + allTasks.length + " settings.");
 

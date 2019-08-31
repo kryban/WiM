@@ -1,7 +1,6 @@
 ﻿
 //DeleteCurrentTeams();
 //CreateTeams();
-//CreateTeamsTasks();
 
 MaakMenu();
 
