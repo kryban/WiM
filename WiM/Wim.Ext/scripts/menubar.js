@@ -66,8 +66,8 @@ function CreateMenuBar(Controls, Menus) {
                 ']' +
                 '},' +
                 '{' +
-                '"id": "configure-team-tasks", "text": "Configure team tasks", "childItems":' +
-                teamTasksItemsStringified +
+                '"id": "configure-team-tasks", "text": "Configure team tasks" ' +
+                //', "childItems":' + teamTasksItemsStringified +
                 '}' +
                 ']' +
                 '},' +
@@ -101,11 +101,12 @@ function menuBarAction(command) {
         LoadTasksOnMainWindow(command);
     }
 
-    else if (command === "add-new-team") {
+    else if (command === "manage-teams") {
         ConfigureTeams(command);
     }
     // all element ids begin with "task_", so we know user wants to go to task management window
-    else if (command.startsWith("tasks_")) {
+    else if (command === "configure-team-tasks") {
+    //else if (command.startsWith("tasks_")) {
         ConfigureTasks(command);
     }
 }
