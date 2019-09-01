@@ -23,7 +23,7 @@ var allTasks = [
     { type: "task", owner: "committers", title: "DOD controle", id: "dodcontrole", activityType: "Requirements" },
     { type: "task", owner: "test", title: "TestBouw", id: "bouw", activityType: "Development" },
     { type: "task", owner: "test", title: "TestTest", id: "test", activityType: "Testing" },
-    { type: "task", owner: "test", title: "TEestCode Review", id: "codereview", activityType: "Development" }
+    { type: "task", owner: "test", title: "TeestCode Review", id: "codereview", activityType: "Development" }
 ];
 
 function LoadAllTasksIntoConfig()
@@ -112,6 +112,8 @@ function taskInpChangeHandler() {
             var taskDocs = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
             //var taskDocs = allTasks.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
 
+            console.log("teamInpChangeHandler(): Emptying task settings." + taskDocs.length + " settings will be removed.");
+
             taskDocs.forEach(
                 function (element) {
 
@@ -161,7 +163,7 @@ function LoadTeamTasks()
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
 
         dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-            console.log("GetAllTeamSettings :" + docs.length);
+            console.log("LoadTeamTasks() : " + docs.length);
             var x = 0;
 
             // only team task setting. Not other settings
@@ -184,7 +186,7 @@ function LoadTeamTasks()
 
                     $('.tasks_input_fields_container_part').append(
                         '<div class="taskInputRow">' +
-                        '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value=" firstTimeRendered' + element.title + '" />' +
+                        '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value="' + element.title + '" />' +
                         '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="' + element.activityType + '" />' +
                         '<a href="#" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
                         '</div>');
@@ -279,28 +281,42 @@ function LoadTasksOnMainWindow(teamnaam)
     //taskFieldSet.appendChild(legendNode);
     //taskFieldSet.appendChild(breakNode);
 
-    console.log("LoadTasks()");
-    var teamTasks = allTasks.filter(function (x) { return x.owner === parsedTeamnaam; });
+    VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
 
-    // nu alles weer opbouwen
-    teamTasks.forEach(
-        function (element)
-        {
-            var inputNode = document.createElement("input");
-            inputNode.setAttribute("type", "checkbox");
-            inputNode.setAttribute("id", element.id);
-            inputNode.setAttribute("value", element.id);
-            inputNode.setAttribute("checked","true");
-            inputNode.setAttribute("name", "taskcheckbox");
-    
-            var labelNode = document.createElement("label");
-            labelNode.setAttribute("for", element.id);
-            labelNode.innerHTML = element.title;
-    
-            taskFieldSet.appendChild(inputNode);
-            taskFieldSet.appendChild(labelNode);
-            taskFieldSet.appendChild(document.createElement("br"));
+        dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+            console.log("LoadTeamTasks() : " + docs.length);
+            var x = 0;
+
+            // only team task setting. Not other settings
+            var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam.toLowerCase(); });
+            //var teamTasks = allTasks.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
+
+            console.log("LoadTasks()");
+
+            // nu alles weer opbouwen
+            teamTasks.forEach(
+                function (element) {
+                    var inputNode = document.createElement("input");
+                    inputNode.setAttribute("type", "checkbox");
+                    inputNode.setAttribute("id", element.id);
+                    inputNode.setAttribute("value", element.id);
+                    inputNode.setAttribute("checked", "true");
+                    inputNode.setAttribute("name", "taskcheckbox");
+
+                    var labelNode = document.createElement("label");
+                    labelNode.setAttribute("for", element.id);
+                    labelNode.innerHTML = element.title;
+
+                    taskFieldSet.appendChild(inputNode);
+                    taskFieldSet.appendChild(labelNode);
+                    taskFieldSet.appendChild(document.createElement("br"));
+                });
+
+            VSS.notifyLoadSucceeded();
         });
+        VSS.notifyLoadSucceeded();
+    });
+
 }
 
 function SetPageTitle(teamnaam) {
