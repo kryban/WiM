@@ -104,6 +104,13 @@ function taskInpChangeHandler() {
 
     var c = document.getElementsByClassName('taskInputRow');
 
+    DeleteTasksDocs(c);
+
+    console.log("teamInpChangeHandler() ended :");
+}
+
+function DeleteTasksDocs(tasks)
+{
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
 
         dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
@@ -114,48 +121,66 @@ function taskInpChangeHandler() {
 
             console.log("teamInpChangeHandler(): Emptying task settings." + taskDocs.length + " settings will be removed.");
 
-            taskDocs.forEach(
-                function (element) {
+//            var filtered = taskDocs;
+            var added = false;
+//            while (filtered.length > 0)
+//            {
+                taskDocs.forEach(
+                    function (element) {
+                        dataService.deleteDocument(TeamSettingsCollectionName, element.id).then(function (service) {
 
-                    dataService.deleteDocument(TeamSettingsCollectionName, element.id).then(function (service) {
-                        console.log("teamInpChangeHandler(): Task setting doc verwijderd");
-                    });
-                }
-            );
+                            if (!added)
+                            {
+                                AddTasksDocs(tasks);
+                                added = true;
+                            }
+                        });
+                    }
+                );
 
-            for (var i = 0; i < c.length; i++)
-            {
-                var taskRij = c[i];
- 
-                var taskTitle = taskRij.childNodes[0].value;
-                var taskActivityType = taskRij.childNodes[1].value;
-                var taskOwner = selectedTeam;
-                var taskId = taskOwner.toLowerCase() + taskTitle.toLowerCase().replace(/\s+/g, '');
+//                var index = filtered.indexOf(element);
+//                filtered.splice(index);
+//            }
 
-                console.log("taskInpChangeHandler() :" + taskDocs.length);
+            console.log("teamInpChangeHandler() : adding new doc - " + newDoc.taskId);
 
-                var newDoc = {
-                    type: "task",
-                    owner: taskOwner,
-                    title: taskTitle,
-                    id: taskId,
-                    activityType: taskActivityType 
-                };
-
-                dataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
-                    // Even if no ID was passed to createDocument, one will be generated
-                    console.log("teamInpChangeHandler() CreateDocument : " + doc.text);
-                });
-
-                console.log("teamInpChangeHandler() : adding new doc - " + newDoc.taskId);
-
-            }
-            VSS.notifyLoadSucceeded();
         });
         VSS.notifyLoadSucceeded();
     });
 
-    console.log("teamInpChangeHandler() ended :");
+}
+
+function AddTasksDocs(tasks)
+{
+    VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
+
+        for (var i = 0; i < tasks.length; i++)
+        {
+            var taskRij = tasks[i];
+
+            var taskTitle = taskRij.childNodes[0].value;
+            var taskActivityType = taskRij.childNodes[1].value;
+            var taskOwner = selectedTeam;
+            var taskId = taskOwner.toLowerCase() + taskTitle.toLowerCase().replace(/\s+/g, '');
+
+            var newDoc = {
+                type: "task",
+                owner: taskOwner,
+                title: taskTitle,
+                id: taskId,
+                activityType: taskActivityType
+            };
+
+            dataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
+                // Even if no ID was passed to createDocument, one will be generated
+                console.log("teamInpChangeHandler() CreateDocument : " + doc.text);
+            });
+
+            console.log("teamInpChangeHandler() : adding new doc - " + newDoc.taskId);
+        }
+        VSS.notifyLoadSucceeded();
+    });
+
 }
 
 function LoadTeamTasks()
