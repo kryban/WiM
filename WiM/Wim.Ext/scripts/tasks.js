@@ -115,6 +115,7 @@ function DeleteTasksDocs(tasks)
 
         dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
 
+            //var teamName = document.getElementById("teamSelect");
             // delete only tasks setting. Not other settings
             var taskDocs = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
             //var taskDocs = allTasks.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
@@ -123,24 +124,26 @@ function DeleteTasksDocs(tasks)
 
 //            var filtered = taskDocs;
             var added = false;
-//            while (filtered.length > 0)
-//            {
-                taskDocs.forEach(
-                    function (element) {
-                        dataService.deleteDocument(TeamSettingsCollectionName, element.id).then(function (service) {
 
-                            if (!added)
-                            {
-                                AddTasksDocs(tasks);
-                                added = true;
-                            }
-                        });
-                    }
-                );
+            taskDocs.forEach(
+                function (element) {
+                    dataService.deleteDocument(TeamSettingsCollectionName, element.id).then(function (service) {
 
-//                var index = filtered.indexOf(element);
-//                filtered.splice(index);
-//            }
+                        if (!added) {
+                            AddTasksDocs(tasks, selectedTeam);
+                            added = true;
+                        }
+                    });
+
+                }
+            );
+
+            // todo: refactor dit is nodig, zodat al er niets te verwijderen valt (1e opgevoerde regel bij nieuwe team)
+            // dan toch nog toevoegingen uitgevoerd worden.
+            if (!added) {
+                AddTasksDocs(tasks, selectedTeam);
+                added = true;
+            }
 
             console.log("teamInpChangeHandler() : adding new doc - " + newDoc.taskId);
 
@@ -150,7 +153,7 @@ function DeleteTasksDocs(tasks)
 
 }
 
-function AddTasksDocs(tasks)
+function AddTasksDocs(tasks, teamName)
 {
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
 
@@ -160,7 +163,7 @@ function AddTasksDocs(tasks)
 
             var taskTitle = taskRij.childNodes[0].value;
             var taskActivityType = taskRij.childNodes[1].value;
-            var taskOwner = selectedTeam;
+            var taskOwner = teamName;
             var taskId = taskOwner.toLowerCase() + taskTitle.toLowerCase().replace(/\s+/g, '');
 
             var newDoc = {
@@ -283,7 +286,7 @@ function OpenTaskConfiguratieDialoog(teamNaam) {
     });
 }
 
-var selectedTeam;
+//var selectedTeam;
 
 function LoadTasksOnMainWindow(teamnaam)
 {
