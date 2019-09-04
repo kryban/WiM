@@ -96,6 +96,7 @@ $(document).ready(function () {
         //taskInpChangeHandler();
         x--;
     });
+
 });
 
 function taskInpChangeHandler() {
@@ -183,7 +184,6 @@ function AddTasksDocs(tasks, teamName)
         }
         VSS.notifyLoadSucceeded();
     });
-
 }
 
 function LoadTeamTasks(selection)
@@ -194,6 +194,9 @@ function LoadTeamTasks(selection)
             console.log("LoadTeamTasks() : " + docs.length);
             var x = 0;
 
+            if (selection === undefined) {
+                selection = document.getElementById("teamSelect").value.toLowerCase();
+            }
             // only team task setting. Not other settings
             var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === selection; });
             //var teamTasks = allTasks.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
@@ -225,8 +228,6 @@ function LoadTeamTasks(selection)
         VSS.notifyLoadSucceeded();
     });
 }
-
-LoadTeamTasks();
 
 function ConfigureTasks(teamnaam) {
     var substringVanaf = "tasks_".length;
@@ -420,5 +421,8 @@ function AddTaskToWorkitem(task)
 {
     OpenConfiguratieDialoog("Adding task: " + task.title);
 }
+
+//var defaultSelection = document.getElementById("teamSelect").value;
+//LoadTeamTasks(defaultSelection);
 
 VSS.notifyLoadSucceeded();
