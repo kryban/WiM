@@ -57,7 +57,7 @@
         function TeamSelectedHandler(obj) {
             selectedTeam = obj.value.toLowerCase();; //$(this).val();
             console.log('TeamSelectedHandler() clicked: ' + selectedTeam);
-            LoadTeamTasks();
+            LoadTeamTasks(selectedTeam);
             console.log('LoadTeamTasks();');
         }
 

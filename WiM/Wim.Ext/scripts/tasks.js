@@ -186,7 +186,7 @@ function AddTasksDocs(tasks, teamName)
 
 }
 
-function LoadTeamTasks()
+function LoadTeamTasks(selection)
 {
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
 
@@ -195,7 +195,7 @@ function LoadTeamTasks()
             var x = 0;
 
             // only team task setting. Not other settings
-            var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam.toLowerCase(); });
+            var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === selection; });
             //var teamTasks = allTasks.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
 
             console.log("Initial load task settings : " + teamTasks.length + " out of " + allTasks.length + " settings.");
