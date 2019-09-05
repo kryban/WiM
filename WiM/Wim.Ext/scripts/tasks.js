@@ -195,7 +195,7 @@ function LoadTeamTasks(selection)
             var x = 0;
 
             if (selection === undefined) {
-                selection = document.getElementById("teamSelect").value.toLowerCase();
+                selection = GetTeamInAction();
             }
             // only team task setting. Not other settings
             var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === selection; });
@@ -293,6 +293,11 @@ function LoadTasksOnMainWindow(teamnaam)
 {
     var substringVanaf = "team_".length;
     var parsedTeamnaam = teamnaam.substring(substringVanaf);
+
+    GloballySetTeamInAction(parsedTeamnaam);
+
+    console.log("LoadTaskOnMainWindow(): Registered team-naam-in-actie ");
+    VSS.register("team-naam-in-actie", parsedTeamnaam);
 
     SetPageTitle(parsedTeamnaam);
 
@@ -420,6 +425,23 @@ function FindTask(tasks, selection) {
 function AddTaskToWorkitem(task)
 {
     OpenConfiguratieDialoog("Adding task: " + task.title);
+}
+
+function GloballySetTeamInAction(teamnaam) {
+    VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
+        dataService.setValue("team-in-action", teamnaam).then(function () {
+            console.log("GloballySetTeamInAction(): Set team - " + teamnaam);
+        });
+    });      
+}
+
+function GetTeamInAction() {
+    VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
+        dataService.getValue("team-in-action").then(function (value) {
+            console.log("GetTeamInAction(): Retrieved team in action value - " + value);
+            return value;
+        });
+    });
 }
 
 //var defaultSelection = document.getElementById("teamSelect").value;

@@ -53,6 +53,9 @@
 
         function TeamSelectedHandler(obj) {
             selectedTeam = obj.value.toLowerCase();; //$(this).val();
+            if (selectedTeam === undefined) {
+                selectedTeam = GetTeamInAction();
+            }
             console.log('TeamSelectedHandler() clicked: ' + selectedTeam);
             LoadTeamTasks(selectedTeam);
             console.log('LoadTeamTasks();');
@@ -88,13 +91,19 @@
         var formData = "foo-manage-tasks-form-data-at-the-bottom";
 
         //// Register form object to be used across this extension
-        console.log("VSS.Register() teams-form: " + formData);
-        VSS.register("manage-tasks", formData);
+        //console.log("VSS.Register() teams-form: " + formData);
+        //VSS.register("manage-tasks", formData);
 
     </script>
 
     <script src="scripts/manage-teams.js"></script>
     <script src="scripts/tasks.js"></script>
+
+    <script>
+            selectedTeam = GetTeamInAction();
+            console.log('Default LoadTeamTask() executed for: ' + selectedTeam);
+            LoadTeamTasks(selectedTeam);
+    </script>
 
 </body>
 </html>
