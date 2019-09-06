@@ -17,7 +17,20 @@
     <meta charset="utf-8" />
     <title>WorkitemManager</title>
     <script src="SDK/scripts/VSS.SDK.js"></script>
+    <script>
+        VSS.init({
+            explicitNotifyLoaded: true,
+            usePlatformScripts: true,
+            usePlatformStyles: true
+        });
+    </script>
     <style>
+        
+        .bandik-ext-title{
+            font-family: "Segoe UI VSS (Regular)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Helvetica, Ubuntu, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            font-size: 25px;
+        }
+
         .open-existing-work-item, .open-existing-work-item, #vss-bandik-extension {
             margin: 20px;
         }
@@ -33,46 +46,45 @@
         #existing-wit-id {
             border: 1px solid #DDD;
         }
-
-
     </style>
 </head>
 <body>
-    <div id="vss-bandik-extension">
+    <div id="vss-bandik-extension" style="height:95vh;">
 
-        <div id="sample-container" class="menu-bar"></div>
+        <div id="pageTitle" class="bandik-ext-title"> Workitem Manager </div>
+        <div style="height:10px"></div>
+        <div style="overflow:auto;height:90%;">
+            <div id="sample-container" class="menu-bar"></div>
 
-        <h1 id="pageTitle"> Workitem Manager </h1>
+            <div class="open-existing-work-item">
+                <label for="existing-wit-id">Existing work item id:</label>
+                <input id="existing-wit-id" value="1">
+                <Button id="existing-wit-button" type="button" value="Open..." onclick="OpenButtonClicked()">Open</Button>
+            </div>
 
-        <div class="open-existing-work-item">
-            <label for="existing-wit-id">Existing work item id:</label>
-            <input id="existing-wit-id" value="1">
-            <Button id="existing-wit-button" type="button" value="Open..." onclick="OpenButtonClicked()">Open</Button>
-        </div>
-
-        <div>
-            <h4 id="existing-wit-text"></h4>
-        </div>
-
-        <div id="tasks">
+            <div>
+                <h4 id="existing-wit-text"></h4>
+            </div>
 
             <div id="tasks">
-                Voeg taken toe: </br></br>
-            </div>
-            <div id="tasks-check-all">
-                <input type="checkbox" id="tasks-check-all-checkbox" name="checkall" checked="false" onclick="CheckUnckeck(this)" />
-                <label for="tasks-check-all-checkbox">All</label><br /><br />
+
+                <div id="tasks">
+                    Voeg taken toe: </br></br>
+                </div>
+                <div id="tasks-check-all">
+                    <input type="checkbox" id="tasks-check-all-checkbox" name="checkall" checked="false" onclick="CheckUnckeck(this)" />
+                    <label for="tasks-check-all-checkbox">All</label><br /><br />
+                </div>
+
+                <form name="tasksForm">
+                    <fieldset class="checkbox" id="selectedTasks" type="checkbox"></fieldset>
+                </form>
+                </br>
+                <Button type="button" name="selectedTasksButton" onclick="SelectedTasksButtonClicked()">Zetten</Button>
             </div>
 
-            <form name="tasksForm">
-                <fieldset class="checkbox" id="selectedTasks" type="checkbox"></fieldset>
-            </form>
-            </br>
-            <Button type="button" name="selectedTasksButton" onclick="SelectedTasksButtonClicked()">Zetten</Button>
+            <div id="combo-container"></div>
         </div>
-
-        <div id="combo-container"></div>
-
 
         <script src="scripts/settings.js"></script>
         <script src="scripts/menubar.js"></script>
@@ -80,6 +92,7 @@
         <script src="scripts/wit.js"></script>
 
         <script>
+
             // default start
             LoadTasksOnMainWindow("team_xtreme");
         </script>

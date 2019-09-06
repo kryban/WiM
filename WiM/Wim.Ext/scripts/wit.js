@@ -1,9 +1,4 @@
-﻿VSS.init({
-    explicitNotifyLoaded: true, 
-    usePlatformScripts: true,
-    usePlatformStyles: false
-});  
-
+﻿
 var wi = "ttt";
 
 var WorkItemObj =
@@ -25,15 +20,6 @@ function MapWorkItemFields(witemObject, witem )
 // https://docs.microsoft.com/en-us/azure/devops/extend/reference/client/api/tfs/workitemtracking/restclient/workitemtrackinghttpclient2_1?view=vsts
 
 var witClient;
-
-VSS.init({
-    // Our extension explicitly notifies the host when we're done loading
-    explicitNotifyLoaded: true,
-
-    // We are using some Azure DevOps Services APIs, so we need the module loader to load them in
-    usePlatformScripts: true,
-    usePlatformStyles: true
-});
 
 VSS.require(["TFS/WorkItemTracking/RestClient"], // modulepath
     function (_restWitClient) {

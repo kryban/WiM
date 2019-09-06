@@ -52,7 +52,7 @@ function OpenTaskConfiguratieDialoog(teamNaam) {
         // Show dialog
         var dialogOptions = {
             title: "Manage tasks"
-            , height: 600
+            , height: 400
             , modal: true
             , cancelText: "Annuleer"
             , getDialogResult: function () {
