@@ -29,6 +29,7 @@
 <body>
     <h3 id="header">Team</h3>
     <select id="teamSelect" onchange="TeamSelectedHandler(this)">
+        <option selected="selected">select team</option>
     </select>
 
     <!--<h3 id="header">Cars</h3>
@@ -87,23 +88,10 @@
 
             VSS.notifyLoadSucceeded();
         });
-
-        var formData = "foo-manage-tasks-form-data-at-the-bottom";
-
-        //// Register form object to be used across this extension
-        //console.log("VSS.Register() teams-form: " + formData);
-        //VSS.register("manage-tasks", formData);
-
     </script>
 
     <script src="scripts/manage-teams.js"></script>
     <script src="scripts/tasks.js"></script>
-
-    <script>
-            selectedTeam = GetTeamInAction();
-            console.log('Default LoadTeamTask() executed for: ' + selectedTeam);
-            LoadTeamTasks(selectedTeam);
-    </script>
 
 </body>
 </html>

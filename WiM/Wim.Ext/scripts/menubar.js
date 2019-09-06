@@ -48,7 +48,7 @@ function CreateMenuBar(Controls, Menus) {
                 '"id":"menu-setting", "text":"Settings", "icon":"icon-settings", "childItems":' +
                 '[' +
                 '{' +
-                '"id": "switch", "text": "Switch", "childItems":' +
+                '"id": "switch", "text": "Switch team", "childItems":' +
                 teamItemsStringified +
                 '},' +
                 '{' +
@@ -58,7 +58,7 @@ function CreateMenuBar(Controls, Menus) {
                 //']' +
                 '},' +
                 '{' +
-                '"id": "configure-team-tasks", "text": "Configure team tasks" ' +
+                '"id": "configure-team-tasks", "text": "Manage team tasks" ' +
                 //', "childItems":' + teamTasksItemsStringified +
                 '}' +
                 ']' +
