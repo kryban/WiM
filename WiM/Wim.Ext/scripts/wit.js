@@ -69,71 +69,71 @@ VSS.require(["TFS/WorkItemTracking/RestClient"], // modulepath
 
 
 
-function OpenTeamSettingsDialog(title)
-{
-    VSS.getService(VSS.ServiceIds.Dialog).then(function (dialogService) {
-        var extensionCtx = VSS.getExtensionContext();
-        // Build absolute contribution ID for dialogContent
-        var contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".teamsettings-form";
+//function OpenTeamSettingsDialog(title)
+//{
+//    VSS.getService(VSS.ServiceIds.Dialog).then(function (dialogService) {
+//        var extensionCtx = VSS.getExtensionContext();
+//        // Build absolute contribution ID for dialogContent
+//        var contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".teamsettings-form";
 
-        // Show dialog
-        var dialogOptions = {
-            title: "My Dialog: "+title,
-            width: 800,
-            height: 600
-        };
+//        // Show dialog
+//        var dialogOptions = {
+//            title: "My Dialog: "+title,
+//            width: 800,
+//            height: 600
+//        };
 
-        dialogService.openDialog(contributionId, dialogOptions);
+//        dialogService.openDialog(contributionId, dialogOptions);
 
-        VSS.notifyLoadSucceeded();
-    });
-}
+//        VSS.notifyLoadSucceeded();
+//    });
+//}
 
-function OpenTeamSettingsDialogAdvanced(title)
-{
-    console.log("OpenTeamSettingsDialogAdvanced()");
+//function OpenTeamSettingsDialogAdvanced(title)
+//{
+//    console.log("OpenTeamSettingsDialogAdvanced()");
 
-    VSS.getService(VSS.ServiceIds.Dialog).then(function (dialogService) {
-        var registrationForm;
-        var extensionCtx = VSS.getExtensionContext();
-        var contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".teamsettings-form";
+//    VSS.getService(VSS.ServiceIds.Dialog).then(function (dialogService) {
+//        var registrationForm;
+//        var extensionCtx = VSS.getExtensionContext();
+//        var contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".teamsettings-form";
 
-        var dialogOptions = {
-            title: "Registration Form: " + title,
-            width: 800,
-            height: 600,
-            getDialogResult: function () {
-                // Get the result from registrationForm object
-                return registrationForm ? registrationForm.getFormData() : null;
-            },
-            okCallback: function (result) {
-                // Log the result to the console
-                console.log(JSON.stringify(result));
-            }
-        };
+//        var dialogOptions = {
+//            title: "Registration Form: " + title,
+//            width: 800,
+//            height: 600,
+//            getDialogResult: function () {
+//                // Get the result from registrationForm object
+//                return registrationForm ? registrationForm.getFormData() : null;
+//            },
+//            okCallback: function (result) {
+//                // Log the result to the console
+//                console.log(JSON.stringify(result));
+//            }
+//        };
 
-        dialogService.openDialog(contributionId, dialogOptions).then(function (dialog) {
-            // Get registrationForm instance which is registered in registrationFormContent.html
-            dialog.getContributionInstance(contributionId).then(function (teamSettingsFormInstance) {
+//        dialogService.openDialog(contributionId, dialogOptions).then(function (dialog) {
+//            // Get registrationForm instance which is registered in registrationFormContent.html
+//            dialog.getContributionInstance(contributionId).then(function (teamSettingsFormInstance) {
 
-                // Keep a reference of registration form instance (to be used above in dialog options)
-                registrationForm = teamSettingsFormInstance;
+//                // Keep a reference of registration form instance (to be used above in dialog options)
+//                registrationForm = teamSettingsFormInstance;
 
-                // Subscribe to form input changes and update the Ok enabled state
-                registrationForm.attachFormChanged(function (isValid) {
-                    dialog.updateOkButton(isValid);
-                });
+//                // Subscribe to form input changes and update the Ok enabled state
+//                registrationForm.attachFormChanged(function (isValid) {
+//                    dialog.updateOkButton(isValid);
+//                });
 
-                // Set the initial ok enabled state
-                registrationForm.isFormValid().then(function (isValid) {
-                    dialog.updateOkButton(isValid);
-                });
-            });
-        });
+//                // Set the initial ok enabled state
+//                registrationForm.isFormValid().then(function (isValid) {
+//                    dialog.updateOkButton(isValid);
+//                });
+//            });
+//        });
 
-        VSS.notifyLoadSucceeded();
-    });
-}
+//        VSS.notifyLoadSucceeded();
+//    });
+//}
 
 function OpenButtonClicked(obj)
 {

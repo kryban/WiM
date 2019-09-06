@@ -1,6 +1,5 @@
 ﻿
-//DeleteCurrentTeams();
-//CreateTeams();
+
 
 MaakMenu();
 
@@ -15,7 +14,6 @@ function CreateMenuBar(Controls, Menus) {
     var container = $(".menu-bar");
 
     var bar = [];
-
 
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
         dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
@@ -44,12 +42,6 @@ function CreateMenuBar(Controls, Menus) {
             console.log("CreateMenuBar() - teamMenuItemsCreated :" + teamItemsStringified);
             console.log("CreateMenuBar() - teamTaskMenuITemsreated:" + teamTasksItemsStringified);
 
-            // docs worden gegroepeerd op basis van Collections
-            // teams behoren tot de collection Wim
-            // taken moeten behoren tot collections van teams, zo kunnen ze per team herkend worden
-            // bij het getten kunnen ze dan de teamnaam als argument mee krijgen, waarna de tasks geretourneerd worden.
-            //var teamTaskItems = '[{"id": "team-xtreme", "text": "Team XtremeNeww" },{ "id": "team-committers", "text": "Team CommittersNeww" }]';
-
             var menuItems =
                 '[' +
                 '{' +
@@ -60,10 +52,10 @@ function CreateMenuBar(Controls, Menus) {
                 teamItemsStringified +
                 '},' +
                 '{' +
-                '"id": "manage-teams", "text": "Manage teams", "childItems":' +
-                '[{ "id": "add-new-team", "text": "Add new team" },' +
-                '{ "id": "delete-team", "text": "Delete team" }' +
-                ']' +
+                '"id": "manage-teams", "text": "Manage teams"' +
+                //'"childItems":[{ "id": "add-new-team", "text": "Add new team" },' +
+                //'{ "id": "delete-team", "text": "Delete team" }' +
+                //']' +
                 '},' +
                 '{' +
                 '"id": "configure-team-tasks", "text": "Configure team tasks" ' +
