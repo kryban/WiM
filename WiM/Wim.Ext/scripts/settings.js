@@ -1,13 +1,13 @@
 ﻿
 //https://docs.microsoft.com/en-us/azure/devops/extend/develop/data-storage?view=azure-devops&viewFallbackFrom=vsts
-
 //see all settings
 //http://krylp:8080/tfs/DefaultCollection/_apis/ExtensionManagement/InstalledExtensions/bandik/WimDevOpExtension/Data/Scopes/Default/Current/Collections/WimCollection/Documents
-
 //DeleteCurrentTeams();
 //CreateTeams();
 
 var TeamSettingsCollectionName = "WimCollection";
+var configuredTeams = [];
+var result;
 
 function ConfigureTeams(command) {
 
@@ -23,25 +23,16 @@ function OpenTeamsConfiguratieDialoog(title) {
     VSS.getService(VSS.ServiceIds.Dialog).then(function (dialogService) {
 
         var extensionCtx = VSS.getExtensionContext();
-
-        // Build absolute contribution ID for dialogContent
         var contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".manage-teams";
 
-        // Show dialog
         var dialogOptions = {
-            title: "Add new team: "
-            //width: 300
+            title: "Manage teams"
             , height: 500
             //, okText: "OK"
             , cancelText: "Annuleer" 
             , getDialogResult: function () {
-                // Get the result from registrationForm object
-                //console.log("getDialogResult(): " + teamsForm);
               }
             , okCallback: function (result) {
-                // Log the result to the console
-                //console.log("okCallback(): ");//JSON.stringify(result));
-
                 VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService) {
                     // Reload whole page
                     console.log("navigationService.reload()");
@@ -84,9 +75,9 @@ function CreateTeams() {
     console.log("CreateTeamsNew() executed.");
 }
 
-function executeInOrder(callback) {
-    callback();
-}
+//function executeInOrder(callback) {
+//    callback();
+//}
 
 function GetTeams() {
     console.log("GetTeams() executed");
@@ -112,10 +103,6 @@ function DeleteAllTeamSettings() {
         VSS.notifyLoadSucceeded();
     });
 }
-
-var configuredTeams = [];
-
-var result;
 
 function SetTeamSettingsNew(teamName) {
 

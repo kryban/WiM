@@ -1,5 +1,7 @@
 ﻿
-//tasks_input_fields_container_part
+var selectedTeam;
+
+
 $(document).ready(function () {
 
     console.log("document.Ready()");
@@ -30,6 +32,57 @@ $(document).ready(function () {
     });
 
 });
+
+function ConfigureTasks(teamnaam) {
+    var substringVanaf = "tasks_".length;
+    var parsedTeamnaam = teamnaam.substring(substringVanaf);
+    console.log("LoadTaskManagementDialog() : " + parsedTeamnaam);
+
+    OpenTaskConfiguratieDialoog(parsedTeamnaam);
+}
+
+function OpenTaskConfiguratieDialoog(teamNaam) {
+
+    VSS.getService(VSS.ServiceIds.Dialog).then(function (dialogService) {
+
+        // Build absolute contribution ID for dialogContent
+        var extensionCtx = VSS.getExtensionContext();
+        var contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".manage-tasks";
+
+        // Show dialog
+        var dialogOptions = {
+            title: "Manage tasks"
+            , height: 600
+            , modal: true
+            , cancelText: "Annuleer"
+            , getDialogResult: function () {
+                //console.log("getDialogResult(): " + teamsForm);
+            }
+            , okCallback: function (result) {
+                VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService) {
+                    console.log("navigationService.reload()");
+                    navigationService.reload();
+                });
+            }
+        };
+
+        dialogService.openDialog(contributionId, dialogOptions).then(
+            function (dialog) {
+
+                dialog
+                    .getContributionInstance("Bandik.WimDevOpExtension.manage-tasks")
+                    .then(function (manageTeamsinstance) {
+                        teamsForm = manageTeamsinstance;
+                    });
+
+                dialog.updateOkButton(true);
+
+                VSS.notifyLoadSucceeded();
+            }
+        );
+        VSS.notifyLoadSucceeded();
+    });
+}
 
 function taskInpChangeHandler() {
 
@@ -117,6 +170,47 @@ function AddTasksDocs(tasks, teamName)
     });
 }
 
+function TeamSelectedHandler(obj) {
+    selectedTeam = obj.value.toLowerCase();; //$(this).val();
+    if (selectedTeam === undefined) {
+        selectedTeam = GetTeamInAction();
+    }
+    console.log('TeamSelectedHandler() clicked: ' + selectedTeam);
+    LoadTeamTasks(selectedTeam);
+    console.log('LoadTeamTasks();');
+}
+
+function CreateTeamSelectElementInitially() {
+
+    VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
+        dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+
+            var x = 0;
+
+            // only teams setting. Not other settings
+            var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
+            console.log("Initial load team settings : " + teamDocs.length + " out of " + docs.length + " settings.");
+
+            teamDocs.forEach(
+                function (element) {
+
+                    var inputId = "teamNaam" + x;
+                    x++;
+
+                    $('#teamSelect').append(
+                        '<option class="teamSelectOption" id="' + inputId + '" value="' + element.text + '" onchange="TeamSelectedHandler(this)">' + element.text + '</option>'
+                    );
+                }
+            );
+
+            VSS.notifyLoadSucceeded();
+        });
+
+        VSS.notifyLoadSucceeded();
+    });
+
+}
+
 function LoadTeamTasks(selection)
 {
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
@@ -156,64 +250,6 @@ function LoadTeamTasks(selection)
             );
             VSS.notifyLoadSucceeded();
         });
-        VSS.notifyLoadSucceeded();
-    });
-}
-
-function ConfigureTasks(teamnaam) {
-    var substringVanaf = "tasks_".length;
-    var parsedTeamnaam = teamnaam.substring(substringVanaf);
-    console.log("LoadTaskManagementDialog() : " + parsedTeamnaam);
-
-    OpenTaskConfiguratieDialoog(parsedTeamnaam);
-}
-
-function OpenTaskConfiguratieDialoog(teamNaam) {
-
-    VSS.getService(VSS.ServiceIds.Dialog).then(function (dialogService) {
-
-        // Build absolute contribution ID for dialogContent
-        var extensionCtx = VSS.getExtensionContext();
-        var contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".manage-tasks";
-
-        // Show dialog
-        var dialogOptions = {
-            title: "Add new task "
-            //width: 300
-            , height: 500
-            //, okText: "OK"
-            , cancelText: "Annuleer"
-            , getDialogResult: function () {
-                // Get the result from registrationForm object
-                //console.log("getDialogResult(): " + teamsForm);
-            }
-            , okCallback: function (result) {
-                // Log the result to the console
-                //console.log("okCallback(): ");//JSON.stringify(result));
-
-                VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService) {
-                    // Reload whole page
-                    console.log("navigationService.reload()");
-                    navigationService.reload();
-                });
-            }
-        };
-
-        dialogService.openDialog(contributionId, dialogOptions).then(
-            function (dialog) {
-
-                dialog
-                    .getContributionInstance("Bandik.WimDevOpExtension.manage-tasks")
-                    .then(function (manageTeamsinstance) {
-                        teamsForm = manageTeamsinstance;
-                    }
-                    );
-
-                dialog.updateOkButton(true);
-
-                VSS.notifyLoadSucceeded();
-            }
-        );
         VSS.notifyLoadSucceeded();
     });
 }
@@ -367,11 +403,9 @@ function GetTeamInAction() {
     });
 }
 
-//var defaultSelection = document.getElementById("teamSelect").value;
-//LoadTeamTasks(defaultSelection);
-
 VSS.notifyLoadSucceeded();
 
+function FirstTimeSetupData() {
 //// First time setup code
 //var allTasks = [
 //    { type: "task", owner: "xtreme", title: "Kick-off", id: "kickoff", activityType: "Requirements" },
@@ -440,4 +474,6 @@ VSS.notifyLoadSucceeded();
 //        });
 //    });
 //}
+}
+
 

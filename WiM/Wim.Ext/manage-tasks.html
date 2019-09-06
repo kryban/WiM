@@ -9,6 +9,10 @@
     <script src="scripts/wit.js"></script>
 
     <style>
+        .external-content-iframe.themeless {
+            overflow:scroll
+        }
+
         .open-existing-work-item, .open-existing-work-item, #vss-bandik-extension, #vss-bandik-extension-config {
             margin: 20px;
         }
@@ -26,7 +30,7 @@
         }
     </style>
 </head>
-<body>
+<body onload="CreateTeamSelectElementInitially();">
     <h3 id="header">Team</h3>
     <select id="teamSelect" onchange="TeamSelectedHandler(this)">
         <option selected="selected">select team</option>
@@ -35,7 +39,7 @@
     <!--<h3 id="header">Cars</h3>
     <div class="sample-container"></div>-->
 
-    <h3 id="header">Manage tasks</h3>
+    <h3 id="header">Tasks</h3>
     <div class="tasks_input_fields_container_part" id="taskInputFields">
         <div>
             <!--<input type="text" name="tags">-->
@@ -44,50 +48,8 @@
     </div>
 
     <script>
-        //var min = 12;
-        //var max = 100;
-        //var select = document.getElementById('teamSelect');
 
-        var selectedTeam;
 
-        //$('#teamSelect').change(TeamSelectedHandler(this));
-
-        function TeamSelectedHandler(obj) {
-            selectedTeam = obj.value.toLowerCase();; //$(this).val();
-            if (selectedTeam === undefined) {
-                selectedTeam = GetTeamInAction();
-            }
-            console.log('TeamSelectedHandler() clicked: ' + selectedTeam);
-            LoadTeamTasks(selectedTeam);
-            console.log('LoadTeamTasks();');
-        }
-
-        VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
-            dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-
-                var x = 0;
-
-                // only teams setting. Not other settings
-                var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
-                console.log("Initial load team settings : " + teamDocs.length + " out of " + docs.length + " settings.");
-
-                teamDocs.forEach(
-                    function (element) {
-
-                        var inputId = "teamNaam" + x;
-                        x++;
-
-                        $('#teamSelect').append(
-                            '<option class="teamSelectOption" id="' + inputId + '" value="' + element.text + '" onchange="TeamSelectedHandler(this)">' + element.text + '</option>'
-                        );
-                    }
-                );
-
-                VSS.notifyLoadSucceeded();
-            });
-
-            VSS.notifyLoadSucceeded();
-        });
     </script>
 
     <script src="scripts/manage-teams.js"></script>
