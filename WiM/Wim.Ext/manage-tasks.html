@@ -9,8 +9,8 @@
     <script src="scripts/wit.js"></script>
 
     <style>
-        .external-content-iframe.themeless {
-            overflow:scroll
+        .selectFrame {
+            overflow:hidden
         }
 
         .open-existing-work-item, .open-existing-work-item, #vss-bandik-extension, #vss-bandik-extension-config {
@@ -28,10 +28,18 @@
         #existing-wit-id {
             border: 1px solid #DDD;
         }
+
+        .tasks_input_fields_container_part{
+            height:300px;
+            width: 100%;
+            overflow:auto;
+        }
+
     </style>
 </head>
 <body onload="CreateTeamSelectElementInitially();">
     <h3 id="header">Team</h3>
+
     <select id="teamSelect" onchange="TeamSelectedHandler(this)">
         <option selected="selected">select team</option>
     </select>
