@@ -63,7 +63,7 @@ function OpenTeamsConfiguratieDialoog(title) {
 
 function DeleteCurrentTeams() {
     console.log("DeleteCurrentTeams()");
-    DeleteAllTeamSettings();
+    DeleteAllSettings();
 }
 
 function CreateTeams() {
@@ -84,9 +84,9 @@ function GetTeams() {
     GetAllTeamSettings();
 }
 
-function DeleteAllTeamSettings() {
+function DeleteAllSettings() {
 
-    console.log("DeleteAllTeamSettings()");
+    console.log("DeleteAllettings()");
 
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
         // Get all document under the collection

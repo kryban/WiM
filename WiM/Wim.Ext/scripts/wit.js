@@ -34,10 +34,15 @@ function OpenButtonClicked(obj) {
 
                         ShowSelectedWorkitemOnPage(workItemFocused);
                         CheckAllowedToAddTaskToPbi(workItemFocused);
+                        var selectedTasks = GetSelectedTasks();
                         
                     });
         }
     );
+}
+
+function GetSelectedTasks() {
+
 }
 
 function CheckAllowedToAddTaskToPbi(workItemFocused) {
