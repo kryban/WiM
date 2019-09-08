@@ -16,6 +16,7 @@
 <head>
     <meta charset="utf-8" />
     <title>WorkitemManager</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="SDK/scripts/VSS.SDK.js"></script>
     <script>
         VSS.init({
@@ -25,8 +26,8 @@
         });
     </script>
     <style>
-        
-        .bandik-ext-title{
+
+        .bandik-ext-title {
             font-family: "Segoe UI VSS (Regular)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Helvetica, Ubuntu, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
             font-size: 25px;
         }
@@ -53,11 +54,12 @@
 
         <div id="pageTitle" class="bandik-ext-title"> Workitem Manager </div>
         <div style="height:10px"></div>
+
         <div style="overflow:auto;height:90%;">
             <div id="sample-container" class="menu-bar"></div>
 
             <div class="open-existing-work-item">
-                <label for="existing-wit-id">Existing work item id:</label>
+                <label for="existing-wit-id">PBI:</label>
                 <input id="existing-wit-id" value="1">
                 <Button id="existing-wit-button" type="button" value="Open..." onclick="OpenButtonClicked()">Open</Button>
             </div>
@@ -67,8 +69,7 @@
             </div>
 
             <div id="tasks">
-
-                <div id="tasks">
+                <div id="tasksLabel">
                     Voeg taken toe: </br></br>
                 </div>
                 <div id="tasks-check-all">
@@ -77,10 +78,10 @@
                 </div>
 
                 <form name="tasksForm">
-                    <fieldset class="checkbox" id="selectedTasks" type="checkbox"></fieldset>
+                    <fieldset class="checkbox" id="task-checkbox" type="checkbox"></fieldset>
                 </form>
                 </br>
-                <Button type="button" name="selectedTasksButton" onclick="SelectedTasksButtonClicked()">Zetten</Button>
+                <Button type="button" name="addTasksButton" onclick="AddTasksButtonClicked()">Zetten</Button>
             </div>
 
             <div id="combo-container"></div>

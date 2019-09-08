@@ -266,7 +266,7 @@ function LoadTasksOnMainWindow(teamnaam)
 
     SetPageTitle(parsedTeamnaam);
 
-    var taskFieldSet = document.getElementById("selectedTasks");
+    var taskFieldSet = document.getElementById("task-checkbox");
 
     // eerst alles verwijderen
     while (taskFieldSet.firstChild) {
@@ -346,7 +346,7 @@ function CheckUnckeck(obj)
     }
 }
 
-function SelectedTasksButtonClicked(obj) {
+function AddTasksButtonClicked(obj) {
 
     var tasksForm = document.getElementsByName("taskcheckbox");
     var i = 0;
