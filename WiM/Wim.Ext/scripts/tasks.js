@@ -348,22 +348,25 @@ function CheckUnckeck(obj)
 
 function AddTasksButtonClicked(obj) {
 
-    var tasksForm = document.getElementsByName("taskcheckbox");
-    var i = 0;
+    var taskCheckboxes = document.getElementsByName("taskcheckbox");
+    var selectedCheckboxes = GetSelectedCheckboxes(taskCheckboxes);
+    //var tasks = FindTeamTaskCollection();
 
-    var tasks = FindTeamTaskCollection();
+    alert("Tasks added: " + selectedCheckboxes.length);
+}
 
-    tasksForm.forEach(
+function GetSelectedCheckboxes(allCheckboxes) {
+    var retval = [];
+    allCheckboxes.forEach(
         function (element) {
             if (element.checked) {
-                i++;
-                var task = FindTask(xtremeTasks, element);
-                AddTaskToWorkitem(task);
+                retval.push(element.labels[0].innerText);
+                //AddTaskToWorkitem(task);
             }
         }
     );
 
-    OpenConfiguratieDialoog("Tasks added: " + i);
+    return retval;
 }
 
 function FindTask(tasks, selection) {
@@ -383,7 +386,7 @@ function FindTask(tasks, selection) {
 
 function AddTaskToWorkitem(task)
 {
-    OpenConfiguratieDialoog("Adding task: " + task.title);
+    alert("Adding task: " + task.title);
 }
 
 function GloballySetTeamInAction(teamnaam) {

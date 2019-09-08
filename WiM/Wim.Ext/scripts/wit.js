@@ -29,20 +29,11 @@ function OpenButtonClicked(obj) {
             witClient.getWorkItem(3)//, ["System.Title", "System.WorkItemType"])
                 .then(
                     function (workitemResult) {
-
                         workItemFocused = new workItem(workitemResult);
-
-                        ShowSelectedWorkitemOnPage(workItemFocused);
-                        CheckAllowedToAddTaskToPbi(workItemFocused);
-                        var selectedTasks = GetSelectedTasks();
-                        
+                        ShowSelectedWorkitemOnPage(workItemFocused);                        
                     });
         }
     );
-}
-
-function GetSelectedTasks() {
-
 }
 
 function CheckAllowedToAddTaskToPbi(workItemFocused) {
