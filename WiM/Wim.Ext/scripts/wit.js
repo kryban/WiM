@@ -60,8 +60,65 @@ function GetWorkItemTypes(callback) {
             });
     });
 }
+// example post request
+//IPromise<Contracts.WorkItem> createWorkItem(document, project, type, validateOnly, bypassRules
 
-//used in wcf client
+
+// create patch document USED in wpf client
+//JsonPatchDocument patchDocument = new JsonPatchDocument();
+//string linkedWorkitemUrl = SettingsGetter.ApiWorkitemUrl + linkedWorkitemId;
+
+//patchDocument.Add(new JsonPatchOperation()
+//            {
+//        Operation = Operation.Add,
+//        Path = WorkitemPaths.Title,
+//        Value = workitemToCreate.Title
+//    });
+
+//patchDocument.Add(new JsonPatchOperation()
+//            {
+//        Operation = Operation.Add,
+//        Path = WorkitemPaths.IterationPath,
+//        Value = workitemToCreate.WorkItemIterationPath
+//    });
+
+//patchDocument.Add(new JsonPatchOperation()
+//            {
+//        Operation = Operation.Add,
+//        Path = WorkitemPaths.AreaPath,
+//        Value = workitemToCreate.WorkItemAreaPath
+//    });
+
+//if (!String.IsNullOrEmpty(workitemToCreate.WorkItemTaskActivity)) {
+//    patchDocument.Add(new JsonPatchOperation()
+//                {
+//            Operation = Operation.Add,
+//            Path = WorkitemPaths.TaskActivity,
+//            Value = workitemToCreate.WorkItemTaskActivity
+//        });
+//}
+
+//patchDocument.Add(new JsonPatchOperation()
+//                {
+//        Operation = Operation.Add,
+//        Path = WorkitemPaths.AllRelations,
+//        Value = new
+//            {
+//                rel = "System.LinkTypes.Hierarchy-Reverse",
+//                url = linkedWorkitemUrl,
+//                attributes = new
+//                    {
+//                        comment = "decompositie van allerlei werk"
+//                    }
+//            }
+//    }
+//);
+
+//return workItemTrackingClient.CreateWorkItemAsync(patchDocument, linkedWorkItemProjectName, "Task").Result;
+
+
+
+//used in wpf client
 //wi = workItem;
 //Title = wi.Fields[WorkItemFields.Title].ToString();
 //WorkItemType = wi.Fields[WorkItemFields.WorkItemType].ToString();

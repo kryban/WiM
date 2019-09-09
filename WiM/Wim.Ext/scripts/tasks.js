@@ -348,11 +348,28 @@ function CheckUnckeck(obj)
 
 function AddTasksButtonClicked(obj) {
 
+    CheckAllowedToAddTaskToPbi(workItemFocused);
     var taskCheckboxes = document.getElementsByName("taskcheckbox");
     var selectedCheckboxes = GetSelectedCheckboxes(taskCheckboxes);
     //var tasks = FindTeamTaskCollection();
 
+    var tasksToAddToWorkitem = CreateTasksToAdd(selectedCheckboxes);
+
     alert("Tasks added: " + selectedCheckboxes.length);
+}
+
+function CreateTasksToAdd(selectedCheckboxes) {
+
+    var retval;
+
+    selectedCheckboxes.forEach(
+        function (element) {
+            var task = new 
+        }
+    );
+
+    return retval;
+
 }
 
 function GetSelectedCheckboxes(allCheckboxes) {
