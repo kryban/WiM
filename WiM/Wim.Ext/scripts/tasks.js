@@ -353,23 +353,39 @@ function AddTasksButtonClicked(obj) {
     var selectedCheckboxes = GetSelectedCheckboxes(taskCheckboxes);
     //var tasks = FindTeamTaskCollection();
 
-    var tasksToAddToWorkitem = CreateTasksToAdd(selectedCheckboxes);
+    var tasksToPairWithWorkitem = CreateTasksToAdd(selectedCheckboxes);
+
+    var numberOfTasksCreated = PairTasksToWorkitems(tasksToPairWithWorkitem);
 
     alert("Tasks added: " + selectedCheckboxes.length);
 }
 
+function PairTasksToWorkitems(tasksToPairWithWorkitem){
+    var numberOfTasksHandled;
+    // create here jsonPatchDocuments and persist the collection of tasks
+
+    return numberOfTasksHandled;
+}
+
 function CreateTasksToAdd(selectedCheckboxes) {
 
-    var retval;
+    var retval = [];
 
     selectedCheckboxes.forEach(
         function (element) {
-            var task = new 
+            var task = new workItem();
+            task.title = element;
+            task.workItemType = "Task";
+            task.workItemProjectName = workItemFocused.workItemProjectName;
+            task.workItemIterationPath = workItemFocused.workItemIterationPath;
+            task.workItemAreaPath = workItemFocused.workItemAreaPath;
+            task.workItemTaskActivity = "workItemTaskActivity";
+
+            retval.push(task);
         }
     );
 
     return retval;
-
 }
 
 function GetSelectedCheckboxes(allCheckboxes) {

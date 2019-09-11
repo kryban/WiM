@@ -5,13 +5,25 @@ var workItemFocused;
 
 function workItem(wiResult) 
 {
-    this.id = wiResult.fields["System.Id"];
-    this.title = wiResult.fields["System.Title"];
-    this.workItemType = wiResult.fields["System.WorkItemType"];
-    this.workItemProjectName = wiResult.fields["System.TeamProject"];
-    this.workItemIterationPath = wiResult.fields["System.IterationPath"];
-    this.workItemAreaPath = wiResult.fields["System.AreaPath"];
-    this.workItemTaskActivity = "System.WorkItemTaskActivity nog niet bepaald";
+    if (wiResult === null || wiResult === undefined) {
+        this.id = "na";
+        this.title = "na";
+        this.workItemType = "na";
+        this.workItemProjectName = "na";
+        this.workItemIterationPath = "na";
+        this.workItemAreaPath = "na";
+        this.workItemTaskActivity = "na";
+    }
+    else {
+
+        this.id = wiResult.fields["System.Id"];
+        this.title = wiResult.fields["System.Title"];
+        this.workItemType = wiResult.fields["System.WorkItemType"];
+        this.workItemProjectName = wiResult.fields["System.TeamProject"];
+        this.workItemIterationPath = wiResult.fields["System.IterationPath"];
+        this.workItemAreaPath = wiResult.fields["System.AreaPath"];
+        this.workItemTaskActivity = "System.WorkItemTaskActivity nog niet bepaald";
+    }
 };
 
 function MapWorkItemFields(witemObject, witem )
