@@ -3,6 +3,9 @@
 var wiTitle = "ttt";
 var workItemFocused;
 
+//const { applyOperation } = require('fast-json-patch');
+const applyOperation = require('fast-json-patch').applyOperation;
+
 function workItem(wiResult) 
 {
     if (wiResult === null || wiResult === undefined) {
