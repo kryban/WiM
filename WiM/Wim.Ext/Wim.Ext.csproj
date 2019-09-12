@@ -94,6 +94,8 @@
   <ItemGroup>
     <Content Include="3_packageExtension.ps" />
     <Content Include="ps\1_npm install vss-web-extension-sdk.ps" />
+    <Content Include="package-lock.json" />
+    <Content Include="package.json" />
     <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
