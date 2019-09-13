@@ -4,7 +4,17 @@ var wiTitle = "ttt";
 var workItemFocused;
 
 //const { applyOperation } = require('fast-json-patch');
-const applyOperation = require('fast-json-patch').applyOperation;
+//const applyOperation = require('fast-json-patch').applyOperation;
+//If this code is not in a define call,
+//DO NOT use require('foo'), but use the async
+//callback version:
+//require(['fast-json-patch'], function (foo) {
+//    baz(foo);
+//});
+
+function baz(ob) {
+    console.log("Baz: " + ob);
+}
 
 function workItem(wiResult) 
 {

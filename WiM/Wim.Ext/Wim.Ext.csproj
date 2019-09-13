@@ -69,15 +69,8 @@
   <ItemGroup>
     <Content Include="manage-tasks.html" />
     <Content Include="manage-teams.html" />
-    <Content Include="node_modules\fast-json-patch\commonjs\core.js" />
-    <Content Include="node_modules\fast-json-patch\commonjs\duplex.js" />
-    <Content Include="node_modules\fast-json-patch\commonjs\helpers.js" />
-    <Content Include="node_modules\fast-json-patch\dist\fast-json-patch.js" />
-    <Content Include="node_modules\fast-json-patch\dist\fast-json-patch.min.js" />
-    <Content Include="node_modules\fast-json-patch\index.js" />
-    <Content Include="node_modules\fast-json-patch\LICENSE.txt" />
-    <Content Include="node_modules\fast-json-patch\webpack.config.js" />
     <Content Include="scripts\manage-teams.js" />
+    <Content Include="scripts\require.js" />
     <Content Include="teamsettings-form.html" />
     <Content Include="doc\Learned.txt" />
     <Content Include="HelloWorld.html" />
@@ -106,14 +99,6 @@
     <Content Include="ps\1_npm install vss-web-extension-sdk.ps" />
     <Content Include="package-lock.json" />
     <Content Include="package.json" />
-    <Content Include="node_modules\fast-json-patch\index.mjs" />
-    <Content Include="node_modules\fast-json-patch\jasmine-run.mjs" />
-    <Content Include="node_modules\fast-json-patch\module\core.mjs" />
-    <Content Include="node_modules\fast-json-patch\module\duplex.mjs" />
-    <Content Include="node_modules\fast-json-patch\module\helpers.mjs" />
-    <Content Include="node_modules\fast-json-patch\package.json" />
-    <Content Include="node_modules\fast-json-patch\README.md" />
-    <Content Include="node_modules\fast-json-patch\tsc-to-mjs.sh" />
     <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -124,17 +109,10 @@
     <Content Include="WiM_Extension_Manifest.json" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="node_modules\fast-json-patch\commonjs\core.d.ts" />
-    <TypeScriptCompile Include="node_modules\fast-json-patch\commonjs\duplex.d.ts" />
-    <TypeScriptCompile Include="node_modules\fast-json-patch\commonjs\helpers.d.ts" />
-    <TypeScriptCompile Include="node_modules\fast-json-patch\index.d.ts" />
-    <TypeScriptCompile Include="node_modules\fast-json-patch\index.ts" />
-    <TypeScriptCompile Include="node_modules\fast-json-patch\module\core.d.ts" />
-    <TypeScriptCompile Include="node_modules\fast-json-patch\module\duplex.d.ts" />
-    <TypeScriptCompile Include="node_modules\fast-json-patch\module\helpers.d.ts" />
+    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+    <Folder Include="node_modules\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

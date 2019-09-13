@@ -346,6 +346,24 @@ function CheckUnckeck(obj)
     }
 }
 
+//require(["TFS/WorkItemTracking/Services", "TFS/WorkItemTracking/RestClient", "VSS/Service"], function (_WorkItemServices, _WorkItemTrackingClient, _Service) {
+//    var client = _Service.getCollectionClient(_WorkItemTrackingClient.WorkItemTrackingHttpClient);
+//}
+
+//var title = "something";
+//var area = "validArea";
+
+//var jsonPatchDoc = [
+//    {
+//        op: "add",
+//        path: "/fields/System.Title",
+//        value: title
+//    }];
+
+//client.createWorkItem(jsonPatchDoc, area, "Tâche").then(function (wi) {
+//    alert("Task created!");
+//});
+
 function AddTasksButtonClicked(obj) {
 
     CheckAllowedToAddTaskToPbi(workItemFocused);
