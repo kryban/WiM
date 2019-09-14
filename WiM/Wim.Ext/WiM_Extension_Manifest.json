@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "WimDevOpExtension",
-  "version": "0.0.27",
+  "version": "0.0.31",
   "name": "WorkitemManagerExtension",
   "baseUri": "https://localhost:44367",
   "publisher": "bandik",
@@ -65,7 +65,7 @@
     }
   ],
   "scopes": [
-    "vso.work"
+    "vso.work_full"
   ],
   "files": [
     {
