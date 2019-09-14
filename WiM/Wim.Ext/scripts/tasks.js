@@ -1,6 +1,64 @@
 ﻿
 var selectedTeam;
 
+var Enm_WorkitemPaths = {
+    AreaPath: "/fields/System.AreaPath",
+    TeamProject: "/fields/System.TeamProject",
+    IterationPath: "/fields/System.IterationPath",
+    WorkItemType: "/fields/System.WorkItemType",
+    State: "/fields/System.State",
+    Reason: "/fields/System.Reason",
+    CreatedDate: "/fields/System.CreatedDate",
+    CreatedBy: "/fields/System.CreatedBy",
+    ChangedDate: "/fields/System.ChangedDate",
+    ChangedBy: "/fields/System.ChangedBy",
+    Title: "/fields/System.Title",
+    BoardColumn: "/fields/System.BoardColumn",
+    BoardColumnDone: "/fields/System.BoardColumnDone",
+    BacklogPriority: "/fields/Microsoft.VSTS.Common.BacklogPriority",
+    Severity: "/fields/Microsoft.VSTS.Common.Severity",
+    KanBanColumn: "/fields/WEF_FA00BAB5AFBB4E299544ED2121CDE143_Kanban.Column",
+    KanBanColumnDone: "/fields/WEF_FA00BAB5AFBB4E299544ED2121CDE143_Kanban.Column.Done",
+    TopDeskWijzigingNr: "/fields/dSZW.Socrates.TopDeskWijzigingNr",
+    SystemInfo: "/fields/Microsoft.VSTS.TCM.SystemInfo",
+    ReproSteps: "/fields/Microsoft.VSTS.TCM.ReproSteps",
+    TaskActivity: "/fields/Microsoft.VSTS.Common.Activity",
+    url: "/fields/url",
+    AllRelations: "/relations/-",
+    SpecficRelations: "/relations/"
+};
+
+var Enm_WorkitemFields = {
+    AreaPath: "System.AreaPath",
+    TeamProject: "System.TeamProject",
+    IterationPath: "System.IterationPath",
+    WorkItemType: "System.WorkItemType",
+    State: "System.State",
+    Reason: "System.Reason",
+    CreatedDate: "System.CreatedDate",
+    CreatedBy: "System.CreatedBy",
+    ChangedDate: "System.ChangedDate",
+    ChangedBy: "System.ChangedBy",
+    Title: "System.Title",
+    BoardColumn: "System.BoardColumn",
+    BoardColumnDone: "System.BoardColumnDone",
+    BacklogPriority: "Microsoft.VSTS.Common.BacklogPriority",
+    Severity: "Microsoft.VSTS.Common.Severity",
+    KanBanColumn: "WEF_FA00BAB5AFBB4E299544ED2121CDE143_Kanban.Column",
+    KanBanColumnDone: "WEF_FA00BAB5AFBB4E299544ED2121CDE143_Kanban.Column.Done",
+    TopDeskWijzigingNr: "dSZW.Socrates.TopDeskWijzigingNr",
+    SystemInfo: "Microsoft.VSTS.TCM.SystemInfo",
+    ReproSteps: "Microsoft.VSTS.TCM.ReproSteps",
+    TaskActivity: "Microsoft.VSTS.Common.Activity",
+    url: "url",
+    AllRelations: "/relations/-",
+    SpecficRelations: "/relations/"
+};
+
+var Enm_JsonPatchOperations =
+{
+    Add: "add"
+}
 
 $(document).ready(function () {
 
@@ -298,7 +356,7 @@ function LoadTasksOnMainWindow(teamnaam)
                     var inputNode = document.createElement("input");
                     inputNode.setAttribute("type", "checkbox");
                     inputNode.setAttribute("id", element.id);
-                    inputNode.setAttribute("value", element.id);
+                    inputNode.setAttribute("value", element.activityType);
                     inputNode.setAttribute("checked", "true");
                     inputNode.setAttribute("name", "taskcheckbox");
 
@@ -366,16 +424,151 @@ function CheckUnckeck(obj)
 
 function AddTasksButtonClicked(obj) {
 
-    CheckAllowedToAddTaskToPbi(workItemFocused);
+    CheckAllowedToAddTaskToPbi(parentWorkItem);
     var taskCheckboxes = document.getElementsByName("taskcheckbox");
     var selectedCheckboxes = GetSelectedCheckboxes(taskCheckboxes);
     //var tasks = FindTeamTaskCollection();
 
     var tasksToPairWithWorkitem = CreateTasksToAdd(selectedCheckboxes);
 
-    var numberOfTasksCreated = PairTasksToWorkitems(tasksToPairWithWorkitem);
+    var jsonPatchDocs = CreateJsonPatchDocsForTasks(tasksToPairWithWorkitem);
+
+    var numberOfTasksCreated = PairTasksToWorkitems(jsonPatchDocs);
 
     alert("Tasks added: " + selectedCheckboxes.length);
+}
+
+function CreateJsonPatchDocsForTasks(tasks) {
+    var retval = [];
+
+    tasks.forEach(function (element) {
+        retval.push(
+            new jsonPatchDoc(element).returnPatchDoc
+        );
+    });
+
+    return retval;
+}
+
+function jsonPatchDoc(task) {
+    //var title = "something";
+    //var area = "validArea";
+
+    //string linkedWorkitemUrl = SettingsGetter.ApiWorkitemUrl + linkedWorkitemId;
+
+    //// this.id;
+    //// this.title,
+    // this.workItemType,
+    // this.workItemProjectName,
+    // this.workItemIterationPath,
+    //// this.workItemAreaPath,
+    // this.workItemTaskActivity
+
+    this.returnPatchDoc = [
+        {
+            "op": Enm_JsonPatchOperations.Add,
+            "path": Enm_WorkitemPaths.Title,
+            "value": task.title
+        },
+        {
+            "op": Enm_JsonPatchOperations.Add,
+            "path": Enm_WorkitemPaths.IterationPath,
+            "value": task.workItemIterationPath
+        },
+        {
+            "op": Enm_JsonPatchOperations.Add,
+            "path": Enm_WorkitemPaths.AreaPath,
+            "value": task.workItemAreaPath
+        },
+        {
+            "op": Enm_JsonPatchOperations.Add,
+            "path": Enm_WorkitemPaths.TaskActivity,
+            "value": task.workItemTaskActivity
+        },
+        {
+            "op": Enm_JsonPatchOperations.Add,
+            "path": Enm_WorkitemPaths.AllRelations,
+            "value": {
+                "rel": "System.LinkTypes.Hierarchy-Reverse",
+                "url": parentWorkItem.url,
+                "attributes": {
+                    "comment": "todo: comment voor decompositie"
+                }
+            }
+        }
+    ];
+// available WorkITtemFields as a result
+// Microsoft.VSTS.Common.BacklogPriority: 1000031622
+// Microsoft.VSTS.Common.Severity: "3 - Medium"
+// Microsoft.VSTS.TCM.ReproSteps: "Reproductiestappen"
+// Microsoft.VSTS.TCM.SystemInfo: "sysinfo"
+// System.AreaPath: "WiM"
+// System.BoardColumn: "New"
+// System.BoardColumnDone: false
+// System.ChangedBy: "kry <KRYLP\kry>"
+// System.ChangedDate: "2017-12-30T19:55:20.99Z"
+// System.CommentCount: 0
+// System.CreatedBy: "kry <KRYLP\kry>"
+// System.CreatedDate: "2017-12-23T22:39:59.693Z"
+// System.IterationPath: "WiM"
+// System.Reason: "New defect reported"
+// System.State: "New"
+// System.TeamProject: "WiM"
+// System.Title: "Voorbeeld van een BUG met heeeeeeel vel tekst en allerlei andere dingetjes die te tekst uiteindelijk te lang maken zodat we het wrappen kunnen testen."
+// System.WorkItemType: "Bug"
+// WEF_FA00BAB5AFBB4E299544ED2121CDE143_Kanban.Column: "New"
+// WEF_FA00BAB5AFBB4E299544ED2121CDE143_Kanban.Column.Done: false
+// dSZW.Socrates.TopDeskWijzigingNr: "W1245-5544"
+   
+
+//patchDocument.Add(new JsonPatchOperation()
+//            {
+//        Operation = Operation.Add,
+//        Path = WorkitemPaths.Title,
+//        Value = workitemToCreate.Title
+//    });
+
+//patchDocument.Add(new JsonPatchOperation()
+//            {
+//        Operation = Operation.Add,
+//        Path = WorkitemPaths.IterationPath,
+//        Value = workitemToCreate.WorkItemIterationPath
+//    });
+
+//patchDocument.Add(new JsonPatchOperation()
+//            {
+//        Operation = Operation.Add,
+//        Path = WorkitemPaths.AreaPath,
+//        Value = workitemToCreate.WorkItemAreaPath
+//    });
+
+//if (!String.IsNullOrEmpty(workitemToCreate.WorkItemTaskActivity)) {
+//    patchDocument.Add(new JsonPatchOperation()
+//                {
+//            Operation = Operation.Add,
+//            Path = WorkitemPaths.TaskActivity,
+//            Value = workitemToCreate.WorkItemTaskActivity
+//        });
+//}
+
+//patchDocument.Add(new JsonPatchOperation()
+//                {
+//        Operation = Operation.Add,
+//        Path = WorkitemPaths.AllRelations,
+//        Value = new
+//            {
+//                rel = "System.LinkTypes.Hierarchy-Reverse",
+//                url = linkedWorkitemUrl,
+//                attributes = new
+//                    {
+//                        comment = "decompositie van allerlei werk"
+//                    }
+//            }
+//    }
+//);
+
+//return workItemTrackingClient.CreateWorkItemAsync(patchDocument, linkedWorkItemProjectName, "Task").Result;
+
 }
 
 function PairTasksToWorkitems(tasksToPairWithWorkitem){
@@ -392,12 +585,12 @@ function CreateTasksToAdd(selectedCheckboxes) {
     selectedCheckboxes.forEach(
         function (element) {
             var task = new workItem();
-            task.title = element;
+            task.title = element.Title;
             task.workItemType = "Task";
-            task.workItemProjectName = workItemFocused.workItemProjectName;
-            task.workItemIterationPath = workItemFocused.workItemIterationPath;
-            task.workItemAreaPath = workItemFocused.workItemAreaPath;
-            task.workItemTaskActivity = "workItemTaskActivity";
+            task.workItemProjectName = parentWorkItem.workItemProjectName;
+            task.workItemIterationPath = parentWorkItem.workItemIterationPath;
+            task.workItemAreaPath = parentWorkItem.workItemAreaPath;
+            task.workItemTaskActivity = element.ActivityType;
 
             retval.push(task);
         }
@@ -406,13 +599,19 @@ function CreateTasksToAdd(selectedCheckboxes) {
     return retval;
 }
 
+function checkBoxInfo(title, activityType) {
+    this.Title = title;
+    this.ActivityType = activityType;
+}
+
 function GetSelectedCheckboxes(allCheckboxes) {
     var retval = [];
     allCheckboxes.forEach(
         function (element) {
             if (element.checked) {
-                retval.push(element.labels[0].innerText);
-                //AddTaskToWorkitem(task);
+                retval.push(
+                    new checkBoxInfo(element.labels[0].innerText, element.value)
+                );
             }
         }
     );
