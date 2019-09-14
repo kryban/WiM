@@ -433,9 +433,33 @@ function AddTasksButtonClicked(obj) {
 
     var jsonPatchDocs = CreateJsonPatchDocsForTasks(tasksToPairWithWorkitem);
 
-    var numberOfTasksCreated = PairTasksToWorkitems(jsonPatchDocs);
+    var numberOfTasksCreated = PairTasksToWorkitem(jsonPatchDocs, parentWorkItem);
 
     alert("Tasks added: " + selectedCheckboxes.length);
+}
+
+function PairTasksToWorkitem(docs, parent) {
+    var numberOfTasksHandled;
+
+    docs.forEach(
+        function (jsonPatchDoc) {
+         var client;
+
+         require(["TFS/WorkItemTracking/Services", "TFS/WorkItemTracking/RestClient", "VSS/Service"],
+            function (_WorkItemServices, _WorkItemTrackingClient, _Service) {
+                client = _Service.getCollectionClient(_WorkItemTrackingClient.WorkItemTrackingHttpClient);
+
+
+                client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task").then(function (wi) {
+                    alert("Task created!");
+                });
+            });
+
+        });
+
+
+
+    return numberOfTasksHandled;
 }
 
 function CreateJsonPatchDocsForTasks(tasks) {
@@ -451,18 +475,6 @@ function CreateJsonPatchDocsForTasks(tasks) {
 }
 
 function jsonPatchDoc(task) {
-    //var title = "something";
-    //var area = "validArea";
-
-    //string linkedWorkitemUrl = SettingsGetter.ApiWorkitemUrl + linkedWorkitemId;
-
-    //// this.id;
-    //// this.title,
-    // this.workItemType,
-    // this.workItemProjectName,
-    // this.workItemIterationPath,
-    //// this.workItemAreaPath,
-    // this.workItemTaskActivity
 
     this.returnPatchDoc = [
         {
@@ -520,62 +532,8 @@ function jsonPatchDoc(task) {
 // WEF_FA00BAB5AFBB4E299544ED2121CDE143_Kanban.Column.Done: false
 // dSZW.Socrates.TopDeskWijzigingNr: "W1245-5544"
    
-
-//patchDocument.Add(new JsonPatchOperation()
-//            {
-//        Operation = Operation.Add,
-//        Path = WorkitemPaths.Title,
-//        Value = workitemToCreate.Title
-//    });
-
-//patchDocument.Add(new JsonPatchOperation()
-//            {
-//        Operation = Operation.Add,
-//        Path = WorkitemPaths.IterationPath,
-//        Value = workitemToCreate.WorkItemIterationPath
-//    });
-
-//patchDocument.Add(new JsonPatchOperation()
-//            {
-//        Operation = Operation.Add,
-//        Path = WorkitemPaths.AreaPath,
-//        Value = workitemToCreate.WorkItemAreaPath
-//    });
-
-//if (!String.IsNullOrEmpty(workitemToCreate.WorkItemTaskActivity)) {
-//    patchDocument.Add(new JsonPatchOperation()
-//                {
-//            Operation = Operation.Add,
-//            Path = WorkitemPaths.TaskActivity,
-//            Value = workitemToCreate.WorkItemTaskActivity
-//        });
-//}
-
-//patchDocument.Add(new JsonPatchOperation()
-//                {
-//        Operation = Operation.Add,
-//        Path = WorkitemPaths.AllRelations,
-//        Value = new
-//            {
-//                rel = "System.LinkTypes.Hierarchy-Reverse",
-//                url = linkedWorkitemUrl,
-//                attributes = new
-//                    {
-//                        comment = "decompositie van allerlei werk"
-//                    }
-//            }
-//    }
-//);
-
 //return workItemTrackingClient.CreateWorkItemAsync(patchDocument, linkedWorkItemProjectName, "Task").Result;
 
-}
-
-function PairTasksToWorkitems(tasksToPairWithWorkitem){
-    var numberOfTasksHandled;
-    // create here jsonPatchDocuments and persist the collection of tasks
-
-    return numberOfTasksHandled;
 }
 
 function CreateTasksToAdd(selectedCheckboxes) {
