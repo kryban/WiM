@@ -57,19 +57,34 @@ function ExistingWitFieldFocussed() {
 
 var witClient;
 function OpenButtonClicked(obj) {
+    
     VSS.require(["TFS/WorkItemTracking/RestClient"], // modulepath
         function (_restWitClient) {
+
+            parentWorkItem = null;
             witClient = _restWitClient.getClient();
 
             var witId = document.getElementById("existing-wit-id").value;
+            var checkBoxes = Array.from(document.getElementsByClassName("checkbox"));
+            var addButton = document.getElementById("addTasksButton");
+
             witClient.getWorkItem(witId)//, ["System.Title", "System.WorkItemType"])
-                .then(
-                    function (workitemResult) {
-                        parentWorkItem = new workItem(workitemResult);
-                        ShowSelectedWorkitemOnPage(parentWorkItem);
-                    });
-        }
-    );
+                .then(function (workitemResult) {
+                    parentWorkItem = new workItem(workitemResult);
+
+                    ShowSelectedWorkitemOnPage(parentWorkItem);
+                    //EnableItems(checkBoxes, addButton);
+                })
+                .catch(//alert("Workitem niet gevonden")
+                    function () {
+                        if (parentWorkItem === undefined || parentWorkItem === null) {
+                            document.getElementById("existing-wit-text").innerHTML = "Workitem niet gevonden";
+                            DisableItems(checkBoxes, addButton);
+                        }
+                    }
+                );
+            }
+        );
 }
 
 function CheckAllowedToAddTaskToPbi(parentWorkItem) {
@@ -83,7 +98,7 @@ function CheckAllowedToAddTaskToPbi(parentWorkItem) {
 function ShowSelectedWorkitemOnPage(workItem) {
 
     var allowToAdd = CheckAllowedToAddTaskToPbi(workItem);
-    var checkBoxes = Array.from(document.getElementsByClassName("checkbox")); //getElementsByName("taskcheckbox");
+    var checkBoxes = Array.from(document.getElementsByClassName("checkbox"));
     var addButton = document.getElementById("addTasksButton");
 
     if (!allowToAdd) {
@@ -92,25 +107,30 @@ function ShowSelectedWorkitemOnPage(workItem) {
             "</br> " +
             "(" + workItem.id + ")" + workItem.title;
 
-        checkBoxes.forEach(function (element) {
-            element.disabled = true;
-        });
-
-        addButton.disabled = true;
-
+        DisableItems(checkBoxes, addButton);
     }
     else {
         document.getElementById("existing-wit-text").className = "existing-wit-text";
         document.getElementById("existing-wit-text").innerHTML = workItem.id + "</br> " + workItem.title;
 
-        checkBoxes.forEach(function (element) {
-            element.disabled = false;
-        });
-
-        addButton.disabled = false;
+        EnableItems(checkBoxes, addButton);
     }
 
     VSS.notifyLoadSucceeded();
+}
+
+function EnableItems(checkBoxes, addButton) {
+    checkBoxes.forEach(function(element) {
+        element.disabled = false;
+    });
+    addButton.disabled = false;
+}
+
+function DisableItems(checkBoxes, addButton) {
+    checkBoxes.forEach(function (element) {
+        element.disabled = true;
+    });
+    addButton.disabled = true;
 }
 
 function GetWorkItemTypes(callback) {
