@@ -50,6 +50,19 @@
         #existing-wit-id {
             border: 1px solid #DDD;
         }
+
+        .existing-wit-text{
+            font-family: "Segoe UI VSS (Regular)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Helvetica, Ubuntu, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            font-size: 14px;
+            color: #000000;
+        }
+
+        .existing-wit-text-not{
+            font-family: "Segoe UI VSS (Regular)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Helvetica, Ubuntu, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            font-size: 14px;
+            color: #ff0000;
+        }
+
     </style>
 </head>
 <body>
@@ -63,12 +76,12 @@
 
             <div class="open-existing-work-item">
                 <label for="existing-wit-id">PBI:</label>
-                <input id="existing-wit-id" value="1">
-                <Button id="existing-wit-button" type="button" value="Open..." onclick="OpenButtonClicked()">Open</Button>
+                <input id="existing-wit-id" value="insert id" onfocus="ExistingWitFieldFocussed()">
+                <Button id="existing-wit-button" type="button" value="Open..." onclick="OpenButtonClicked(this)">Open</Button>
             </div>
 
             <div>
-                <h4 id="existing-wit-text"></h4>
+                <h4 id="existing-wit-text" class="existing-wit-text"></h4>
             </div>
 
             <div id="tasks">
@@ -76,7 +89,7 @@
                     Voeg taken toe: </br></br>
                 </div>
                 <div id="tasks-check-all">
-                    <input type="checkbox" id="tasks-check-all-checkbox" name="checkall" checked="false" onclick="CheckUnckeck(this)" />
+                    <input class="checkbox" type="checkbox" id="tasks-check-all-checkbox" name="checkall" checked="false" onclick="CheckUnckeck(this)" />
                     <label for="tasks-check-all-checkbox">All</label><br /><br />
                 </div>
 
@@ -84,7 +97,7 @@
                     <fieldset class="checkbox" id="task-checkbox" type="checkbox"></fieldset>
                 </form>
                 </br>
-                <Button type="button" name="addTasksButton" onclick="AddTasksButtonClicked()">Zetten</Button>
+                <Button type="button" id="addTasksButton" onclick="AddTasksButtonClicked()">Zetten</Button>
             </div>
 
             <div id="combo-container"></div>

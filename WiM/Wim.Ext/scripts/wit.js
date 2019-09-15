@@ -48,17 +48,25 @@ function MapWorkItemFields(witemObject, witem )
     witemObject.Title = witem.fields["System.Title"];
 }
 
+function ExistingWitFieldFocussed() {
+    var field = document.getElementById("existing-wit-id");
+    if (field.value === "insert id") {
+        field.value = "";
+    }
+}
+
 var witClient;
 function OpenButtonClicked(obj) {
     VSS.require(["TFS/WorkItemTracking/RestClient"], // modulepath
         function (_restWitClient) {
             witClient = _restWitClient.getClient();
 
-            witClient.getWorkItem(3)//, ["System.Title", "System.WorkItemType"])
+            var witId = document.getElementById("existing-wit-id").value;
+            witClient.getWorkItem(witId)//, ["System.Title", "System.WorkItemType"])
                 .then(
                     function (workitemResult) {
                         parentWorkItem = new workItem(workitemResult);
-                        ShowSelectedWorkitemOnPage(parentWorkItem);                        
+                        ShowSelectedWorkitemOnPage(parentWorkItem);
                     });
         }
     );
@@ -66,15 +74,42 @@ function OpenButtonClicked(obj) {
 
 function CheckAllowedToAddTaskToPbi(parentWorkItem) {
     if (parentWorkItem.workItemType !== "Product Backlog Item" && parentWorkItem.workItemType !== "Bug") {
-        alert("Aan een " + parentWorkItem.workItemType + " mag geen Taak toegevoegd worden.");
+        //alert("Aan een " + parentWorkItem.workItemType + " mag geen Taak toegevoegd worden.");
         return false;
     }
     return true;
 }
 
 function ShowSelectedWorkitemOnPage(workItem) {
-    var workitemID = workItem.id; //document.getElementById("existing-wit-id").value;
-    document.getElementById("existing-wit-text").innerHTML = workitemID + "</br> " + workItem.title;
+
+    var allowToAdd = CheckAllowedToAddTaskToPbi(workItem);
+    var checkBoxes = Array.from(document.getElementsByClassName("checkbox")); //getElementsByName("taskcheckbox");
+    var addButton = document.getElementById("addTasksButton");
+
+    if (!allowToAdd) {
+        document.getElementById("existing-wit-text").className = "existing-wit-text-not";
+        document.getElementById("existing-wit-text").innerHTML = "Aan een " + workItem.workItemType + " mag geen Task toegevoegd worden." +
+            "</br> " +
+            "(" + workItem.id + ")" + workItem.title;
+
+        checkBoxes.forEach(function (element) {
+            element.disabled = true;
+        });
+
+        addButton.disabled = true;
+
+    }
+    else {
+        document.getElementById("existing-wit-text").className = "existing-wit-text";
+        document.getElementById("existing-wit-text").innerHTML = workItem.id + "</br> " + workItem.title;
+
+        checkBoxes.forEach(function (element) {
+            element.disabled = false;
+        });
+
+        addButton.disabled = false;
+    }
+
     VSS.notifyLoadSucceeded();
 }
 

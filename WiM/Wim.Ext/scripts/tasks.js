@@ -359,6 +359,7 @@ function LoadTasksOnMainWindow(teamnaam)
                     inputNode.setAttribute("value", element.activityType);
                     inputNode.setAttribute("checked", "true");
                     inputNode.setAttribute("name", "taskcheckbox");
+                    inputNode.setAttribute("class", "checkbox");
 
                     var labelNode = document.createElement("label");
                     labelNode.setAttribute("for", element.id);
@@ -435,11 +436,12 @@ function AddTasksButtonClicked(obj) {
 
     var numberOfTasksCreated = PairTasksToWorkitem(jsonPatchDocs, parentWorkItem);
 
-    alert("Tasks added: " + selectedCheckboxes.length);
+    alert("Tasks selected: " + selectedCheckboxes.length);
+    alert("Tasks added: " + numberOfTasksCreated);
 }
 
 function PairTasksToWorkitem(docs, parent) {
-    var numberOfTasksHandled;
+    var numberOfTasksHandled = 0;
 
     docs.forEach(
         function (jsonPatchDoc) {
@@ -449,15 +451,11 @@ function PairTasksToWorkitem(docs, parent) {
             function (_WorkItemServices, _WorkItemTrackingClient, _Service) {
                 client = _Service.getCollectionClient(_WorkItemTrackingClient.WorkItemTrackingHttpClient);
 
-
                 client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task").then(function (wi) {
-                    alert("Task created!");
+                    numberOfTasksHandled++;//alert("Task created!");
                 });
             });
-
         });
-
-
 
     return numberOfTasksHandled;
 }
