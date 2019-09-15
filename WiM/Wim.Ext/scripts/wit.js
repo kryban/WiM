@@ -2,19 +2,7 @@
 // https://docs.microsoft.com/en-us/azure/devops/extend/reference/client/api/tfs/workitemtracking/restclient/workitemtrackinghttpclient2_1?view=vsts
 var wiTitle = "ttt";
 var parentWorkItem;
-
-//const { applyOperation } = require('fast-json-patch');
-//const applyOperation = require('fast-json-patch').applyOperation;
-//If this code is not in a define call,
-//DO NOT use require('foo'), but use the async
-//callback version:
-//require(['fast-json-patch'], function (foo) {
-//    baz(foo);
-//});
-
-function baz(ob) {
-    console.log("Baz: " + ob);
-}
+var defaultText_searchWI = "workitem ID";
 
 function workItem(wiResult) 
 {
@@ -50,7 +38,7 @@ function MapWorkItemFields(witemObject, witem )
 
 function ExistingWitFieldFocussed() {
     var field = document.getElementById("existing-wit-id");
-    if (field.value === "insert id") {
+    if (field.value === "workitem ID") {
         field.value = "";
     }
 }
@@ -68,14 +56,12 @@ function OpenButtonClicked(obj) {
             var checkBoxes = Array.from(document.getElementsByClassName("checkbox"));
             var addButton = document.getElementById("addTasksButton");
 
-            witClient.getWorkItem(witId)//, ["System.Title", "System.WorkItemType"])
+            witClient.getWorkItem(witId)// when only specific fields required , ["System.Title", "System.WorkItemType"])
                 .then(function (workitemResult) {
                     parentWorkItem = new workItem(workitemResult);
-
                     ShowSelectedWorkitemOnPage(parentWorkItem);
-                    //EnableItems(checkBoxes, addButton);
                 })
-                .catch(//alert("Workitem niet gevonden")
+                .catch(
                     function () {
                         if (parentWorkItem === undefined || parentWorkItem === null) {
                             document.getElementById("existing-wit-text").innerHTML = "Workitem niet gevonden";
@@ -89,7 +75,6 @@ function OpenButtonClicked(obj) {
 
 function CheckAllowedToAddTaskToPbi(parentWorkItem) {
     if (parentWorkItem.workItemType !== "Product Backlog Item" && parentWorkItem.workItemType !== "Bug") {
-        //alert("Aan een " + parentWorkItem.workItemType + " mag geen Taak toegevoegd worden.");
         return false;
     }
     return true;
@@ -143,76 +128,3 @@ function GetWorkItemTypes(callback) {
             });
     });
 }
-// example post request
-//IPromise<Contracts.WorkItem> createWorkItem(document, project, type, validateOnly, bypassRules
-
-
-// create patch document USED in wpf client
-//JsonPatchDocument patchDocument = new JsonPatchDocument();
-//string linkedWorkitemUrl = SettingsGetter.ApiWorkitemUrl + linkedWorkitemId;
-
-//patchDocument.Add(new JsonPatchOperation()
-//            {
-//        Operation = Operation.Add,
-//        Path = WorkitemPaths.Title,
-//        Value = workitemToCreate.Title
-//    });
-
-//patchDocument.Add(new JsonPatchOperation()
-//            {
-//        Operation = Operation.Add,
-//        Path = WorkitemPaths.IterationPath,
-//        Value = workitemToCreate.WorkItemIterationPath
-//    });
-
-//patchDocument.Add(new JsonPatchOperation()
-//            {
-//        Operation = Operation.Add,
-//        Path = WorkitemPaths.AreaPath,
-//        Value = workitemToCreate.WorkItemAreaPath
-//    });
-
-//if (!String.IsNullOrEmpty(workitemToCreate.WorkItemTaskActivity)) {
-//    patchDocument.Add(new JsonPatchOperation()
-//                {
-//            Operation = Operation.Add,
-//            Path = WorkitemPaths.TaskActivity,
-//            Value = workitemToCreate.WorkItemTaskActivity
-//        });
-//}
-
-//patchDocument.Add(new JsonPatchOperation()
-//                {
-//        Operation = Operation.Add,
-//        Path = WorkitemPaths.AllRelations,
-//        Value = new
-//            {
-//                rel = "System.LinkTypes.Hierarchy-Reverse",
-//                url = linkedWorkitemUrl,
-//                attributes = new
-//                    {
-//                        comment = "decompositie van allerlei werk"
-//                    }
-//            }
-//    }
-//);
-
-//return workItemTrackingClient.CreateWorkItemAsync(patchDocument, linkedWorkItemProjectName, "Task").Result;
-
-
-
-//used in wpf client
-//wi = workItem;
-//Title = wi.Fields[WorkItemFields.Title].ToString();
-//WorkItemType = wi.Fields[WorkItemFields.WorkItemType].ToString();
-//WorkItemProjectName = AddProjectName();
-//WorkItemIterationPath = AddIterationPath();
-//WorkItemAreaPath = AddAreaPath();
-//workItemTaskActivity = AddTaskActivity();
-//id = wi.Id.ToString();
-
-//newTask.Title = item.Title;
-//newTask.WorkItemIterationPath = workItemWrapper.WorkItemIterationPath;
-//newTask.WorkItemAreaPath = workItemWrapper.WorkItemAreaPath;
-//newTask.WorkItemType = "Task";
-//newTask.WorkItemTaskActivity = item.ActivityType;
