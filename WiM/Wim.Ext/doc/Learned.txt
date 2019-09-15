@@ -17,4 +17,10 @@
 	dan moet het eerst geregistreerd worden in de HTML van de dialog met VSS.register(contrinutionId, data);
 	LET OP dat je eerst de VSS.register uitvoert, VOORDAT je dialogservice.getConstributionInstance(...) wordt gedaan.
 	
+5. Scope van de extensie
+	In de manifest kan je een scope aangeven. Dat bepaalt tot welke gebieden de extensie toegang heeft 
+	en wat het daar mag doen. Zo geeft "vso.work" de extensie toegang tot work items, met alleen leesrechten. 
+	Met "vso.work_write" mag de extensie ook workitems aanmaken of wijzigen en met "vso.work_full" heeft het full access.
+	https://docs.microsoft.com/nl-nl/azure/devops/extend/develop/manifest?view=azure-devops#scopes
+
 
