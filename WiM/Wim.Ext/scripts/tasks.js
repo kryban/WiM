@@ -434,13 +434,23 @@ function AddTasksButtonClicked(obj) {
 
     var jsonPatchDocs = CreateJsonPatchDocsForTasks(tasksToPairWithWorkitem);
 
-    var numberOfTasksCreated = PairTasksToWorkitem(jsonPatchDocs, parentWorkItem);
+    PairTasksToWorkitem(jsonPatchDocs, parentWorkItem)
+        .then(function ()
+        {
+            alert("Tasks added");
+        });
 
-    alert("Tasks selected: " + selectedCheckboxes.length);
-    alert("Tasks added: " + numberOfTasksCreated);
+    reloadHost();
 }
 
-function PairTasksToWorkitem(docs, parent) {
+function reloadHost() {
+    VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService) {
+        console.log("navigationService.reload()");
+        navigationService.reload();
+    });
+}
+
+async function PairTasksToWorkitem(docs, parent) {
     var numberOfTasksHandled = 0;
 
     docs.forEach(
@@ -457,8 +467,13 @@ function PairTasksToWorkitem(docs, parent) {
             });
         });
 
-    return numberOfTasksHandled;
+    return await new Promise(function (resolve, reject) {
+        // the function is executed automatically when the promise is constructed
+        resolve(numberOfTasksHandled);
+    });
 }
+
+
 
 function CreateJsonPatchDocsForTasks(tasks) {
     var retval = [];
