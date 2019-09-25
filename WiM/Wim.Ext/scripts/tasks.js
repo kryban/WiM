@@ -437,8 +437,10 @@ function AddTasksButtonClicked(obj) {
     PairTasksToWorkitem(jsonPatchDocs, parentWorkItem)
         .then(function ()
         {
-            alert("Tasks added");
+            alert("Tasks added - " + numberOfTasksHandled);
         });
+
+    alert("Tasks added: " + numberOfTasksHandled);
 
     reloadHost();
 }
@@ -450,8 +452,10 @@ function reloadHost() {
     });
 }
 
+var numberOfTasksHandled;
+
 async function PairTasksToWorkitem(docs, parent) {
-    var numberOfTasksHandled = 0;
+    numberOfTasksHandled = 0;
 
     docs.forEach(
         function (jsonPatchDoc) {
