@@ -1,6 +1,4 @@
-﻿- verwijderen werk niet
-
-- hoe komt UpdateTasksDocs aan zijn selectedTeams
+﻿- hoe komt UpdateTasksDocs aan zijn selectedTeams
   als argument meegeven ! 
 
 - type task uit een drop down kiezen
@@ -8,3 +6,10 @@
 
 - readme maken
 
+- Wim vanuit meerdere punten kunnen laten starten vai contribution targets.
+  Maar het moet dan wel klaar voor zijn. 
+  Als het bijvoorbeeld via .
+  
+- Enter moet Zoek knop activeren
+
+- Zetten knop andere naam geven
