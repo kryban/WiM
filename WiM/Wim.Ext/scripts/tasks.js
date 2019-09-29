@@ -58,7 +58,7 @@ var Enm_WorkitemFields = {
 var Enm_JsonPatchOperations =
 {
     Add: "add"
-}
+};
 
 $(document).ready(function () {
 
@@ -229,7 +229,7 @@ function AddTasksDocs(tasks, teamName)
 }
 
 function TeamSelectedHandler(obj) {
-    selectedTeam = obj.value.toLowerCase();; //$(this).val();
+    selectedTeam = obj.value.toLowerCase(); //$(this).val();
     if (selectedTeam === undefined) {
         selectedTeam = GetTeamInAction();
     }
@@ -314,8 +314,12 @@ function LoadTeamTasks(selection)
 
 function LoadTasksOnMainWindow(teamnaam)
 {
-    var substringVanaf = "team_".length;
-    var parsedTeamnaam = teamnaam.substring(substringVanaf);
+    var parsedTeamnaam;
+    if (teamnaam.startsWith("team_")) {
+        var substringVanaf = "team_".length;
+        parsedTeamnaam = teamnaam.substring(substringVanaf);
+    }
+    else { parsedTeamnaam = teamnaam;}
 
     GloballySetTeamInAction(parsedTeamnaam);
 
@@ -376,10 +380,23 @@ function LoadTasksOnMainWindow(teamnaam)
     });
 }
 
+function SetChosenTeam(teamNaam){
+    chosenTeam = teamNaam.substring("team_".length);
+}
+
 function SetPageTitle(teamnaam) {
     selectedTeam = teamnaam;
     var pageTitleText = "Workitem Manager for Team " + selectedTeam.charAt(0).toUpperCase() + selectedTeam.slice(1);
     document.getElementById("pageTitle").innerHTML = pageTitleText;
+}
+
+function GetTeamFromPageTitle() {
+    var fullTitle = document.getElementById("pageTitle").innerHTML.value;
+
+    var substringVanaf = "Workitem Manager for Team ".length;
+    var parsedTeamnaam = fullTitle.substring(substringVanaf);
+
+    return parsedTeamnaam;
 }
 
 function CheckUnckeck(obj)
@@ -434,15 +451,14 @@ function AddTasksButtonClicked(obj) {
 
     var jsonPatchDocs = CreateJsonPatchDocsForTasks(tasksToPairWithWorkitem);
 
-    PairTasksToWorkitem(jsonPatchDocs, parentWorkItem)
-        .then(function ()
-        {
-            alert("Tasks added - " + numberOfTasksHandled);
-        });
+    (async () => {
+        await PairTasksToWorkitem(jsonPatchDocs, parentWorkItem)
+            .then(function () {
+                alert("Taken toegevoegd.");
+            });
+    })();
 
-    alert("Tasks added: " + numberOfTasksHandled);
-
-    reloadHost();
+    LoadTasksOnMainWindow(chosenTeam);
 }
 
 function reloadHost() {
@@ -459,16 +475,18 @@ async function PairTasksToWorkitem(docs, parent) {
 
     docs.forEach(
         function (jsonPatchDoc) {
-         var client;
+            var client;
 
-         require(["TFS/WorkItemTracking/Services", "TFS/WorkItemTracking/RestClient", "VSS/Service"],
-            function (_WorkItemServices, _WorkItemTrackingClient, _Service) {
-                client = _Service.getCollectionClient(_WorkItemTrackingClient.WorkItemTrackingHttpClient);
+            
+                require(["TFS/WorkItemTracking/Services", "TFS/WorkItemTracking/RestClient", "VSS/Service"],
+                    function (_WorkItemServices, _WorkItemTrackingClient, _Service) {
+                        client = _Service.getCollectionClient(_WorkItemTrackingClient.WorkItemTrackingHttpClient);
 
-                client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task").then(function (wi) {
-                    numberOfTasksHandled++;//alert("Task created!");
-                });
-            });
+                        client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task").then(function (wi) {
+                            numberOfTasksHandled++;//alert("Task created!");
+                        });
+                    });
+
         });
 
     return await new Promise(function (resolve, reject) {

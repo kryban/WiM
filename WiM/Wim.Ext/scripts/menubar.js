@@ -91,6 +91,7 @@ function menuBarAction(command) {
     // all element ids begin with "team_", so we know user wants to switch teams
     if (command.startsWith("team_")) {
         LoadTasksOnMainWindow(command);
+        SetChosenTeam(command);
     }
 
     else if (command === "manage-teams") {
