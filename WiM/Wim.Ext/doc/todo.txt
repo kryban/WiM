@@ -1,0 +1,10 @@
+﻿- verwijderen werk niet
+
+- hoe komt UpdateTasksDocs aan zijn selectedTeams
+  als argument meegeven ! 
+
+- type task uit een drop down kiezen
+  (hoe wordt dit vastgelegd ? )
+
+- readme maken
+

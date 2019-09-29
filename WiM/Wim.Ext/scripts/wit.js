@@ -3,7 +3,7 @@
 var wiTitle = "ttt";
 var parentWorkItem;
 var defaultText_searchWI = "workitem ID";
-var chosenTeam="";
+//var chosenTeam="";
 
 function workItem(wiResult) 
 {

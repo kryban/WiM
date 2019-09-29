@@ -85,7 +85,7 @@ $(document).ready(function () {
     $('.tasks_input_fields_container_part').on("click", ".remove_task_field", function (e) {
         e.preventDefault();
         $(this).parent('div').remove();
-        //taskInpChangeHandler();
+        taskInpChangeHandler();
         x--;
     });
 
@@ -159,7 +159,6 @@ function UpdateTasksDocs(tasks)
 
         dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
 
-            //var teamName = document.getElementById("teamSelect");
             // delete only tasks setting. Not other settings
             var taskDocs = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
             //var taskDocs = allTasks.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
@@ -321,7 +320,7 @@ function LoadTasksOnMainWindow(teamnaam)
     }
     else { parsedTeamnaam = teamnaam;}
 
-    GloballySetTeamInAction(parsedTeamnaam);
+    SetTeamInAction(parsedTeamnaam);
 
     console.log("LoadTaskOnMainWindow(): Registered team-naam-in-actie ");
     VSS.register("team-naam-in-actie", parsedTeamnaam);
@@ -380,9 +379,9 @@ function LoadTasksOnMainWindow(teamnaam)
     });
 }
 
-function SetChosenTeam(teamNaam){
-    chosenTeam = teamNaam.substring("team_".length);
-}
+//function SetChosenTeam(teamNaam){
+//    chosenTeam = teamNaam.substring("team_".length);
+//}
 
 function SetPageTitle(teamnaam) {
     selectedTeam = teamnaam;
@@ -458,7 +457,7 @@ function AddTasksButtonClicked(obj) {
             });
     })();
 
-    LoadTasksOnMainWindow(chosenTeam);
+    LoadTasksOnMainWindow(selectedTeam);
 }
 
 function reloadHost() {
@@ -632,10 +631,10 @@ function AddTaskToWorkitem(task)
     alert("Adding task: " + task.title);
 }
 
-function GloballySetTeamInAction(teamnaam) {
+function SetTeamInAction(teamnaam) {
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
         dataService.setValue("team-in-action", teamnaam).then(function () {
-            console.log("GloballySetTeamInAction(): Set team - " + teamnaam);
+            console.log("SetTeamInAction(): Set team - " + teamnaam);
         });
     });      
 }
