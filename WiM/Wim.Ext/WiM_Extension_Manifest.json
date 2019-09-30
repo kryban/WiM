@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "WimDevOpExtension",
-  "version": "0.0.33",
+  "version": "0.0.31",
   "name": "WorkitemManagerExtension",
   "baseUri": "https://localhost:44367",
   "publisher": "bandik",
@@ -18,16 +18,16 @@
   },
   "contributions": [
     {
-      "id": "Bandik.WimDevOpExtension",
+      "id": "Bandik.WimDevOpExtension.beta",
       "type": "ms.vss-web.hub",
-      "description": "Add multiple pre-configured tasks to work items. (beta)",
+      "description": "Adds a 'WiM Extension Beta hub to the Work hub group. (beta)",
       "targets": [
         "ms.vss-work-web.work-hub-group"
       ],
       "properties": {
         "name": "WiM",
         "order": 99,
-        "uri": "Main.html",
+        "uri": "Test.html",
         "iconAsset": "bandik.WimDevOpExtension/images/icon.png",
         "_sharedData": {
           "assets": [
@@ -69,7 +69,7 @@
   ],
   "files": [
     {
-      "path": "Main.html",
+      "path": "Test.html",
       "addressable": true
     },
     {
