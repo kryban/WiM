@@ -450,14 +450,12 @@ function AddTasksButtonClicked(obj) {
 
     var jsonPatchDocs = CreateJsonPatchDocsForTasks(tasksToPairWithWorkitem);
 
-    PairTasksToWorkitem(jsonPatchDocs, parentWorkItem);
-
-    //(async () => {
-    //    await 
-    //        .then(function () {
-    //            alert("Taken toegevoegd.");
-    //        });
-    //})();
+    (async () => {
+        await PairTasksToWorkitem(jsonPatchDocs, parentWorkItem)
+            .then(function () {
+                alert("Taken toegevoegd.");
+            });
+    })();
 
     LoadTasksOnMainWindow(selectedTeam);
 }
@@ -476,20 +474,18 @@ async function PairTasksToWorkitem(docs, parent) {
 
     docs.forEach(
         function (jsonPatchDoc) {
-            var client; 
+            var client;
+
+            
                 require(["TFS/WorkItemTracking/Services", "TFS/WorkItemTracking/RestClient", "VSS/Service"],
                     function (_WorkItemServices, _WorkItemTrackingClient, _Service) {
                         client = _Service.getCollectionClient(_WorkItemTrackingClient.WorkItemTrackingHttpClient);
 
                         client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task").then(function (wi) {
                             numberOfTasksHandled++;//alert("Task created!");
-                            if (numberOfTasksHandled === docs.length) {
-                                var taakTaken = numberOfTasksHandled === 1 ? "taak" : "taken";
-                                alert(numberOfTasksHandled + " " + taakTaken + " toegevoegd aan PBI " + parent.id + " (" + parent.title +").");
-                                VSS.notifyLoadSucceeded();
-                            }
                         });
                     });
+
         });
 
     return await new Promise(function (resolve, reject) {
@@ -497,6 +493,8 @@ async function PairTasksToWorkitem(docs, parent) {
         resolve(numberOfTasksHandled);
     });
 }
+
+
 
 function CreateJsonPatchDocsForTasks(tasks) {
     var retval = [];
