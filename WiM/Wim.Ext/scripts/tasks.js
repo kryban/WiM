@@ -450,12 +450,14 @@ function AddTasksButtonClicked(obj) {
 
     var jsonPatchDocs = CreateJsonPatchDocsForTasks(tasksToPairWithWorkitem);
 
-    (async () => {
-        await PairTasksToWorkitem(jsonPatchDocs, parentWorkItem)
-            .then(function () {
-                alert("Taken toegevoegd.");
-            });
-    })();
+    PairTasksToWorkitem(jsonPatchDocs, parentWorkItem);
+
+    //(async () => {
+    //    await 
+    //        .then(function () {
+    //            alert("Taken toegevoegd.");
+    //        });
+    //})();
 
     LoadTasksOnMainWindow(selectedTeam);
 }
@@ -472,17 +474,44 @@ var numberOfTasksHandled;
 async function PairTasksToWorkitem(docs, parent) {
     numberOfTasksHandled = 0;
 
+    var container = $("#sample-container");
+
+    var options = {
+        target: $("#sample-container"),
+        //cancellable: true,
+        //cancelTextFormat: "{0} to cancel",
+        cancelCallback: function () {
+            console.log("cancelled");
+        }
+    };
+
     docs.forEach(
         function (jsonPatchDoc) {
             var client;
 
             
-                require(["TFS/WorkItemTracking/Services", "TFS/WorkItemTracking/RestClient", "VSS/Service"],
-                    function (_WorkItemServices, _WorkItemTrackingClient, _Service) {
+            require(["TFS/WorkItemTracking/Services", "TFS/WorkItemTracking/RestClient", "VSS/Service", "VSS/Controls", "VSS/Controls/StatusIndicator"],
+                function (_WorkItemServices, _WorkItemTrackingClient, _Service, Controls, StatusIndicator) {
                         client = _Service.getCollectionClient(_WorkItemTrackingClient.WorkItemTrackingHttpClient);
+
+                        //require(["VSS/Controls", "VSS/Controls/StatusIndicator"], function (Controls, StatusIndicator) {
+                    // Create the wait control in a container element
+                    var waitcontrol = Controls.create(StatusIndicator.WaitControl, container, options);
+                        //});
+
+                        //waitcontrol.startWait();
 
                         client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task").then(function (wi) {
                             numberOfTasksHandled++;//alert("Task created!");
+                            if (numberOfTasksHandled === docs.length) {
+
+                                var taakTaken = numberOfTasksHandled === 1 ? "taak" : "taken";
+                                alert(numberOfTasksHandled + " " + taakTaken + " toegevoegd aan PBI " + parent.id + " (" + parent.title + ").");
+
+                                //waitcontrol.endWait();
+
+                                VSS.notifyLoadSucceeded();
+                            }
                         });
                     });
 
