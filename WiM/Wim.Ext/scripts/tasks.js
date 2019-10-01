@@ -471,55 +471,56 @@ function reloadHost() {
 
 var numberOfTasksHandled;
 
-async function PairTasksToWorkitem(docs, parent) {
+function PairTasksToWorkitem(docs, parent) {
     numberOfTasksHandled = 0;
 
-    var container = $("#sample-container");
+    var container = $("#tasksContainer");
 
     var options = {
-        target: $("#sample-container"),
-        //cancellable: true,
+        //target: $("#tasksContainer"),
+        cancellable: true,
         //cancelTextFormat: "{0} to cancel",
-        cancelCallback: function () {
-            console.log("cancelled");
-        }
+        //cancelCallback: function () {
+        //    console.log("cancelled");
+        //}
     };
+
+    require(["VSS/Controls", "VSS/Controls/StatusIndicator"], function (Controls, StatusIndicator) {
+
+       var waitcontrol = Controls.create(StatusIndicator.WaitControl, container, options);
+
+    waitcontrol.startWait();
+    waitcontrol.setMessage("waiter waits.");
 
     docs.forEach(
         function (jsonPatchDoc) {
             var client;
-
             
-            require(["TFS/WorkItemTracking/Services", "TFS/WorkItemTracking/RestClient", "VSS/Service", "VSS/Controls", "VSS/Controls/StatusIndicator"],
+            require(["TFS/WorkItemTracking/Services", "TFS/WorkItemTracking/RestClient", "VSS/Service"],
                 function (_WorkItemServices, _WorkItemTrackingClient, _Service, Controls, StatusIndicator) {
                         client = _Service.getCollectionClient(_WorkItemTrackingClient.WorkItemTrackingHttpClient);
 
                         //require(["VSS/Controls", "VSS/Controls/StatusIndicator"], function (Controls, StatusIndicator) {
-                    // Create the wait control in a container element
-                    var waitcontrol = Controls.create(StatusIndicator.WaitControl, container, options);
-                        //});
-
-                        //waitcontrol.startWait();
-
                         client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task").then(function (wi) {
                             numberOfTasksHandled++;//alert("Task created!");
+
                             if (numberOfTasksHandled === docs.length) {
 
                                 var taakTaken = numberOfTasksHandled === 1 ? "taak" : "taken";
                                 alert(numberOfTasksHandled + " " + taakTaken + " toegevoegd aan PBI " + parent.id + " (" + parent.title + ").");
 
-                                //waitcontrol.endWait();
+                                waitcontrol.endWait();
 
                                 VSS.notifyLoadSucceeded();
                             }
                         });
+
+                    //waitcontrol.setMessage("waiter waits.");
+                    //waitcontrol.endWait();
                     });
 
         });
 
-    return await new Promise(function (resolve, reject) {
-        // the function is executed automatically when the promise is constructed
-        resolve(numberOfTasksHandled);
     });
 }
 

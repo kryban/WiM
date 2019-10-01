@@ -98,11 +98,13 @@
                     <label for="tasks-check-all-checkbox">All</label><br /><br />
                 </div>
 
-                <form name="tasksForm">
-                    <fieldset class="checkbox" id="task-checkbox" type="checkbox"></fieldset>
-                </form>
-                </br>
-                <Button type="button" id="addTasksButton" onclick="AddTasksButtonClicked()">Zetten</Button>
+                <div id="tasksContainer">
+                    <form name="tasksForm">
+                        <fieldset class="checkbox" id="task-checkbox" type="checkbox"></fieldset>
+                    </form>
+                    </br>
+                    <Button type="button" id="addTasksButton" onclick="AddTasksButtonClicked()">Zetten</Button>
+                </div>
             </div>
 
             <div id="combo-container"></div>
