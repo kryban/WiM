@@ -379,10 +379,6 @@ function LoadTasksOnMainWindow(teamnaam)
     });
 }
 
-//function SetChosenTeam(teamNaam){
-//    chosenTeam = teamNaam.substring("team_".length);
-//}
-
 function SetPageTitle(teamnaam) {
     selectedTeam = teamnaam;
     var pageTitleText = "Workitem Manager for Team " + selectedTeam.charAt(0).toUpperCase() + selectedTeam.slice(1);
@@ -421,24 +417,6 @@ function CheckUnckeck(obj)
     }
 }
 
-//require(["TFS/WorkItemTracking/Services", "TFS/WorkItemTracking/RestClient", "VSS/Service"], function (_WorkItemServices, _WorkItemTrackingClient, _Service) {
-//    var client = _Service.getCollectionClient(_WorkItemTrackingClient.WorkItemTrackingHttpClient);
-//}
-
-//var title = "something";
-//var area = "validArea";
-
-//var jsonPatchDoc = [
-//    {
-//        op: "add",
-//        path: "/fields/System.Title",
-//        value: title
-//    }];
-
-//client.createWorkItem(jsonPatchDoc, area, "Tâche").then(function (wi) {
-//    alert("Task created!");
-//});
-
 function AddTasksButtonClicked(obj) {
 
     CheckAllowedToAddTaskToPbi(parentWorkItem);
@@ -451,13 +429,6 @@ function AddTasksButtonClicked(obj) {
     var jsonPatchDocs = CreateJsonPatchDocsForTasks(tasksToPairWithWorkitem);
 
     PairTasksToWorkitem(jsonPatchDocs, parentWorkItem);
-
-    //(async () => {
-    //    await 
-    //        .then(function () {
-    //            alert("Taken toegevoegd.");
-    //        });
-    //})();
 
     LoadTasksOnMainWindow(selectedTeam);
 }
@@ -478,7 +449,7 @@ function PairTasksToWorkitem(docs, parent) {
 
     var options = {
         //target: $("#tasksContainer"),
-        cancellable: true,
+        //cancellable: true,
         //cancelTextFormat: "{0} to cancel",
         //cancelCallback: function () {
         //    console.log("cancelled");
@@ -487,7 +458,7 @@ function PairTasksToWorkitem(docs, parent) {
 
     require(["VSS/Controls", "VSS/Controls/StatusIndicator"], function (Controls, StatusIndicator) {
 
-       var waitcontrol = Controls.create(StatusIndicator.WaitControl, container, options);
+    var waitcontrol = Controls.create(StatusIndicator.WaitControl, container, options);
 
     waitcontrol.startWait();
     waitcontrol.setMessage("waiter waits.");
@@ -500,9 +471,9 @@ function PairTasksToWorkitem(docs, parent) {
                 function (_WorkItemServices, _WorkItemTrackingClient, _Service, Controls, StatusIndicator) {
                         client = _Service.getCollectionClient(_WorkItemTrackingClient.WorkItemTrackingHttpClient);
 
-                        //require(["VSS/Controls", "VSS/Controls/StatusIndicator"], function (Controls, StatusIndicator) {
-                        client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task").then(function (wi) {
-                            numberOfTasksHandled++;//alert("Task created!");
+                    client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task").then(function (wi) {
+
+                            numberOfTasksHandled++;
 
                             if (numberOfTasksHandled === docs.length) {
 
@@ -513,11 +484,8 @@ function PairTasksToWorkitem(docs, parent) {
 
                                 VSS.notifyLoadSucceeded();
                             }
-                        });
-
-                    //waitcontrol.setMessage("waiter waits.");
-                    //waitcontrol.endWait();
                     });
+                });
 
         });
 
