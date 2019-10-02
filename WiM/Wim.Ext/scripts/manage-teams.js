@@ -1,40 +1,4 @@
-﻿$(document).ready(function () {
-
-    console.log("dcument.Ready()")
-
-    var max_fields_limit = 7;
-    var x = 0;
-
-    $('.voeg_toe').click(function (e) {
-        e.preventDefault();
-        if (x < max_fields_limit) {
-            x++;
-            var inputId = "teamNaam" + x;
-            
-            $('.input_fields_container_part').append(
-                '<div>' +
-                '<input onchange="teamInpChangeHandler()" type="text" class="teamNaamInput" name="teamInpNaam" id="' + inputId + '" value="... teamnaam ... "/>' +
-                '<a href="#" class="remove_field" style="margin-left:10px;">Verwijder</a>' +
-                '</div>');
-        }
-    });
-
-    $('.input_fields_container_part').on("click", ".remove_field", function (e) {
-        e.preventDefault();
-        $(this).parent('div').remove();
-        teamInpChangeHandler();
-        x--;
-    });
-
-    var checkBoxes = Array.from(document.getElementsByClassName("checkbox"));
-    var addButton = document.getElementById("addTasksButton");
-
-    if (parentWorkItem === undefined || parentWorkItem === null) {
-        DisableItems(checkBoxes, addButton);
-    }
-
-});
-
+﻿
 VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
 
     dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
@@ -109,7 +73,6 @@ function teamInpChangeHandler() {
     });
 
     console.log("teamInpChangeHandler() ended :");
-
 }
 
 

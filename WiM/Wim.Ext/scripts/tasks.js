@@ -60,16 +60,47 @@ var Enm_JsonPatchOperations =
     Add: "add"
 };
 
+
+
+
 $(document).ready(function () {
 
     console.log("document.Ready()");
 
-    var max_fields_limit = 27;
+    //arbitrary maximum
+    var max_teamfields_limit = 7;
     var x = 0;
+
+
+
+    $('.voeg_toe').click(function (e) {
+        e.preventDefault();
+        if (x < max_teamfields_limit) {
+            alert("hoi");
+            x++;
+            var inputId = "teamNaam" + x;
+
+            $('.input_fields_container_part').append(
+                '<div>' +
+                '<input onchange="teamInpChangeHandler()" type="text" class="teamNaamInput" name="teamInpNaam" id="' + inputId + '" value="... teamnaam ... "/>' +
+                '<a href="#" class="remove_field" style="margin-left:10px;">Verwijder</a>' +
+                '</div>');
+        }
+    });
+
+    $('.input_fields_container_part').on("click", ".remove_field", function (e) {
+        e.preventDefault();
+        $(this).parent('div').remove();
+        teamInpChangeHandler();
+        x--;
+    });
+
+    var max_taskfields_limit = 27;
+    x = 0;
 
     $('.voeg_task_toe').click(function (e) {
         e.preventDefault();
-        if (x < max_fields_limit) {
+        if (x < max_taskfields_limit) {
             x++;
             var inputId = "taskNaam" + x;
 
@@ -89,6 +120,34 @@ $(document).ready(function () {
         x--;
     });
 
+    ////////////////
+    //var max_fields_limit = 8; //set limit for maximum input fields
+    //var i = 1; //initialize counter for text box
+    //$('.add_more_button').click(function (e) { //click event on add more fields button having class add_more_button
+    //    e.preventDefault();
+    //    if (i < max_fields_limit) { //check conditions
+    //        i++; //counter increment
+    //        //$('.input_fields_container_part').append('<div><input type="text" name="tags"/><a href="#" class="remove_field" style="margin-left:10px;">Remove</a></div>'); //add input field
+    //        $('.input_fields_container_part').append(
+    //            '<div>' +
+    //            '<input type="text" name="taskTitle"/>' +
+    //            '<input type="text" name="taskId"/>' +
+    //            '<input type="text" name="taskActivityType"/>' +
+    //            '<a href="#" class="remove_field" style="margin-left:10px;">Verwijder</a>' +
+    //            '</div>'); //add input field
+    //    }
+    //});
+    //$('.input_fields_container_part').on("click", ".remove_field", function (e) { //user click on remove text links
+    //    e.preventDefault(); $(this).parent('div').remove(); i--;
+    //});
+    ////////////////
+
+    var checkBoxes = Array.from(document.getElementsByClassName("checkbox"));
+    var addButton = document.getElementById("addTasksButton");
+
+    if (parentWorkItem === undefined || parentWorkItem === null) {
+        DisableItems(checkBoxes, addButton);
+    }
 });
 
 function ConfigureTasks(teamnaam) {
