@@ -25,6 +25,14 @@
         teamInpChangeHandler();
         x--;
     });
+
+    var checkBoxes = Array.from(document.getElementsByClassName("checkbox"));
+    var addButton = document.getElementById("addTasksButton");
+
+    if (parentWorkItem === undefined || parentWorkItem === null) {
+        DisableItems(checkBoxes, addButton);
+    }
+
 });
 
 VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {

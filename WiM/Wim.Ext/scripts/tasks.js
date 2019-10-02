@@ -150,7 +150,7 @@ function taskInpChangeHandler() {
 
     UpdateTasksDocs(t);
 
-    console.log("teamInpChangeHandler() ended :");
+    console.log("taskInpChangeHandler() ended :");
 }
 
 function UpdateTasksDocs(tasks)
@@ -180,14 +180,14 @@ function UpdateTasksDocs(tasks)
                 }
             );
 
-            // todo: refactor dit is nodig, zodat al er niets te verwijderen valt (1e opgevoerde regel bij nieuwe team)
+            // todo: refactor dit is nodig, zodat als er niets te verwijderen valt (1e opgevoerde regel bij nieuwe team)
             // dan toch nog toevoegingen uitgevoerd worden.
             if (!added) {
                 AddTasksDocs(tasks, selectedTeam);
                 added = true;
             }
 
-            console.log("teamInpChangeHandler() : adding new doc - " + newDoc.taskId);
+            console.log("taskInpChangeHandler() : adding new doc - " + newDoc.taskId);
 
         });
         VSS.notifyLoadSucceeded();
@@ -221,7 +221,7 @@ function AddTasksDocs(tasks, teamName)
                 console.log("teamInpChangeHandler() CreateDocument : " + doc.text);
             });
 
-            console.log("teamInpChangeHandler() : adding new doc - " + newDoc.taskId);
+            console.log("taskInpChangeHandler() : adding new doc - " + newDoc.taskId);
         }
         VSS.notifyLoadSucceeded();
     });
@@ -383,15 +383,6 @@ function SetPageTitle(teamnaam) {
     selectedTeam = teamnaam;
     var pageTitleText = "Workitem Manager for Team " + selectedTeam.charAt(0).toUpperCase() + selectedTeam.slice(1);
     document.getElementById("pageTitle").innerHTML = pageTitleText;
-}
-
-function GetTeamFromPageTitle() {
-    var fullTitle = document.getElementById("pageTitle").innerHTML.value;
-
-    var substringVanaf = "Workitem Manager for Team ".length;
-    var parsedTeamnaam = fullTitle.substring(substringVanaf);
-
-    return parsedTeamnaam;
 }
 
 function CheckUnckeck(obj)
@@ -609,25 +600,25 @@ function GetSelectedCheckboxes(allCheckboxes) {
     return retval;
 }
 
-function FindTask(tasks, selection) {
+//function FindTask(tasks, selection) {
 
-    var retval;
+//    var retval;
 
-    tasks.forEach(
-        function (element) {
-            if (element.id === selection.id)
-            {
-                retval = element;
-            }
-        });
+//    tasks.forEach(
+//        function (element) {
+//            if (element.id === selection.id)
+//            {
+//                retval = element;
+//            }
+//        });
 
-    return retval;
-}
+//    return retval;
+//}
 
-function AddTaskToWorkitem(task)
-{
-    alert("Adding task: " + task.title);
-}
+//function AddTaskToWorkitem(task)
+//{
+//    alert("Adding task: " + task.title);
+//}
 
 function SetTeamInAction(teamnaam) {
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
