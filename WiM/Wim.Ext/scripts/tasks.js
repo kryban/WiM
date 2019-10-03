@@ -61,24 +61,19 @@ var Enm_JsonPatchOperations =
 };
 
 
-
-
-$(document).ready(function () {
-
+document.addEventListener('DOMContentLoaded', function (event) {
     console.log("document.Ready()");
 
     //arbitrary maximum
     var max_teamfields_limit = 7;
-    var x = 0;
-
-
+    var t = 0;
 
     $('.voeg_toe').click(function (e) {
         e.preventDefault();
-        if (x < max_teamfields_limit) {
+        if (t < max_teamfields_limit) {
             alert("hoi");
-            x++;
-            var inputId = "teamNaam" + x;
+            t++;
+            var inputId = "teamNaam" + t;
 
             $('.input_fields_container_part').append(
                 '<div>' +
@@ -148,6 +143,7 @@ $(document).ready(function () {
     if (parentWorkItem === undefined || parentWorkItem === null) {
         DisableItems(checkBoxes, addButton);
     }
+
 });
 
 function ConfigureTasks(teamnaam) {
