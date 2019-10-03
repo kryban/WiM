@@ -68,52 +68,63 @@ document.addEventListener('DOMContentLoaded', function (event) {
     var max_teamfields_limit = 7;
     var t = 0;
 
-    $('.voeg_toe').click(function (e) {
-        e.preventDefault();
-        if (t < max_teamfields_limit) {
-            alert("hoi");
-            t++;
-            var inputId = "teamNaam" + t;
+    document.getElementById('voegTeamToe').onclick =
+        function (e) {
+            e.preventDefault();
+            if (t < max_teamfields_limit) {
+                alert("hoi");
+                t++;
+                var inputId = "teamNaam" + t;
 
-            $('.input_fields_container_part').append(
-                '<div>' +
-                '<input onchange="teamInpChangeHandler()" type="text" class="teamNaamInput" name="teamInpNaam" id="' + inputId + '" value="... teamnaam ... "/>' +
-                '<a href="#" class="remove_field" style="margin-left:10px;">Verwijder</a>' +
-                '</div>');
-        }
-    });
+                $('.input_fields_container_part').append(
+                    '<div>' +
+                    '<input onchange="teamInpChangeHandler()" type="text" class="teamNaamInput" name="teamInpNaam" id="' + inputId + '" value="... teamnaam ... "/>' +
+                    '<a href="#" id="removeField" class="remove_field" style="margin-left:10px;">Verwijder</a>' +
+                    '</div>');
+            }
+        };
 
-    $('.input_fields_container_part').on("click", ".remove_field", function (e) {
-        e.preventDefault();
-        $(this).parent('div').remove();
-        teamInpChangeHandler();
-        x--;
-    });
+    document.getElementById('removeField').onclick =
+        function (e) {
+            e.preventDefault();
+            $(this).parent('div').remove();
+            teamInpChangeHandler();
+            x--;
+        };
+
+    //$('.input_fields_container_part').on("click", ".remove_field", function (e) {
+    //    e.preventDefault();
+    //    $(this).parent('div').remove();
+    //    teamInpChangeHandler();
+    //    x--;
+    //});
 
     var max_taskfields_limit = 27;
     x = 0;
 
-    $('.voeg_task_toe').click(function (e) {
-        e.preventDefault();
-        if (x < max_taskfields_limit) {
-            x++;
-            var inputId = "taskNaam" + x;
+    document.getElementById('voegTaskToe').onclick =
+        function (e) {
+            e.preventDefault();
+            if (x < max_taskfields_limit) {
+                x++;
+                var inputId = "taskNaam" + x;
 
-            $('.tasks_input_fields_container_part').append(
-                '<div class="taskInputRow">' +
-                '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value="... taskNaam ... "/>' +
-                '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="... taskActivityType ... "/>' +
-                '<a href="#" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
-                '</div>');
-        }
-    });
+                $('.tasks_input_fields_container_part').append(
+                    '<div class="taskInputRow">' +
+                    '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value="... taskNaam ... "/>' +
+                    '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="... taskActivityType ... "/>' +
+                    '<a href="#" id="removeTaskField" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
+                    '</div>');
+            }
+        };
 
-    $('.tasks_input_fields_container_part').on("click", ".remove_task_field", function (e) {
-        e.preventDefault();
-        $(this).parent('div').remove();
-        taskInpChangeHandler();
-        x--;
-    });
+    document.getElementById('removeTaskField').onclick =
+        function (e) {
+            e.preventDefault();
+            $(this).parent('div').remove();
+            taskInpChangeHandler();
+            x--;
+        };
 
     ////////////////
     //var max_fields_limit = 8; //set limit for maximum input fields
