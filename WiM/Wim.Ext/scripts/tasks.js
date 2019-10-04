@@ -64,28 +64,28 @@ var Enm_JsonPatchOperations =
 document.addEventListener('DOMContentLoaded', function (event) {
     console.log("document.Ready()");
 
-    //arbitrary maximum
-    var max_teamfields_limit = 7;
-    var t = 0;
+    ////arbitrary maximum
+    //var max_teamfields_limit = 7;
+    //var t = 0;
 
-    var addTeam = document.getElementById('voegTeamToe');
-    if (addTeam !== null) {
-        addTeam.onclick =
-            function (e) {
-                e.preventDefault();
-                if (t < max_teamfields_limit) {
-                    alert("hoi");
-                    t++;
-                    var inputId = "teamNaam" + t;
+    //var addTeam = document.getElementById('voegTeamToe');
+    //if (addTeam !== null) {
+    //    addTeam.onclick =
+    //        function (e) {
+    //            e.preventDefault();
+    //            if (t < max_teamfields_limit) {
+    //                alert("hoi");
+    //                t++;
+    //                var inputId = "teamNaam" + t;
 
-                    $('.input_fields_container_part').append(
-                        '<div>' +
-                        '<input onchange="teamInpChangeHandler()" type="text" class="teamNaamInput" name="teamInpNaam" id="' + inputId + '" value="... teamnaam ... "/>' +
-                        '<a href="#" onclick="removeFieldClickHandler(this)" class="remove_field" style="margin-left:10px;">Verwijderrr</a>' +
-                        '</div>');
-                }
-            };
-    }
+    //                $('.input_fields_container_part').append(
+    //                    '<div>' +
+    //                    '<input onchange="teamInpChangeHandler()" type="text" class="teamNaamInput" name="teamInpNaam" id="' + inputId + '" value="... teamnaam ... "/>' +
+    //                    '<a href="#" onclick="removeFieldClickHandler(this)" class="remove_field" style="margin-left:10px;">Verwijderrr</a>' +
+    //                    '</div>');
+    //            }
+    //        };
+    //}
 
     //var removeLinks = document.getElementsByClassName('removeField');
     //if (removeLinks !== null) {
@@ -107,27 +107,27 @@ document.addEventListener('DOMContentLoaded', function (event) {
     //    x--;
     //});
 
-    var max_taskfields_limit = 27;
-    x = 0;
+    //var max_taskfields_limit = 27;
+    //x = 0;
 
-    var addTasks = document.getElementById('voegTaskToe');
-    if (addTasks !== null) {
-        addTasks.onclick =
-            function (e) {
-                e.preventDefault();
-                if (x < max_taskfields_limit) {
-                    x++;
-                    var inputId = "taskNaam" + x;
+    //var addTasks = document.getElementById('voegTaskToe');
+    //if (addTasks !== null) {
+    //    addTasks.onclick =
+    //        function (e) {
+    //            e.preventDefault();
+    //            if (x < max_taskfields_limit) {
+    //                x++;
+    //                var inputId = "taskNaam" + x;
 
-                    $('.tasks_input_fields_container_part').append(
-                        '<div class="taskInputRow">' +
-                        '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value="... taskNaam ... "/>' +
-                        '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="... taskActivityType ... "/>' +
-                        '<a href="#" onclick="removeFieldClickHandler(this)" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
-                        '</div>');
-                }
-            };
-    }
+    //                $('.tasks_input_fields_container_part').append(
+    //                    '<div class="taskInputRow">' +
+    //                    '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value="... taskNaam ... "/>' +
+    //                    '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="... taskActivityType ... "/>' +
+    //                    '<a href="#" onclick="removeFieldClickHandler(this)" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
+    //                    '</div>');
+    //            }
+    //        };
+    //}
 
     //var removeTasks = document.getElementById('removeTaskField');
     //if (removeTasks !== null) {
@@ -185,6 +185,23 @@ function removeFieldClickHandler(obj) {
 
 }
 
+function addTaskToConfigurationHandler(obj) {
+
+    var max_taskfields_limit = 27;
+    x = 0;
+    alert("foo");
+    if (x < max_taskfields_limit) {
+        x++;
+        var inputId = "taskNaam" + x;
+
+        $('.tasks_input_fields_container_part').append(
+            '<div class="taskInputRow">' +
+            '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value="... taskNaam ... "/>' +
+            '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="... taskActivityType ... "/>' +
+            '<a href="#" onclick="removeFieldClickHandler(this)" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
+            '</div>');
+    }
+}
 
 function ConfigureTasks(teamnaam) {
     var substringVanaf = "tasks_".length;

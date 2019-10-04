@@ -75,5 +75,23 @@ function teamInpChangeHandler() {
     console.log("teamInpChangeHandler() ended :");
 }
 
+function addTeamHandler(obj) {
+    //arbitrary maximum
+    var max_teamfields_limit = 7;
+    var t = 0;
+
+    if (t < max_teamfields_limit) {
+        alert("hoihoi");
+        t++;
+        var inputId = "teamNaam" + t;
+
+        $('.input_fields_container_part').append(
+            '<div>' +
+            '<input onchange="teamInpChangeHandler()" type="text" class="teamNaamInput" name="teamInpNaam" id="' + inputId + '" value="... teamnaam ... "/>' +
+            '<a href="#" onclick="removeFieldClickHandler(this)" class="remove_field" style="margin-left:10px;">Verwijder</a>' +
+            '</div>');
+    }
+}
+
 
 
