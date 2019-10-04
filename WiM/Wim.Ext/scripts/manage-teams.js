@@ -15,7 +15,7 @@ VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
                 $('.input_fields_container_part').append(
                     '<div>' +
                     '<input onchange="teamInpChangeHandler()" type="text" class="teamNaamInput" name="teamInpNaam" id="' + inputId +'" value="' + element.text + '"/>' +
-                    '<a href="#" class="remove_field" style="margin-left:10px;">Verwijder</a>' +
+                    '<a href="#" onclick="removeFieldClickHandler(this)" class="remove_field" style="margin-left:10px;">Verwijder</a>' +
                     '</div>');
             }
         );

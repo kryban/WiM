@@ -68,29 +68,37 @@ document.addEventListener('DOMContentLoaded', function (event) {
     var max_teamfields_limit = 7;
     var t = 0;
 
-    document.getElementById('voegTeamToe').onclick =
-        function (e) {
-            e.preventDefault();
-            if (t < max_teamfields_limit) {
-                alert("hoi");
-                t++;
-                var inputId = "teamNaam" + t;
+    var addTeam = document.getElementById('voegTeamToe');
+    if (addTeam !== null) {
+        addTeam.onclick =
+            function (e) {
+                e.preventDefault();
+                if (t < max_teamfields_limit) {
+                    alert("hoi");
+                    t++;
+                    var inputId = "teamNaam" + t;
 
-                $('.input_fields_container_part').append(
-                    '<div>' +
-                    '<input onchange="teamInpChangeHandler()" type="text" class="teamNaamInput" name="teamInpNaam" id="' + inputId + '" value="... teamnaam ... "/>' +
-                    '<a href="#" id="removeField" class="remove_field" style="margin-left:10px;">Verwijder</a>' +
-                    '</div>');
-            }
-        };
+                    $('.input_fields_container_part').append(
+                        '<div>' +
+                        '<input onchange="teamInpChangeHandler()" type="text" class="teamNaamInput" name="teamInpNaam" id="' + inputId + '" value="... teamnaam ... "/>' +
+                        '<a href="#" onclick="removeFieldClickHandler(this)" class="remove_field" style="margin-left:10px;">Verwijderrr</a>' +
+                        '</div>');
+                }
+            };
+    }
 
-    document.getElementById('removeField').onclick =
-        function (e) {
-            e.preventDefault();
-            $(this).parent('div').remove();
-            teamInpChangeHandler();
-            x--;
-        };
+    //var removeLinks = document.getElementsByClassName('removeField');
+    //if (removeLinks !== null) {
+    //    removeLinks.forEach(function (element) {
+    //        element.onclick =
+    //            function (e) {
+    //                e.preventDefault();
+    //                $(this).parent('div').remove();
+    //                teamInpChangeHandler();
+    //                x--;
+    //            };
+    //    });
+    //}
 
     //$('.input_fields_container_part').on("click", ".remove_field", function (e) {
     //    e.preventDefault();
@@ -102,29 +110,38 @@ document.addEventListener('DOMContentLoaded', function (event) {
     var max_taskfields_limit = 27;
     x = 0;
 
-    document.getElementById('voegTaskToe').onclick =
-        function (e) {
-            e.preventDefault();
-            if (x < max_taskfields_limit) {
-                x++;
-                var inputId = "taskNaam" + x;
+    var addTasks = document.getElementById('voegTaskToe');
+    if (addTasks !== null) {
+        addTasks.onclick =
+            function (e) {
+                e.preventDefault();
+                if (x < max_taskfields_limit) {
+                    x++;
+                    var inputId = "taskNaam" + x;
 
-                $('.tasks_input_fields_container_part').append(
-                    '<div class="taskInputRow">' +
-                    '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value="... taskNaam ... "/>' +
-                    '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="... taskActivityType ... "/>' +
-                    '<a href="#" id="removeTaskField" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
-                    '</div>');
-            }
-        };
+                    $('.tasks_input_fields_container_part').append(
+                        '<div class="taskInputRow">' +
+                        '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value="... taskNaam ... "/>' +
+                        '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="... taskActivityType ... "/>' +
+                        '<a href="#" onclick="removeFieldClickHandler(this)" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
+                        '</div>');
+                }
+            };
+    }
 
-    document.getElementById('removeTaskField').onclick =
-        function (e) {
-            e.preventDefault();
-            $(this).parent('div').remove();
-            taskInpChangeHandler();
-            x--;
-        };
+    //var removeTasks = document.getElementById('removeTaskField');
+    //if (removeTasks !== null) {
+    //    removeTasks.forEach(function (element) {
+    //        element.onclick =
+    //            function (e) {
+    //                e.preventDefault();
+    //                $(this).parent('div').remove();
+    //                taskInpChangeHandler();
+    //                x--;
+    //            };
+    //        }
+    //    );
+    //}
 
     ////////////////
     //var max_fields_limit = 8; //set limit for maximum input fields
@@ -151,11 +168,23 @@ document.addEventListener('DOMContentLoaded', function (event) {
     var checkBoxes = Array.from(document.getElementsByClassName("checkbox"));
     var addButton = document.getElementById("addTasksButton");
 
-    if (parentWorkItem === undefined || parentWorkItem === null) {
+
+    if (checkBoxes !== null && addButton !== null &&
+        (parentWorkItem === undefined || parentWorkItem === null)) {
         DisableItems(checkBoxes, addButton);
     }
-
 });
+
+function removeFieldClickHandler(obj) {
+
+    while (obj.parentNode.firstChild) {
+        obj.parentNode.removeChild(obj.parentNode.firstChild);
+    }
+    teamInpChangeHandler();
+    x--;
+
+}
+
 
 function ConfigureTasks(teamnaam) {
     var substringVanaf = "tasks_".length;
@@ -367,7 +396,7 @@ function LoadTeamTasks(selection)
                         '<div class="taskInputRow">' +
                         '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value="' + element.title + '" />' +
                         '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="' + element.activityType + '" />' +
-                        '<a href="#" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
+                        '<a href="#" onclick="removeFieldClickHandler(this)" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
                         '</div>');
                 }
             );
