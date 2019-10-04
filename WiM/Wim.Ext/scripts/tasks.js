@@ -175,13 +175,27 @@ document.addEventListener('DOMContentLoaded', function (event) {
     }
 });
 
-function removeFieldClickHandler(obj) {
+function removeTeamFieldClickHandler(obj) {
 
-    while (obj.parentNode.firstChild) {
-        obj.parentNode.removeChild(obj.parentNode.firstChild);
+    if (obj !== null) {
+        while (obj.parentNode !== null && obj.parentNode.firstChild) {
+            obj.parentNode.removeChild(obj.parentNode.firstChild);
+        }
     }
     teamInpChangeHandler();
-    x--;
+    //x--;
+
+}
+
+function removeTaskFieldClickHandler(obj) {
+
+    if (obj !== null) {
+        while (obj.parentNode !== null && obj.parentNode.firstChild) {
+            obj.parentNode.removeChild(obj.parentNode.firstChild);
+        }
+    }
+    taskInpChangeHandler();
+    //x--;
 
 }
 
@@ -198,7 +212,7 @@ function addTaskToConfigurationHandler(obj) {
             '<div class="taskInputRow">' +
             '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value="... taskNaam ... "/>' +
             '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="... taskActivityType ... "/>' +
-            '<a href="#" onclick="removeFieldClickHandler(this)" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
+            '<a href="#" onclick="removeTaskFieldClickHandler(this)" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
             '</div>');
     }
 }
@@ -413,7 +427,7 @@ function LoadTeamTasks(selection)
                         '<div class="taskInputRow">' +
                         '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value="' + element.title + '" />' +
                         '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="' + element.activityType + '" />' +
-                        '<a href="#" onclick="removeFieldClickHandler(this)" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
+                        '<a href="#" onclick="removeTaskFieldClickHandler(this)" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
                         '</div>');
                 }
             );
