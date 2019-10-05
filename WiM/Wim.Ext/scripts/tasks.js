@@ -64,110 +64,8 @@ var Enm_JsonPatchOperations =
 document.addEventListener('DOMContentLoaded', function (event) {
     console.log("document.Ready()");
 
-    ////arbitrary maximum
-    //var max_teamfields_limit = 7;
-    //var t = 0;
-
-    //var addTeam = document.getElementById('voegTeamToe');
-    //if (addTeam !== null) {
-    //    addTeam.onclick =
-    //        function (e) {
-    //            e.preventDefault();
-    //            if (t < max_teamfields_limit) {
-    //                alert("hoi");
-    //                t++;
-    //                var inputId = "teamNaam" + t;
-
-    //                $('.input_fields_container_part').append(
-    //                    '<div>' +
-    //                    '<input onchange="teamInpChangeHandler()" type="text" class="teamNaamInput" name="teamInpNaam" id="' + inputId + '" value="... teamnaam ... "/>' +
-    //                    '<a href="#" onclick="removeFieldClickHandler(this)" class="remove_field" style="margin-left:10px;">Verwijderrr</a>' +
-    //                    '</div>');
-    //            }
-    //        };
-    //}
-
-    //var removeLinks = document.getElementsByClassName('removeField');
-    //if (removeLinks !== null) {
-    //    removeLinks.forEach(function (element) {
-    //        element.onclick =
-    //            function (e) {
-    //                e.preventDefault();
-    //                $(this).parent('div').remove();
-    //                teamInpChangeHandler();
-    //                x--;
-    //            };
-    //    });
-    //}
-
-    //$('.input_fields_container_part').on("click", ".remove_field", function (e) {
-    //    e.preventDefault();
-    //    $(this).parent('div').remove();
-    //    teamInpChangeHandler();
-    //    x--;
-    //});
-
-    //var max_taskfields_limit = 27;
-    //x = 0;
-
-    //var addTasks = document.getElementById('voegTaskToe');
-    //if (addTasks !== null) {
-    //    addTasks.onclick =
-    //        function (e) {
-    //            e.preventDefault();
-    //            if (x < max_taskfields_limit) {
-    //                x++;
-    //                var inputId = "taskNaam" + x;
-
-    //                $('.tasks_input_fields_container_part').append(
-    //                    '<div class="taskInputRow">' +
-    //                    '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value="... taskNaam ... "/>' +
-    //                    '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="... taskActivityType ... "/>' +
-    //                    '<a href="#" onclick="removeFieldClickHandler(this)" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
-    //                    '</div>');
-    //            }
-    //        };
-    //}
-
-    //var removeTasks = document.getElementById('removeTaskField');
-    //if (removeTasks !== null) {
-    //    removeTasks.forEach(function (element) {
-    //        element.onclick =
-    //            function (e) {
-    //                e.preventDefault();
-    //                $(this).parent('div').remove();
-    //                taskInpChangeHandler();
-    //                x--;
-    //            };
-    //        }
-    //    );
-    //}
-
-    ////////////////
-    //var max_fields_limit = 8; //set limit for maximum input fields
-    //var i = 1; //initialize counter for text box
-    //$('.add_more_button').click(function (e) { //click event on add more fields button having class add_more_button
-    //    e.preventDefault();
-    //    if (i < max_fields_limit) { //check conditions
-    //        i++; //counter increment
-    //        //$('.input_fields_container_part').append('<div><input type="text" name="tags"/><a href="#" class="remove_field" style="margin-left:10px;">Remove</a></div>'); //add input field
-    //        $('.input_fields_container_part').append(
-    //            '<div>' +
-    //            '<input type="text" name="taskTitle"/>' +
-    //            '<input type="text" name="taskId"/>' +
-    //            '<input type="text" name="taskActivityType"/>' +
-    //            '<a href="#" class="remove_field" style="margin-left:10px;">Verwijder</a>' +
-    //            '</div>'); //add input field
-    //    }
-    //});
-    //$('.input_fields_container_part').on("click", ".remove_field", function (e) { //user click on remove text links
-    //    e.preventDefault(); $(this).parent('div').remove(); i--;
-    //});
-    ////////////////
-
     var checkBoxes = Array.from(document.getElementsByClassName("checkbox"));
     var addButton = document.getElementById("addTasksButton");
-
 
     if (checkBoxes !== null && addButton !== null &&
         (parentWorkItem === undefined || parentWorkItem === null)) {
@@ -183,8 +81,6 @@ function removeTeamFieldClickHandler(obj) {
         }
     }
     teamInpChangeHandler();
-    //x--;
-
 }
 
 function removeTaskFieldClickHandler(obj) {
@@ -195,26 +91,54 @@ function removeTaskFieldClickHandler(obj) {
         }
     }
     taskInpChangeHandler();
-    //x--;
-
 }
 
 function addTaskToConfigurationHandler(obj) {
 
-    var max_taskfields_limit = 27;
-    x = 0;
-    alert("foo");
-    if (x < max_taskfields_limit) {
-        x++;
-        var inputId = "taskNaam" + x;
+    var taskInputRowNode = document.createElement("div");
+    taskInputRowNode.setAttribute("class", "taskInputRow");
 
-        $('.tasks_input_fields_container_part').append(
-            '<div class="taskInputRow">' +
-            '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value="... taskNaam ... "/>' +
-            '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="... taskActivityType ... "/>' +
-            '<a href="#" onclick="removeTaskFieldClickHandler(this)" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
-            '</div>');
-    }
+    var taskNaamInputNode = document.createElement("input");
+    taskNaamInputNode.setAttribute("onchange", "taskInpChangeHandler()");
+    taskNaamInputNode.setAttribute("type", "text");
+    taskNaamInputNode.setAttribute("value", "... taskNaam ... ");
+    taskNaamInputNode.setAttribute("name", "taskInpNaam");
+    taskNaamInputNode.setAttribute("class", "taskNaamInput");
+
+    var taskActivityTypeInputNode = document.createElement("input");
+    taskActivityTypeInputNode.setAttribute("onchange", "taskInpChangeHandler()");
+    taskActivityTypeInputNode.setAttribute("type", "text");
+    taskActivityTypeInputNode.setAttribute("value", "... taskActivityType ...");
+    taskActivityTypeInputNode.setAttribute("name", "taskActivityType");
+    taskActivityTypeInputNode.setAttribute("class", "taskActivityTypeInput");
+
+    var removeTaskFieldNode = document.createElement("a");
+    removeTaskFieldNode.setAttribute("onclick", "removeTaskFieldClickHandler(this)");
+    removeTaskFieldNode.setAttribute("href", "#");
+    removeTaskFieldNode.setAttribute("type", "text");
+    removeTaskFieldNode.setAttribute("value", "... taskActivityType ...");
+    removeTaskFieldNode.setAttribute("style", "margin-left:10px;");
+    removeTaskFieldNode.setAttribute("class", "remove_task_field");
+    removeTaskFieldNode.innerText = "Verwijder taak";
+    
+    //var labelNode = document.createElement("label");
+    //labelNode.setAttribute("for", element.id);
+    //labelNode.innerHTML = element.title;
+    var taskInputContainer = document.getElementsByClassName("tasks_input_fields_container_part")[0];
+
+    taskInputContainer.appendChild(taskInputRowNode);
+    taskInputRowNode.appendChild(taskNaamInputNode);
+    taskInputRowNode.appendChild(taskActivityTypeInputNode);
+    taskInputRowNode.appendChild(removeTaskFieldNode);
+    taskInputRowNode.appendChild(document.createElement("br"));
+
+    //document.getElementsByClassName("tasks_input_fields_container_part").appendChild(new);
+    //    $('.tasks_input_fields_container_part').append(
+    //        '<div class="taskInputRow">' +
+    //        '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" value="... taskNaam ... "/>' +
+    //        '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" value="... taskActivityType ... "/>' +
+    //        '<a href="#" onclick="removeTaskFieldClickHandler(this)" class="remove_task_field" style=""margin-left:10px;">Verwijder taak</a>' +
+    //        '</div>');
 }
 
 function ConfigureTasks(teamnaam) {
