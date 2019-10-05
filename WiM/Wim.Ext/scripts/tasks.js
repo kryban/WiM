@@ -93,7 +93,10 @@ function removeTaskFieldClickHandler(obj) {
     taskInpChangeHandler();
 }
 
-function addTaskToConfigurationHandler(obj) {
+function addTaskToConfigurationHandler(title, type) {
+
+    var taskTitle = title !== null ? title : "... taskNaam ... ";
+    var tastType = type !== null ? type : "... taskActivityType ...";
 
     var taskInputRowNode = document.createElement("div");
     taskInputRowNode.setAttribute("class", "taskInputRow");
@@ -101,22 +104,22 @@ function addTaskToConfigurationHandler(obj) {
     var taskNaamInputNode = document.createElement("input");
     taskNaamInputNode.setAttribute("onchange", "taskInpChangeHandler()");
     taskNaamInputNode.setAttribute("type", "text");
-    taskNaamInputNode.setAttribute("value", "... taskNaam ... ");
+    taskNaamInputNode.setAttribute("value", taskTitle);
     taskNaamInputNode.setAttribute("name", "taskInpNaam");
     taskNaamInputNode.setAttribute("class", "taskNaamInput");
 
     var taskActivityTypeInputNode = document.createElement("input");
     taskActivityTypeInputNode.setAttribute("onchange", "taskInpChangeHandler()");
     taskActivityTypeInputNode.setAttribute("type", "text");
-    taskActivityTypeInputNode.setAttribute("value", "... taskActivityType ...");
+    taskActivityTypeInputNode.setAttribute("value", type);
     taskActivityTypeInputNode.setAttribute("name", "taskActivityType");
     taskActivityTypeInputNode.setAttribute("class", "taskActivityTypeInput");
 
     var removeTaskFieldNode = document.createElement("a");
     removeTaskFieldNode.setAttribute("onclick", "removeTaskFieldClickHandler(this)");
     removeTaskFieldNode.setAttribute("href", "#");
-    removeTaskFieldNode.setAttribute("type", "text");
-    removeTaskFieldNode.setAttribute("value", "... taskActivityType ...");
+    //removeTaskFieldNode.setAttribute("type", "text");
+    //removeTaskFieldNode.setAttribute("value", "... taskActivityType ...");
     removeTaskFieldNode.setAttribute("style", "margin-left:10px;");
     removeTaskFieldNode.setAttribute("class", "remove_task_field");
     removeTaskFieldNode.innerText = "Verwijder taak";
@@ -344,15 +347,17 @@ function LoadTeamTasks(selection)
 
             teamTasks.forEach(
                 function (element) {
-                    var inputId = "teamNaam" + x;
-                    x++;
+                    //var inputId = "teamNaam" + x;
+                    //x++;
 
-                    $('.tasks_input_fields_container_part').append(
-                        '<div class="taskInputRow">' +
-                        '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value="' + element.title + '" />' +
-                        '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="' + element.activityType + '" />' +
-                        '<a href="#" onclick="removeTaskFieldClickHandler(this)" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
-                        '</div>');
+                    addTaskToConfigurationHandler(element.title, element.activityType);
+
+                    //$('.tasks_input_fields_container_part').append(
+                    //    '<div class="taskInputRow">' +
+                    //    '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value="' + element.title + '" />' +
+                    //    '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="' + element.activityType + '" />' +
+                    //    '<a href="#" onclick="removeTaskFieldClickHandler(this)" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
+                    //    '</div>');
                 }
             );
             VSS.notifyLoadSucceeded();
