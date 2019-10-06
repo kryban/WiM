@@ -108,12 +108,57 @@ function addTaskToConfigurationHandler(title, type) {
     taskNaamInputNode.setAttribute("name", "taskInpNaam");
     taskNaamInputNode.setAttribute("class", "taskNaamInput");
 
-    var taskActivityTypeInputNode = document.createElement("input");
-    taskActivityTypeInputNode.setAttribute("onchange", "taskInpChangeHandler()");
-    taskActivityTypeInputNode.setAttribute("type", "text");
-    taskActivityTypeInputNode.setAttribute("value", type);
-    taskActivityTypeInputNode.setAttribute("name", "taskActivityType");
-    taskActivityTypeInputNode.setAttribute("class", "taskActivityTypeInput");
+    //var taskActivityTypeInputNode = document.createElement("input");
+    //taskActivityTypeInputNode.setAttribute("onchange", "taskInpChangeHandler()");
+    //taskActivityTypeInputNode.setAttribute("type", "text");
+    //taskActivityTypeInputNode.setAttribute("value", type);
+    //taskActivityTypeInputNode.setAttribute("name", "taskActivityType");
+    //taskActivityTypeInputNode.setAttribute("class", "taskActivityTypeInput");
+
+    var taskActivityTypeSelectNode = document.createElement("select");
+    taskActivityTypeSelectNode.setAttribute("class", "taskActivityTypeSelect");
+    taskActivityTypeSelectNode.setAttribute("onchange", "taskInpChangeHandler()");
+
+    var taskActivityTypeOptionNode1 = document.createElement("option");
+    taskActivityTypeOptionNode1.setAttribute("class", "taskActivityTypeOption");
+    var taskActivityTypeOptionNode2 = document.createElement("option");
+    taskActivityTypeOptionNode2.setAttribute("class", "taskActivityTypeOption");
+    var taskActivityTypeOptionNode3 = document.createElement("option");
+    taskActivityTypeOptionNode3.setAttribute("class", "taskActivityTypeOption");
+    var taskActivityTypeOptionNode4 = document.createElement("option");
+    taskActivityTypeOptionNode4.setAttribute("class", "taskActivityTypeOption");
+    var taskActivityTypeOptionNode5 = document.createElement("option");
+    taskActivityTypeOptionNode5.setAttribute("class", "taskActivityTypeOption");
+    var taskActivityTypeOptionNode6 = document.createElement("option");
+    taskActivityTypeOptionNode6.setAttribute("class", "taskActivityTypeOption");
+
+    taskActivityTypeOptionNode1.innerText = "Deployment";
+    if (type === taskActivityTypeOptionNode1.innerText) {
+        taskActivityTypeOptionNode1.setAttribute("selected","selected");
+    }
+    taskActivityTypeOptionNode2.innerText = "Design";
+    if (type === taskActivityTypeOptionNode2.innerText) {
+        taskActivityTypeOptionNode2.setAttribute("selected", "selected");
+    }
+    taskActivityTypeOptionNode3.innerText = "Development";
+    if (type === taskActivityTypeOptionNode3.innerText) {
+        taskActivityTypeOptionNode3.setAttribute("selected", "selected");
+    }
+    taskActivityTypeOptionNode4.innerText = "Documentation";
+    if (type === taskActivityTypeOptionNode4.innerText) {
+        taskActivityTypeOptionNode4.setAttribute("selected", "selected");
+    }
+    taskActivityTypeOptionNode5.innerText = "Requirement";
+    if (type === taskActivityTypeOptionNode5.innerText) {
+        taskActivityTypeOptionNode5.setAttribute("selected", "selected");
+    }
+    taskActivityTypeOptionNode6.innerText = "Testing";
+    if (type === taskActivityTypeOptionNode6.innerText) {
+        taskActivityTypeOptionNode6.setAttribute("selected", "selected");
+    }
+
+
+    //https://www.w3schools.com/tags/tag_select.asp
 
     var removeTaskFieldNode = document.createElement("a");
     removeTaskFieldNode.setAttribute("onclick", "removeTaskFieldClickHandler(this)");
@@ -131,7 +176,14 @@ function addTaskToConfigurationHandler(title, type) {
 
     taskInputContainer.appendChild(taskInputRowNode);
     taskInputRowNode.appendChild(taskNaamInputNode);
-    taskInputRowNode.appendChild(taskActivityTypeInputNode);
+    //taskInputRowNode.appendChild(taskActivityTypeInputNode);
+    taskInputRowNode.appendChild(taskActivityTypeSelectNode);
+    taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode1);
+    taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode2);
+    taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode3);
+    taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode4);
+    taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode5);
+    taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode6);
     taskInputRowNode.appendChild(removeTaskFieldNode);
     taskInputRowNode.appendChild(document.createElement("br"));
 
@@ -516,6 +568,12 @@ function PairTasksToWorkitem(docs, parent) {
             require(["TFS/WorkItemTracking/Services", "TFS/WorkItemTracking/RestClient", "VSS/Service"],
                 function (_WorkItemServices, _WorkItemTrackingClient, _Service, Controls, StatusIndicator) {
                         client = _Service.getCollectionClient(_WorkItemTrackingClient.WorkItemTrackingHttpClient);
+
+                    client.getField("Activity", parent.workItemProjectName).then(function (field) {
+                        var foo; 
+                        foo = field;
+                        var bar = foo;
+                    });
 
                     client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task").then(function (wi) {
 
