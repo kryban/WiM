@@ -573,24 +573,25 @@ function PairTasksToWorkitem(docs, parent) {
     waitcontrol.startWait();
     waitcontrol.setMessage("waiter waits.");
 
+    var workItemPromises = [];
+
     docs.forEach(
-        function (jsonPatchDoc) {
-            client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task").then(
-                function () {
-                    numberOfTasksHandled++;
+        (jsonPatchDoc) => {
+            numberOfTasksHandled++;
+            workItemPromises.push(client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task"));
+        }
+    );
 
-                    if (numberOfTasksHandled === docs.length) {
+    Promise.all(workItemPromises).then(
+        () => {
+            var taakTaken = numberOfTasksHandled === 1 ? "taak" : "taken";
+            alert(numberOfTasksHandled + " " + taakTaken + " toegevoegd aan PBI " + parent.id + " (" + parent.title + ").");
 
-                        var taakTaken = numberOfTasksHandled === 1 ? "taak" : "taken";
-                        alert(numberOfTasksHandled + " " + taakTaken + " toegevoegd aan PBI " + parent.id + " (" + parent.title + ").");
+            waitcontrol.endWait();
 
-                        waitcontrol.endWait();
-
-                        VSS.notifyLoadSucceeded();
-                    }
-                }
-            );
-        });
+            VSS.notifyLoadSucceeded();
+        }
+    );
 }
 
 function CreateJsonPatchDocsForTasks(tasks) {
