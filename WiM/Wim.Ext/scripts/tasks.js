@@ -566,6 +566,9 @@ function PairTasksToWorkitem(docs, parent) {
     var controls = require("VSS/Controls");
     var statusindicator = require("VSS/Controls/StatusIndicator");
     var waitcontrol = controls.create(statusindicator.WaitControl, container, options);
+    var vssService = require("VSS/Service");
+    var wiTrackingClient = require("TFS/WorkItemTracking/RestClient");
+    var client = vssService.getCollectionClient(wiTrackingClient.WorkItemTrackingHttpClient);
 
     waitcontrol.startWait();
     waitcontrol.setMessage("waiter waits.");
@@ -574,15 +577,9 @@ function PairTasksToWorkitem(docs, parent) {
         function (jsonPatchDoc) {
             var client;
 
-            require(["TFS/WorkItemTracking/Services", "TFS/WorkItemTracking/RestClient", "VSS/Service"],
-                function (_WorkItemServices, _WorkItemTrackingClient, _Service) {
-                    client = _Service.getCollectionClient(_WorkItemTrackingClient.WorkItemTrackingHttpClient);
-
-                    client.getField("Activity", parent.workItemProjectName).then(function (field) {
-                        var foo;
-                        foo = field;
-                        var bar = foo;
-                    });
+            require(["TFS/WorkItemTracking/Services", "TFS/WorkItemTracking/RestClient"],
+                function (_WorkItemServices, _WorkItemTrackingClient) {
+                    client = vssService.getCollectionClient(_WorkItemTrackingClient.WorkItemTrackingHttpClient);
 
                     client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task").then(function (wi) {
 
