@@ -563,9 +563,9 @@ function PairTasksToWorkitem(docs, parent) {
         //}
     };
 
-    require(["VSS/Controls", "VSS/Controls/StatusIndicator"], function (Controls, StatusIndicator) {
-
-    var waitcontrol = Controls.create(StatusIndicator.WaitControl, container, options);
+    var controls = require("VSS/Controls");
+    var statusindicator = require("VSS/Controls/StatusIndicator");
+    var waitcontrol = controls.create(statusindicator.WaitControl, container, options);
 
     waitcontrol.startWait();
     waitcontrol.setMessage("waiter waits.");
@@ -573,36 +573,34 @@ function PairTasksToWorkitem(docs, parent) {
     docs.forEach(
         function (jsonPatchDoc) {
             var client;
-            
+
             require(["TFS/WorkItemTracking/Services", "TFS/WorkItemTracking/RestClient", "VSS/Service"],
-                function (_WorkItemServices, _WorkItemTrackingClient, _Service, Controls, StatusIndicator) {
-                        client = _Service.getCollectionClient(_WorkItemTrackingClient.WorkItemTrackingHttpClient);
+                function (_WorkItemServices, _WorkItemTrackingClient, _Service) {
+                    client = _Service.getCollectionClient(_WorkItemTrackingClient.WorkItemTrackingHttpClient);
 
                     client.getField("Activity", parent.workItemProjectName).then(function (field) {
-                        var foo; 
+                        var foo;
                         foo = field;
                         var bar = foo;
                     });
 
                     client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task").then(function (wi) {
 
-                            numberOfTasksHandled++;
+                        numberOfTasksHandled++;
 
-                            if (numberOfTasksHandled === docs.length) {
+                        if (numberOfTasksHandled === docs.length) {
 
-                                var taakTaken = numberOfTasksHandled === 1 ? "taak" : "taken";
-                                alert(numberOfTasksHandled + " " + taakTaken + " toegevoegd aan PBI " + parent.id + " (" + parent.title + ").");
+                            var taakTaken = numberOfTasksHandled === 1 ? "taak" : "taken";
+                            alert(numberOfTasksHandled + " " + taakTaken + " toegevoegd aan PBI " + parent.id + " (" + parent.title + ").");
 
-                                waitcontrol.endWait();
+                            waitcontrol.endWait();
 
-                                VSS.notifyLoadSucceeded();
-                            }
+                            VSS.notifyLoadSucceeded();
+                        }
                     });
                 });
 
         });
-
-    });
 }
 
 
