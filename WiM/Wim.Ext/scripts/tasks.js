@@ -575,32 +575,23 @@ function PairTasksToWorkitem(docs, parent) {
 
     docs.forEach(
         function (jsonPatchDoc) {
-            var client;
+            client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task").then(
+                function () {
+                    numberOfTasksHandled++;
 
-            require(["TFS/WorkItemTracking/Services", "TFS/WorkItemTracking/RestClient"],
-                function (_WorkItemServices, _WorkItemTrackingClient) {
-                    client = vssService.getCollectionClient(_WorkItemTrackingClient.WorkItemTrackingHttpClient);
+                    if (numberOfTasksHandled === docs.length) {
 
-                    client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task").then(function (wi) {
+                        var taakTaken = numberOfTasksHandled === 1 ? "taak" : "taken";
+                        alert(numberOfTasksHandled + " " + taakTaken + " toegevoegd aan PBI " + parent.id + " (" + parent.title + ").");
 
-                        numberOfTasksHandled++;
+                        waitcontrol.endWait();
 
-                        if (numberOfTasksHandled === docs.length) {
-
-                            var taakTaken = numberOfTasksHandled === 1 ? "taak" : "taken";
-                            alert(numberOfTasksHandled + " " + taakTaken + " toegevoegd aan PBI " + parent.id + " (" + parent.title + ").");
-
-                            waitcontrol.endWait();
-
-                            VSS.notifyLoadSucceeded();
-                        }
-                    });
-                });
-
+                        VSS.notifyLoadSucceeded();
+                    }
+                }
+            );
         });
 }
-
-
 
 function CreateJsonPatchDocsForTasks(tasks) {
     var retval = [];
