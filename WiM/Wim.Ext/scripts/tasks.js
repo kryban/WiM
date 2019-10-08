@@ -93,16 +93,19 @@ function removeTaskFieldClickHandler(obj) {
     taskInpChangeHandler();
 }
 
+var defaultTaskTitle = "Taak titel";
 function addTaskToConfigurationHandler(title, type) {
 
-    var taskTitle = title !== null ? title : "... taskNaam ... ";
-    var tastType = type !== null ? type : "... taskActivityType ...";
+    var taskTitle = (title !== null && typeof title !== "undefined") ? title : defaultTaskTitle;
+    //var tastType = type !== null ? type : "... taskActivityType ...";
 
     var taskInputRowNode = document.createElement("div");
     taskInputRowNode.setAttribute("class", "taskInputRow");
 
     var taskNaamInputNode = document.createElement("input");
     taskNaamInputNode.setAttribute("onchange", "taskInpChangeHandler()");
+    taskNaamInputNode.setAttribute("onblur", "taskInpChangeHandler(obj)");
+    taskNaamInputNode.setAttribute("onfocus", "removeDefaultTextHandler(this)");
     taskNaamInputNode.setAttribute("type", "text");
     taskNaamInputNode.setAttribute("value", taskTitle);
     taskNaamInputNode.setAttribute("name", "taskInpNaam");
@@ -194,6 +197,12 @@ function addTaskToConfigurationHandler(title, type) {
     //        '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" value="... taskActivityType ... "/>' +
     //        '<a href="#" onclick="removeTaskFieldClickHandler(this)" class="remove_task_field" style=""margin-left:10px;">Verwijder taak</a>' +
     //        '</div>');
+}
+
+function removeDefaultTextHandler(focusedObject) {
+    if (focusedObject.value === defaultTaskTitle || focusedOject.innerText === defaultTeamName) {
+        focusedObject.value = "";
+    }
 }
 
 function ConfigureTasks(teamnaam) {
