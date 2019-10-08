@@ -60,7 +60,6 @@ var Enm_JsonPatchOperations =
     Add: "add"
 };
 
-
 document.addEventListener('DOMContentLoaded', function (event) {
     console.log("document.Ready()");
 
@@ -97,7 +96,6 @@ var defaultTaskTitle = "Taak titel";
 function addTaskToConfigurationHandler(title, type) {
 
     var taskTitle = (title !== null && typeof title !== "undefined") ? title : defaultTaskTitle;
-    //var tastType = type !== null ? type : "... taskActivityType ...";
 
     var taskInputRowNode = document.createElement("div");
     taskInputRowNode.setAttribute("class", "taskInputRow");
@@ -110,13 +108,6 @@ function addTaskToConfigurationHandler(title, type) {
     taskNaamInputNode.setAttribute("value", taskTitle);
     taskNaamInputNode.setAttribute("name", "taskInpNaam");
     taskNaamInputNode.setAttribute("class", "taskNaamInput");
-
-    //var taskActivityTypeInputNode = document.createElement("input");
-    //taskActivityTypeInputNode.setAttribute("onchange", "taskInpChangeHandler()");
-    //taskActivityTypeInputNode.setAttribute("type", "text");
-    //taskActivityTypeInputNode.setAttribute("value", type);
-    //taskActivityTypeInputNode.setAttribute("name", "taskActivityType");
-    //taskActivityTypeInputNode.setAttribute("class", "taskActivityTypeInput");
 
     var taskActivityTypeSelectNode = document.createElement("select");
     taskActivityTypeSelectNode.setAttribute("class", "taskActivityTypeSelect");
@@ -160,43 +151,30 @@ function addTaskToConfigurationHandler(title, type) {
         taskActivityTypeOptionNode6.setAttribute("selected", "selected");
     }
 
-
-    //https://www.w3schools.com/tags/tag_select.asp
-
     var removeTaskFieldNode = document.createElement("a");
     removeTaskFieldNode.setAttribute("onclick", "removeTaskFieldClickHandler(this)");
     removeTaskFieldNode.setAttribute("href", "#");
-    //removeTaskFieldNode.setAttribute("type", "text");
-    //removeTaskFieldNode.setAttribute("value", "... taskActivityType ...");
     removeTaskFieldNode.setAttribute("style", "margin-left:10px;");
     removeTaskFieldNode.setAttribute("class", "remove_task_field");
     removeTaskFieldNode.innerText = "Verwijder taak";
     
-    //var labelNode = document.createElement("label");
-    //labelNode.setAttribute("for", element.id);
-    //labelNode.innerHTML = element.title;
     var taskInputContainer = document.getElementsByClassName("tasks_input_fields_container_part")[0];
 
     taskInputContainer.appendChild(taskInputRowNode);
+
     taskInputRowNode.appendChild(taskNaamInputNode);
-    //taskInputRowNode.appendChild(taskActivityTypeInputNode);
     taskInputRowNode.appendChild(taskActivityTypeSelectNode);
+
     taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode1);
     taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode2);
     taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode3);
     taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode4);
     taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode5);
     taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode6);
+
     taskInputRowNode.appendChild(removeTaskFieldNode);
     taskInputRowNode.appendChild(document.createElement("br"));
 
-    //document.getElementsByClassName("tasks_input_fields_container_part").appendChild(new);
-    //    $('.tasks_input_fields_container_part').append(
-    //        '<div class="taskInputRow">' +
-    //        '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" value="... taskNaam ... "/>' +
-    //        '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" value="... taskActivityType ... "/>' +
-    //        '<a href="#" onclick="removeTaskFieldClickHandler(this)" class="remove_task_field" style=""margin-left:10px;">Verwijder taak</a>' +
-    //        '</div>');
 }
 
 function removeDefaultTextHandler(focusedObject) {
@@ -217,11 +195,9 @@ function OpenTaskConfiguratieDialoog(teamNaam) {
 
     VSS.getService(VSS.ServiceIds.Dialog).then(function (dialogService) {
 
-        // Build absolute contribution ID for dialogContent
         var extensionCtx = VSS.getExtensionContext();
         var contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".manage-tasks";
 
-        // Show dialog
         var dialogOptions = {
             title: "Manage tasks"
             , height: 400
@@ -275,7 +251,6 @@ function UpdateTasksDocs(tasks)
 
             // delete only tasks setting. Not other settings
             var taskDocs = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
-            //var taskDocs = allTasks.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
 
             console.log("teamInpChangeHandler(): Emptying task settings." + taskDocs.length + " settings will be removed.");
 
@@ -306,7 +281,6 @@ function UpdateTasksDocs(tasks)
         });
         VSS.notifyLoadSucceeded();
     });
-
 }
 
 function AddTasksDocs(tasks, teamName)
@@ -331,7 +305,6 @@ function AddTasksDocs(tasks, teamName)
             };
 
             dataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
-                // Even if no ID was passed to createDocument, one will be generated
                 console.log("teamInpChangeHandler() CreateDocument : " + doc.text);
             });
 
@@ -348,7 +321,6 @@ function TeamSelectedHandler(obj) {
     }
     console.log('TeamSelectedHandler() clicked: ' + selectedTeam);
     LoadTeamTasks(selectedTeam);
-    console.log('LoadTeamTasks();');
 }
 
 function CreateTeamSelectElementInitially() {
@@ -362,15 +334,22 @@ function CreateTeamSelectElementInitially() {
             var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
             console.log("Initial load team settings : " + teamDocs.length + " out of " + docs.length + " settings.");
 
+            var teamSelectNode = document.getElementsByClassName("teamSelect")[0];
+
             teamDocs.forEach(
                 function (element) {
 
                     var inputId = "teamNaam" + x;
                     x++;
 
-                    $('#teamSelect').append(
-                        '<option class="teamSelectOption" id="' + inputId + '" value="' + element.text + '" onchange="TeamSelectedHandler(this)">' + element.text + '</option>'
-                    );
+                    var teamSelecectOption = document.createElement("option");
+                    teamSelecectOption.setAttribute("class", "teamSelectOption");
+                    teamSelecectOption.setAttribute("id", inputId);
+                    teamSelecectOption.setAttribute("value", element.text);
+                    teamSelecectOption.setAttribute("onchange", "TeamSelectedHandler(this)");
+                    teamSelecectOption.innerText = element.text;
+
+                    teamSelectNode.appendChild(teamSelecectOption);
                 }
             );
 
@@ -395,7 +374,6 @@ function LoadTeamTasks(selection)
             }
             // only team task setting. Not other settings
             var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === selection; });
-            //var teamTasks = allTasks.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
 
             console.log("Initial load task settings : " + teamTasks.length + " out of " + teamTasks.length + " settings.");
 
@@ -408,17 +386,7 @@ function LoadTeamTasks(selection)
 
             teamTasks.forEach(
                 function (element) {
-                    //var inputId = "teamNaam" + x;
-                    //x++;
-
                     addTaskToConfigurationHandler(element.title, element.activityType);
-
-                    //$('.tasks_input_fields_container_part').append(
-                    //    '<div class="taskInputRow">' +
-                    //    '<input onchange="taskInpChangeHandler()" type="text" class="taskNaamInput" name="taskInpNaam" id="' + inputId + '" value="' + element.title + '" />' +
-                    //    '<input onchange="taskInpChangeHandler()" type="text" class="taskActivityTypeInput" name="taskActivityType" id="' + inputId + '" value="' + element.activityType + '" />' +
-                    //    '<a href="#" onclick="removeTaskFieldClickHandler(this)" class="remove_task_field" style="margin-left:10px;">Verwijder taak</a>' +
-                    //    '</div>');
                 }
             );
             VSS.notifyLoadSucceeded();
@@ -450,26 +418,18 @@ function LoadTasksOnMainWindow(teamnaam)
         taskFieldSet.removeChild(taskFieldSet.firstChild);
     }
 
-    //var breakNode = document.createElement("br");
-    //var legendNode = document.createElement("legend");
-    //legendNode.innerHTML = "Voeg taken toe";
-
-    //taskFieldSet.appendChild(legendNode);
-    //taskFieldSet.appendChild(breakNode);
-
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
 
         dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
             console.log("LoadTeamTasks() : " + docs.length);
             var x = 0;
 
-            // only team task setting. Not other settings
+            // only team task setting. Not other settings or other tam tasks
             var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam.toLowerCase(); });
-            //var teamTasks = allTasks.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
 
             console.log("LoadTasks()");
 
-            // nu alles weer opbouwen
+            // build up again
             teamTasks.forEach(
                 function (element) {
                     var inputNode = document.createElement("input");
@@ -529,7 +489,6 @@ function AddTasksButtonClicked(obj) {
     CheckAllowedToAddTaskToPbi(parentWorkItem);
     var taskCheckboxes = document.getElementsByName("taskcheckbox");
     var selectedCheckboxes = GetSelectedCheckboxes(taskCheckboxes);
-    //var tasks = FindTeamTaskCollection();
 
     var tasksToPairWithWorkitem = CreateTasksToAdd(selectedCheckboxes);
 
