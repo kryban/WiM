@@ -1,17 +1,4 @@
-﻿<!--<!DOCTYPE html>
-<html>
-<head>
-    <title>Hello World</title>
-    <script src="sdk/scripts/VSS.SDK.js"></script>
-</head>
-<body>
-    <script type="text/javascript">VSS.init();</script>
-    <h1>Hello World</h1>
-    <script type="text/javascript">VSS.notifyLoadSucceeded();</script>
-</body>
-</html>-->
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -81,7 +68,7 @@
 
             <div class="open-existing-work-item">
                 <label for="existing-wit-id">PBI:</label>
-                <input id="existing-wit-id" value="workitem ID" onfocus="ExistingWitFieldFocussed()">
+                <input id="existing-wit-id" value="workitem ID" onfocus="ExistingWitFieldFocussed()" onkeypress="MainPageEnterPressed(event)">
                 <Button id="existing-wit-button" type="button" value="Open..." onclick="OpenButtonClicked(this)">Open</Button>
             </div>
 

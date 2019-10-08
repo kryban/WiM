@@ -74,6 +74,13 @@ function OpenButtonClicked(obj) {
         );
 }
 
+function MainPageEnterPressed(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        OpenButtonClicked();
+    }
+}
+
 function CheckAllowedToAddTaskToPbi(parentWorkItem) {
     if (parentWorkItem.workItemType !== "Product Backlog Item" && parentWorkItem.workItemType !== "Bug") {
         return false;
