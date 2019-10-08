@@ -116,7 +116,7 @@ function addTeamHandler(name) {
     //removeTaskFieldNode.setAttribute("value", "... taskActivityType ...");
     removeTeamFieldNode.setAttribute("style", "margin-left:10px;");
     removeTeamFieldNode.setAttribute("class", "remove_field");
-    removeTeamFieldNode.innerText = "Verwijder team";
+    removeTeamFieldNode.innerText = "Verwijder teamm";
 
     //var labelNode = document.createElement("label");
     //labelNode.setAttribute("for", element.id);
