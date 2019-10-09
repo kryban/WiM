@@ -109,7 +109,7 @@ function addTaskToConfigurationHandler(title, type) {
 
     var taskNaamInputNode = document.createElement("input");
     taskNaamInputNode.setAttribute("onchange", "taskInpChangeHandler()");
-    taskNaamInputNode.setAttribute("onblur", "taskInpChangeHandler(obj)");
+    taskNaamInputNode.setAttribute("onblur", "taskInpChangeHandler()");
     taskNaamInputNode.setAttribute("onfocus", "removeDefaultTextHandler(this)");
     taskNaamInputNode.setAttribute("type", "text");
     taskNaamInputNode.setAttribute("value", taskTitle);
@@ -271,6 +271,7 @@ function UpdateTasksDocs(tasks)
                             AddTasksDocs(tasks, selectedTeam);
                             added = true;
                         }
+                        //log("add here ? ")
                     });
                 }
             );
