@@ -73,6 +73,7 @@
     <Content Include="scripts\defaultSettings.js" />
     <Content Include="scripts\manage-teams.js" />
     <Content Include="scripts\require.js" />
+    <Content Include="scripts\startup.js" />
     <Content Include="teamsettings-form.html" />
     <Content Include="doc\Learned.txt" />
     <Content Include="HelloWorld.html" />

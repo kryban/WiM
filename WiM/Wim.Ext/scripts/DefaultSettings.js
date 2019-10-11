@@ -1,4 +1,4 @@
-﻿var TeamSettingsCollectionName = "WimCollection";
+﻿
 
 //DeleteAll();
 //DeleteCurrentTeams();
