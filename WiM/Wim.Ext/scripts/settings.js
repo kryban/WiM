@@ -3,7 +3,7 @@
 //see all settings
 //http://krylp:8080/tfs/DefaultCollection/_apis/ExtensionManagement/InstalledExtensions/bandik/WimDevOpExtension/Data/Scopes/Default/Current/Collections/WimCollection/Documents
 //DeleteCurrentTeams();
-//CreateTeams();
+CreateTeams();
 
 var TeamSettingsCollectionName = "WimCollection";
 var configuredTeams = [];
@@ -61,19 +61,7 @@ function OpenTeamsConfiguratieDialoog(title) {
     });
 }
 
-function DeleteCurrentTeams() {
-    console.log("DeleteCurrentTeams()");
-    DeleteAllSettings();
-}
 
-function CreateTeams() {
-    console.log("CreateTeams() executing");
-    SetTeamSettingsNew("Xtreme");
-    SetTeamSettingsNew("Committers");
-    SetTeamSettingsNew("Test");
-    SetTeamSettingsNew("NieuweTest");
-    console.log("CreateTeamsNew() executed.");
-}
 
 //function executeInOrder(callback) {
 //    callback();
@@ -84,69 +72,6 @@ function GetTeams() {
     GetAllTeamSettings();
 }
 
-function DeleteAllSettings() {
-
-    console.log("DeleteAllettings()");
-
-    VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
-        // Get all document under the collection
-        dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-            //console.log("There are " + docs.length + " in the collection.");
-            docs.forEach(
-                function (element) {
-                    DeleteTeamSettings(dataService, element.id, element.text);
-                }
-            );
-            VSS.notifyLoadSucceeded();
-        });
-
-        VSS.notifyLoadSucceeded();
-    });
-}
-
-function SetTeamSettingsNew(teamName) {
-
-    console.log("SetTeamSettingsNew(): " + teamName);
-
-    VSS.getService(VSS.ServiceIds.ExtensionData).then(
-        function (dataservice) {
-            dataservice.getDocuments(TeamSettingsCollectionName).then(
-                function (docs) {
-                    console.log("GetAllTeamSettingsNew :" + docs.length);
-                    configuredTeams = [];
-                    docs.forEach(
-                        function (element) {
-                            configuredTeams.push(element);
-                        }
-                    );
-
-                    result = configuredTeams.find(obj => obj.text === teamName);
-                    console.log("checkNew: " + result);
-
-                    if (typeof result === 'undefined') {
-
-                        var newDoc = {
-                            type: "team",
-                            text: teamName
-                        };
-
-                        dataservice.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
-                            // Even if no ID was passed to createDocument, one will be generated
-                            console.log("SetTeamSetting (CreateTeamsNew) : " + doc.text);
-                        });
-
-                        console.log("SettingNew NOT exists.");
-                    }
-
-                    console.log("SettingNew ALREADY exists.");
-
-                    VSS.notifyLoadSucceeded();
-                }
-            );
-
-            VSS.notifyLoadSucceeded();
-        });
-}
 
 function getExistingSettings(dataservice) {
 
@@ -236,26 +161,6 @@ function GetAllTeamSettings() {
 
             VSS.notifyLoadSucceeded();
             return docs;
-        });
-        VSS.notifyLoadSucceeded();
-    });
-}
-
-function DeleteTeamSettings(dservice, docId, docText) {
-
-    console.log("DeleteTeamSettings() " + docId + " " + docText);
-
-    if (dservice !== null) {
-        dservice.deleteDocument(TeamSettingsCollectionName, docId).then(function () {
-            console.log("Doc verwijderd");
-            VSS.notifyLoadSucceeded();
-        });
-    }
-
-    VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
-        dataService.deleteDocument(TeamSettingsCollectionName, docId).then(function () {
-            console.log("Doc verwijderddd");
-            VSS.notifyLoadSucceeded();
         });
         VSS.notifyLoadSucceeded();
     });
