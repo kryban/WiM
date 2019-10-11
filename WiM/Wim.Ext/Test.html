@@ -97,6 +97,22 @@
             <div id="combo-container"></div>
         </div>
 
+        <dialog id="manage-teams-dialog">
+            <form method="dialog">
+                <h2 id="header">Manage teamsssss</h2>
+
+                <div class="input_fields_container_part" id="teamInputFields">
+                    <div>
+                        <!--<input type="text" name="tags">-->
+                        <button onclick="addTeamHandler(this)" id="voegTeamToe" class="btn btn-sm btn-primary voeg_toe">Voeg toe</button>
+                    </div>
+                </div>
+                <menu>
+                    <button value="cancel">Cancel</button>
+                    <button id="confirmBtn" value="default">Confirm</button>
+                </menu>
+            </form>
+        </dialog>
 
         <script src="scripts/startup.js"></script>
         <script src="scripts/settings.js"></script>
@@ -109,8 +125,8 @@
 
         <script>
 
-            // default start
-            // LoadTasksOnMainWindow("team_xtreme");
+                    // default start
+                    // LoadTasksOnMainWindow("team_xtreme");
         </script>
 
     </div>

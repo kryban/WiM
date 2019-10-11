@@ -20,47 +20,101 @@ var extenralSetted;
 
 function OpenTeamsConfiguratieDialoog(title) {
 
-    VSS.getService(VSS.ServiceIds.Dialog).then(function (dialogService) {
+    //VSS.getService(VSS.ServiceIds.Dialog).then(function (dialogService) {
 
-        var extensionCtx = VSS.getExtensionContext();
-        var contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".manage-teams";
+    //    var extensionCtx = VSS.getExtensionContext();
+    //    var contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".manage-teams";
 
-        var dialogOptions = {
-            title: "Manage teams"
-            , height: 500
-            //, okText: "OK"
-            , cancelText: "Annuleer" 
-            , getDialogResult: function () {
-              }
-            , okCallback: function (result) {
-                VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService) {
-                    // Reload whole page
-                    console.log("navigationService.reload()");
-                    navigationService.reload();
-                    VSS.notifyLoadSucceeded();
-                });
-            }
-        };
+    //    var dialogOptions = {
+    //        title: "Manage teams"
+    //        , height: 500
+    //        , okText: "OKK"
+    //        //, cancelText: "Annuleer" 
+    //        , getDialogResult: function () {
+    //          }
+    //        , okCallback: function (result) {
+    //            VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService) {
+    //                // Reload whole page
+    //               log("navigationService.reload()");
+    //                navigationService.reload();
+    //                VSS.notifyLoadSucceeded();
+    //            });
+    //        }
+    //    };
 
-        dialogService.openDialog(contributionId, dialogOptions).then(
-            function (dialog) {
+    //    dialogService.openDialog(contributionId, dialogOptions).then(
+    //        function (dialog) {
 
-                dialog
-                    .getContributionInstance("Bandik.WimDevOpExtension.manage-teams")
-                    .then(function(manageTeamsinstance) {
-                        teamsForm = manageTeamsinstance;
-                    }
-                );
+    //            dialog
+    //                .getContributionInstance("Bandik.WimDevOpExtension.manage-teams")
+    //                .then(function(manageTeamsinstance) {
+    //                    teamsForm = manageTeamsinstance;
+    //                }
+    //            );
 
-                dialog.updateOkButton(true);
-                VSS.notifyLoadSucceeded();
-            }
-        );
+    //            dialog.updateOkButton(true);
+    //            VSS.notifyLoadSucceeded();
+    //        }
+    //    );
 
-        VSS.notifyLoadSucceeded();
+    //    VSS.notifyLoadSucceeded();
+    //});
+
+    //var updateButton = document.getElementById('updateDetails');
+    var favDialog = document.getElementById('manage-teams-dialog');
+    //var outputBox = document.getElementsByTagName('output')[0];
+    //var selectEl = document.getElementsByTagName('select')[0];
+    var confirmBtn = document.getElementById('confirmBtn');
+
+    if (typeof favDialog.showModal === "function") {
+        favDialog.showModal();
+    } else {
+        alert("The dialog API is not supported by this browser");
+    }
+
+    // “Update details” button opens the <dialog> modally
+    //updateButton.addEventListener('click', function onOpen() {
+    //    if (typeof favDialog.showModal === "function") {
+    //        favDialog.showModal();
+    //    } else {
+    //        alert("The dialog API is not supported by this browser");
+    //    }
+    //});
+    // "Favorite animal" input sets the value of the submit button
+    //selectEl.addEventListener('change', function onSelect(e) {
+    //    confirmBtn.value = selectEl.value;
+    //});
+    // "Confirm" button of form triggers "close" on dialog because of [method="dialog"]
+    favDialog.addEventListener('close', function onClose() {
+        teamInpChangeHandler();
+        log("closing teamsettings");
     });
 }
 
+//(function () {
+//    var updateButton = document.getElementById('updateDetails');
+//    var favDialog = document.getElementById('favDialog');
+//    var outputBox = document.getElementsByTagName('output')[0];
+//    var selectEl = document.getElementsByTagName('select')[0];
+//    var confirmBtn = document.getElementById('confirmBtn');
+
+//    // “Update details” button opens the <dialog> modally
+//    updateButton.addEventListener('click', function onOpen() {
+//        if (typeof favDialog.showModal === "function") {
+//            favDialog.showModal();
+//        } else {
+//            alert("The dialog API is not supported by this browser");
+//        }
+//    });
+//    // "Favorite animal" input sets the value of the submit button
+//    selectEl.addEventListener('change', function onSelect(e) {
+//        confirmBtn.value = selectEl.value;
+//    });
+//    // "Confirm" button of form triggers "close" on dialog because of [method="dialog"]
+//    favDialog.addEventListener('close', function onClose() {
+//        outputBox.value = favDialog.returnValue + " button clicked - " + (new Date()).toString();
+//    });
+//})();
 
 
 //function executeInOrder(callback) {

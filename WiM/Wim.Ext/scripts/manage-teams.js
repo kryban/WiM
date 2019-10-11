@@ -100,8 +100,8 @@ function addTeamHandler(name) {
     //teamRowNode.setAttribute("class", "taskInputRow");
 
     var teamNaamInputNode = document.createElement("input");
-    teamNaamInputNode.setAttribute("onchange", "teamInpChangeHandler()");
-    teamNaamInputNode.setAttribute("onblur", "teamInpChangeHandler()");
+    //teamNaamInputNode.setAttribute("onchange", "teamInpChangeHandler()");
+    //teamNaamInputNode.setAttribute("onblur", "teamInpChangeHandler()");
     teamNaamInputNode.setAttribute("onfocus", "removeDefaultTextHandler(this)");
     teamNaamInputNode.setAttribute("type", "text");
     teamNaamInputNode.setAttribute("value", teamTitle);

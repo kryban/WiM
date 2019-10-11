@@ -167,7 +167,7 @@ function addTaskToConfigurationHandler(title, type) {
 }
 
 function removeDefaultTextHandler(focusedObject) {
-    if (focusedObject.value === defaultTaskTitle || focusedOject.innerText === defaultTeamName) {
+    if (focusedObject.value === defaultTaskTitle || focusedObject.innerText === defaultTeamName) {
         focusedObject.value = "";
     }
     log();
