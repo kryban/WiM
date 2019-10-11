@@ -66,16 +66,58 @@ function log(txt) {
 }
 
 document.addEventListener('DOMContentLoaded', function (event) {
+
+    ControleerSettingsCollection();
+    SetCheckBoxes();
+    MaakMenu();
+
+    log("document.Ready()");
+});
+
+function ControleerSettingsCollection() {
+    try
+    {
+        FindCollection();
+    }
+    catch (e)
+    {
+        CreateFirstTimeCollection();
+    }
+}
+
+function FindCollection()
+{
+    VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
+        dataService.getDocuments(TeamSettingsCollectionName);
+    });
+    log("Found");
+}
+
+function CreateFirstTimeCollection() {
+    VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
+
+        var newDoc = {
+            type: "team",
+            text: "DefaultTeam"
+        };
+
+        dataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
+            log(doc.text);
+        });
+    });
+
+    log();
+
+}
+
+function SetCheckBoxes() {
     var checkBoxes = Array.from(document.getElementsByClassName("checkbox"));
     var addButton = document.getElementById("addTasksButton");
-
     if (checkBoxes !== null && addButton !== null &&
         (parentWorkItem === undefined || parentWorkItem === null)) {
         DisableItems(checkBoxes, addButton);
     }
-
-    log("document.Ready()");
-});
+}
 
 function removeTeamFieldClickHandler(obj) {
 

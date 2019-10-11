@@ -1,7 +1,7 @@
 ﻿var TeamSettingsCollectionName = "WimCollection";
 
 //DeleteAll();
-DeleteCurrentTeams();
+//DeleteCurrentTeams();
 //CreateTeams();
 
 

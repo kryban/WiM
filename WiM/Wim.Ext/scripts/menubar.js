@@ -1,87 +1,90 @@
 ﻿
 
-MaakMenu();
-
 function MaakMenu() {
     VSS.require(["VSS/Controls", "VSS/Controls/Menus"], function(Controls, Menus) {
-
         CreateMenuBar(Controls, Menus);
     });
 }
 
-function CreateMenuBar(Controls, Menus) {
+function CreateMenuBar(controls, menus) {
+
+    VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
+        dataService.getDocuments(TeamSettingsCollectionName).then(
+            (docs) => {
+                menuFoo(docs, controls, menus);
+            }
+        );
+        VSS.notifyLoadSucceeded();
+    });
+}
+
+function menuFoo(docs, Controls, Menus) {
     var container = $(".menu-bar");
 
     var bar = [];
 
-    VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
-        dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+    console.log("CreateMenuBar() - getDocuments :" + docs.length);
 
-            console.log("CreateMenuBar() - getDocuments :" + docs.length);
+    bar = docs.filter(function (d) { return d.type === 'team'; });
 
-            bar = docs.filter(function (d) { return d.type === 'team'; });
+    var teamMenuItems = [];
+    var teamTasksMenuItems = [];
 
-            var teamMenuItems = [];
-            var teamTasksMenuItems = [];
-
-            bar.forEach(
-                function (element) {
-                    teamMenuItems.push(
-                        { id: "team_"+element.text.toLowerCase(), text: element.text }
-                    );
-                    teamTasksMenuItems.push(
-                        { id: "tasks_"+element.text.toLowerCase(), text: element.text }
-                    );
-                }
+    bar.forEach(
+        function (element) {
+            teamMenuItems.push(
+                { id: "team_" + element.text.toLowerCase(), text: element.text }
             );
+            teamTasksMenuItems.push(
+                { id: "tasks_" + element.text.toLowerCase(), text: element.text }
+            );
+        }
+    );
 
-            var teamItemsStringified = JSON.stringify(teamMenuItems);
-            var teamTasksItemsStringified = JSON.stringify(teamTasksMenuItems);
+    var teamItemsStringified = JSON.stringify(teamMenuItems);
+    var teamTasksItemsStringified = JSON.stringify(teamTasksMenuItems);
 
-            console.log("CreateMenuBar() - teamMenuItemsCreated :" + teamItemsStringified);
-            console.log("CreateMenuBar() - teamTaskMenuITemsreated:" + teamTasksItemsStringified);
+    console.log("CreateMenuBar() - teamMenuItemsCreated :" + teamItemsStringified);
+    console.log("CreateMenuBar() - teamTaskMenuITemsreated:" + teamTasksItemsStringified);
 
-            var menuItems =
-                '[' +
-                '{' +
-                '"id":"menu-setting", "text":"Settings", "icon":"icon-settings", "childItems":' +
-                '[' +
-                '{' +
-                '"id": "switch", "text": "Switch team", "childItems":' +
-                teamItemsStringified +
-                '},' +
-                '{' +
-                '"id": "manage-teams", "text": "Manage teams"' +
-                //'"childItems":[{ "id": "add-new-team", "text": "Add new team" },' +
-                //'{ "id": "delete-team", "text": "Delete team" }' +
-                //']' +
-                '},' +
-                '{' +
-                '"id": "configure-team-tasks", "text": "Manage team tasks" ' +
-                //', "childItems":' + teamTasksItemsStringified +
-                '}' +
-                ']' +
-                '},' +
-                '{ "separator": "true" },' +
-                '{ "id": "menu-help", "text": "Help", "icon": "icon-help", "tag": "test" }' +
-                ']';
+    var menuItems =
+        '[' +
+        '{' +
+        '"id":"menu-setting", "text":"Settings", "icon":"icon-settings", "childItems":' +
+        '[' +
+        '{' +
+        '"id": "switch", "text": "Switch team", "childItems":' +
+        teamItemsStringified +
+        '},' +
+        '{' +
+        '"id": "manage-teams", "text": "Manage teams"' +
+        //'"childItems":[{ "id": "add-new-team", "text": "Add new team" },' +
+        //'{ "id": "delete-team", "text": "Delete team" }' +
+        //']' +
+        '},' +
+        '{' +
+        '"id": "configure-team-tasks", "text": "Manage team tasks" ' +
+        //', "childItems":' + teamTasksItemsStringified +
+        '}' +
+        ']' +
+        '},' +
+        '{ "separator": "true" },' +
+        '{ "id": "menu-help", "text": "Help", "icon": "icon-help", "tag": "test" }' +
+        ']';
 
-            var menuItemsParsed = JSON.parse(menuItems);
+    var menuItemsParsed = JSON.parse(menuItems);
 
-            // stukje abrakadabra
-            var menubarOptions = {
-                items: menuItemsParsed,
-                executeAction: function (args) {
-                    var command = args.get_commandName();
-                    menuBarAction(command);
-                }
-            };
+    // stukje abrakadabra
+    var menubarOptions = {
+        items: menuItemsParsed,
+        executeAction: function (args) {
+            var command = args.get_commandName();
+            menuBarAction(command);
+        }
+    };
 
-            var menubar = Controls.create(Menus.MenuBar, container, menubarOptions);
-            VSS.notifyLoadSucceeded();
-        });
-        VSS.notifyLoadSucceeded();
-    });
+    var menubar = Controls.create(Menus.MenuBar, container, menubarOptions);
+    VSS.notifyLoadSucceeded();
 }
 
 // the center of all actions binded to menu items based on their names

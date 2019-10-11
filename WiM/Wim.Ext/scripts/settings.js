@@ -3,7 +3,7 @@
 //see all settings
 //http://krylp:8080/tfs/DefaultCollection/_apis/ExtensionManagement/InstalledExtensions/bandik/WimDevOpExtension/Data/Scopes/Default/Current/Collections/WimCollection/Documents
 //DeleteCurrentTeams();
-CreateTeams();
+//CreateTeams();
 
 var TeamSettingsCollectionName = "WimCollection";
 var configuredTeams = [];
