@@ -28,7 +28,14 @@ function ControleerSettingsCollection() {
 
 function FindCollection() {
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
-        dataService.getDocuments(TeamSettingsCollectionName);
+        dataService.getDocuments(TeamSettingsCollectionName).then(
+            (docs) => {
+                if (docs.length < 1) {
+                    CreateFirstTimeCollection();
+                }
+                log("Aantal ocs: " + docs.length);
+            }
+        );
     });
     log("Found");
 }
@@ -47,7 +54,6 @@ function CreateFirstTimeCollection() {
     });
 
     log();
-
 }
 
 function SetCheckBoxes() {
