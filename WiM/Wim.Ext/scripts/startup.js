@@ -28,14 +28,19 @@ function ControleerSettingsCollection() {
 
 function FindCollection() {
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
-        dataService.getDocuments(TeamSettingsCollectionName).then(
-            (docs) => {
-                if (docs.length < 1) {
+        dataService.getDocuments(TeamSettingsCollectionName)
+            .then(
+                (docs) => {
+                    if (docs.length < 1) {
+                        CreateFirstTimeCollection();
+                    }
+                    log("Aantal gecvonden docs: " + docs.length);
+                },
+                (err) => {
                     CreateFirstTimeCollection();
+                    log("Niets gevonden. Default aangemaakt");
                 }
-                log("Aantal ocs: " + docs.length);
-            }
-        );
+            );
     });
     log("Found");
 }
