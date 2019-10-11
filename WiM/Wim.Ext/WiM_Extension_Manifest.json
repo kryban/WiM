@@ -76,6 +76,14 @@
       "addressable": true
     },
     {
+      "path": "manage-teams.html",
+      "addressable": true
+    },
+    {
+      "path": "manage-tasks.html",
+      "addressable": true
+    },
+    {
       "path": "SDK/scripts",
       "addressable": true
     },
