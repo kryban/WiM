@@ -64,11 +64,11 @@ function OpenTeamsConfiguratieDialoog(title) {
     
     //var outputBox = document.getElementsByTagName('output')[0];
     //var selectEl = document.getElementsByTagName('select')[0];
-    var confirmBtn = document.getElementById('dialogConfirm');
+    var _teamConfirmBtn = document.getElementById('teamDialogConfirm');
     
 
-    if (typeof favDialog.showModal === "function") {
-        favDialog.showModal();
+    if (typeof teamDialog.showModal === "function") {
+        teamDialog.showModal();
     } else {
         alert("The dialog API is not supported by this browser");
     }
@@ -86,7 +86,7 @@ function OpenTeamsConfiguratieDialoog(title) {
     //    confirmBtn.value = selectEl.value;
     //});
     // "Confirm" button of form triggers "close" on dialog because of [method="dialog"]
-    favDialog.addEventListener('close', function onClose() {
+    teamDialog.addEventListener('close', function onClose() {
         //teamInpChangeHandler();
         log("closing teamsettings");
     });

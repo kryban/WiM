@@ -57,7 +57,7 @@
 
     </style>
 </head>
-<body>
+<body onload="CreateTeamSelectElementInitially()">
     <div id="vss-bandik-extension" style="height:95vh;">
 
         <div id="pageTitle" class="bandik-ext-title"> Workitem Manager </div>
@@ -99,19 +99,41 @@
 
         <dialog id="manage-teams-dialog">
             <!--<form>-->
-                <h2 id="header">Manage teamssssst</h2>
+            <h2 id="header">Manage teams</h2>
 
-                <div class="input_fields_container_part" id="teamInputFields">
-                    <div>
-                        <!--<input type="text" name="tags">-->
-                        <button onclick="addTeamHandler(this)" id="voegTeamToe" class="btn btn-sm btn-primary voeg_toe">Voeg toe</button>
-                    </div>
+            <div class="input_fields_container_part" id="teamInputFields">
+                <div>
+                    <!--<input type="text" name="tags">-->
+                    <button onclick="addTeamHandler(this)" id="voegTeamToe" class="btn btn-sm btn-primary voeg_toe">Voeg toe</button>
                 </div>
-                <menu>
-                    <button id="dialogCancel" value="cancel" >Cancel</button>
-                    <button id="dialogConfirm" value="default" onclick="teamInpChangeHandler()">OK</button>
-                </menu>
+            </div>
+            <menu>
+                <button id="teamDialogCancel" value="cancel">Cancel</button>
+                <button id="teamDialogConfirm" value="default" onclick="teamInpChangeHandler()">OK</button>
+            </menu>
             <!--</form>-->
+        </dialog>
+
+        <dialog id="manage-tasks-dialog">
+
+            <!--<h2 id="header">Manage teamssssst</h2>-->
+            <div class="ui-dialog-title" id="header">Team</div>
+
+            <select class="teamSelect" onchange="TeamSelectedHandler(this)">
+                <option selected="selected">select team</option>
+            </select>
+
+            <div class="ui-dialog-title">Tasks</div>
+            <div class="tasks_input_fields_container_part" id="taskInputFields">
+                <div>
+                    <button onclick="addTaskToConfigurationHandler()" id="voegTaskToe" class="btn btn-sm btn-primary voeg_task_toe">Voeg toe</button>
+                </div>
+            </div>
+
+            <menu>
+                <button id="taskDialogCancel" value="cancel">Cancel</button>
+                <button id="takDialogConfirm" value="default" onclick="taskInpChangeHandler()">OK</button>
+            </menu>
         </dialog>
 
         <script src="scripts/startup.js"></script>
@@ -125,8 +147,8 @@
 
         <script>
 
-                                    // default start
-                                    // LoadTasksOnMainWindow("team_xtreme");
+                                            // default start
+                                            // LoadTasksOnMainWindow("team_xtreme");
         </script>
 
     </div>
