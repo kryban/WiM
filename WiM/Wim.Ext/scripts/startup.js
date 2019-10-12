@@ -1,4 +1,6 @@
 ﻿var TeamSettingsCollectionName = "WimCollection";
+var teamDialog = document.getElementById('manage-teams-dialog');
+var tasksDialog = document.getElementById('manage-tasks-dialog');
 
 document.addEventListener('DOMContentLoaded', function (event) {
 
@@ -8,6 +10,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
     SetCheckBoxes();
 
     MaakMenu();
+
+    RegistreerButtonEvents();
 
     log("DocumentReady:" + name);
 });
@@ -34,7 +38,7 @@ function FindCollection() {
                     if (docs.length < 1) {
                         CreateFirstTimeCollection();
                     }
-                    log("Aantal gevonden docs: " + docs.length);
+                    log("Aantal gecvonden docs: " + docs.length);
                 },
                 (err) => {
                     CreateFirstTimeCollection();
@@ -42,6 +46,7 @@ function FindCollection() {
                 }
             );
     });
+    log("Found");
 }
 
 function CreateFirstTimeCollection() {
@@ -67,4 +72,19 @@ function SetCheckBoxes() {
         (parentWorkItem === undefined || parentWorkItem === null)) {
         DisableItems(checkBoxes, addButton);
     }
+}
+
+function RegistreerButtonEvents() {
+
+    var teamCancelBtn = document.getElementById('teamDialogCancel');
+    var taskCancelBtn = document.getElementById('taskDialogCancel');
+
+    //var confirmBtn = document.getElementById('dialogConfirm');;
+
+    teamCancelBtn.addEventListener("click", () => { teamDialog.close(); });
+    taskCancelBtn.addEventListener("click", () => { tasksDialog.close(); });
+
+    //confirmBtn.addEventListener("click",teamInpChangeHandler());
+
+    log();
 }

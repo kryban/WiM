@@ -7,7 +7,7 @@ VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
 
         // only teams setting. Not other settings
         var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
-        console.log("Initial load team settings : " + teamDocs.length + " out of " + docs.length +" settings.");
+        log("Initial load team settings : " + teamDocs.length + " out of " + docs.length +" settings");
         teamDocs.forEach(
             function (element) {
                 //var inputId = "teamNaam" + x;
@@ -42,7 +42,7 @@ function teamInpChangeHandler() {
                 function (element) {
 
                     dataService.deleteDocument(TeamSettingsCollectionName, element.id).then(function (service) {
-                        console.log("teamInpChangeHandler(): Doc verwijderd");
+                        log("Doc verwijderd");
                     });   
                 }
             );
@@ -52,8 +52,8 @@ function teamInpChangeHandler() {
                 var teamnaam = c[i].value;
                 teamsForm.push(teamnaam);
 
-                console.log("teamInpChangeHandler() :" + teamDocs.length);
-                console.log("teamInpChangeHandler() : " + teamnaam);
+                log(teamDocs.length);
+                log(teamnaam);
 
                 var newDoc = {
                     type: "team",
@@ -62,10 +62,10 @@ function teamInpChangeHandler() {
 
                 dataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
                     // Even if no ID was passed to createDocument, one will be generated
-                    console.log("teamInpChangeHandler() CreateDocument : " + doc.text);
+                    log(doc.text);
                 });
 
-                console.log("teamInpChangeHandler(). Setting NOT exists.");
+                log("Setting NOT exists");
 
             }
             VSS.notifyLoadSucceeded();
@@ -73,7 +73,8 @@ function teamInpChangeHandler() {
         VSS.notifyLoadSucceeded();
     });
 
-    console.log("teamInpChangeHandler() ended :");
+    favDialog.close();
+    log("Finished");
 }
 
 var defaultTeamName = "Team naam";
@@ -100,8 +101,8 @@ function addTeamHandler(name) {
     //teamRowNode.setAttribute("class", "taskInputRow");
 
     var teamNaamInputNode = document.createElement("input");
-    teamNaamInputNode.setAttribute("onchange", "teamInpChangeHandler()");
-    teamNaamInputNode.setAttribute("onblur", "teamInpChangeHandler()");
+    //teamNaamInputNode.setAttribute("onchange", "teamInpChangeHandler()");
+    //teamNaamInputNode.setAttribute("onblur", "teamInpChangeHandler()");
     teamNaamInputNode.setAttribute("onfocus", "removeDefaultTextHandler(this)");
     teamNaamInputNode.setAttribute("type", "text");
     teamNaamInputNode.setAttribute("value", teamTitle);
@@ -137,7 +138,18 @@ function removeTeamFieldClickHandler(obj) {
             obj.parentNode.removeChild(obj.parentNode.firstChild);
         }
     }
-    teamInpChangeHandler();
+    //teamInpChangeHandler();
+
+    function RegistreerButtonEvents() {
+
+        var cancelBtn = document.getElementById('dialogCancel');
+        var confirmBtn = document.getElementById('dialogConfirm');;
+
+        cancelBtn.addEventListener("click", () => { favDialog.close(); });
+        confirmBtn.addEventListener("click", teamInpChangeHandler());
+
+        log();
+    }
 }
 
 

@@ -23,4 +23,9 @@
 	Met "vso.work_write" mag de extensie ook workitems aanmaken of wijzigen en met "vso.work_full" heeft het full access.
 	https://docs.microsoft.com/nl-nl/azure/devops/extend/develop/manifest?view=azure-devops#scopes
 
-
+6. Binnen wigo is een releae pieline opgezet, om de extensie van die pipeline te installeren. 
+	Er kon geen koppeling gelegd worden tussen een publiek GitHub account. 
+	Opgelost door de remote van de solution te wisselen tussen github en locale azure devops repo. 
+	Synchen met GitHub -> switchen naar locale repo -> Pushen van wijzigingen -> Builden - Releasen
+	Wisselen van repo kan eenvoudig door in de root van de solution in de (verborgen) .git folder de url in
+	de config aan te passen.
