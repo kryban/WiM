@@ -1,4 +1,5 @@
 ﻿var TeamSettingsCollectionName = "WimCollection";
+var favDialog = document.getElementById('manage-teams-dialog');
 
 document.addEventListener('DOMContentLoaded', function (event) {
 
@@ -8,6 +9,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
     SetCheckBoxes();
 
     MaakMenu();
+
+    RegistreerButtonEvents();
 
     log("DocumentReady:" + name);
 });
@@ -68,4 +71,15 @@ function SetCheckBoxes() {
         (parentWorkItem === undefined || parentWorkItem === null)) {
         DisableItems(checkBoxes, addButton);
     }
+}
+
+function RegistreerButtonEvents() {
+
+    var cancelBtn = document.getElementById('dialogCancel');
+    //var confirmBtn = document.getElementById('dialogConfirm');;
+
+    cancelBtn.addEventListener("click", () => { favDialog.close(); });
+    //confirmBtn.addEventListener("click",teamInpChangeHandler());
+
+    log();
 }

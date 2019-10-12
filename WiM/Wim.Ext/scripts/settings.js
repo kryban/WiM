@@ -61,10 +61,11 @@ function OpenTeamsConfiguratieDialoog(title) {
     //});
 
     //var updateButton = document.getElementById('updateDetails');
-    var favDialog = document.getElementById('manage-teams-dialog');
+    
     //var outputBox = document.getElementsByTagName('output')[0];
     //var selectEl = document.getElementsByTagName('select')[0];
-    var confirmBtn = document.getElementById('confirmBtn');
+    var confirmBtn = document.getElementById('dialogConfirm');
+    
 
     if (typeof favDialog.showModal === "function") {
         favDialog.showModal();
@@ -86,7 +87,7 @@ function OpenTeamsConfiguratieDialoog(title) {
     //});
     // "Confirm" button of form triggers "close" on dialog because of [method="dialog"]
     favDialog.addEventListener('close', function onClose() {
-        teamInpChangeHandler();
+        //teamInpChangeHandler();
         log("closing teamsettings");
     });
 }

@@ -73,6 +73,7 @@ function teamInpChangeHandler() {
         VSS.notifyLoadSucceeded();
     });
 
+    favDialog.close();
     console.log("teamInpChangeHandler() ended :");
 }
 
@@ -137,7 +138,18 @@ function removeTeamFieldClickHandler(obj) {
             obj.parentNode.removeChild(obj.parentNode.firstChild);
         }
     }
-    teamInpChangeHandler();
+    //teamInpChangeHandler();
+
+    function RegistreerButtonEvents() {
+
+        var cancelBtn = document.getElementById('dialogCancel');
+        var confirmBtn = document.getElementById('dialogConfirm');;
+
+        cancelBtn.addEventListener("click", () => { favDialog.close(); });
+        confirmBtn.addEventListener("click", teamInpChangeHandler());
+
+        log();
+    }
 }
 
 
