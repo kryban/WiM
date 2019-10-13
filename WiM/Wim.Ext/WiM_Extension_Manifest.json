@@ -1,12 +1,20 @@
 {
   "manifestVersion": 1,
   "id": "WimDevOpExtension",
-  "version": "0.0.40",
+  "version": "0.0.43",
   "name": "WorkitemManagerExtension",
   "publisher": "bandik",
-  "description": " A hub for adding multiple tasks at once (beta)",
+  "description": " A hub for adding multiple tasks in one click",
   "public": false,
   "categories": [ "Plan and track" ],
+  "content": {
+    "details": {
+      "path": "overview.md"
+    },
+    "license": {
+      "path": "license.txt"
+    }
+  },
   "targets": [
     {
       "id": "Microsoft.VisualStudio.Services"
@@ -105,6 +113,22 @@
     },
     {
       "path": "images/icon.png",
+      "addressable": true
+    },
+    {
+      "path": "images/overview-addTasks.png",
+      "addressable": true
+    },
+    {
+      "path": "images/overview-manageTasks.png",
+      "addressable": true
+    },
+    {
+      "path": "images/overview-manageTeams.png",
+      "addressable": true
+    },
+    {
+      "path": "images/overview-switchTeam.png",
       "addressable": true
     }
 

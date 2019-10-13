@@ -68,6 +68,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="doc\todo.txt" />
+    <Content Include="images\overview-addTasks.png" />
+    <Content Include="images\overview-manageTasks.png" />
+    <Content Include="images\overview-manageTeams.png" />
+    <Content Include="images\overview-switchTeam.png" />
+    <Content Include="license.txt" />
     <Content Include="manage-tasks.html" />
     <Content Include="manage-teams.html" />
     <Content Include="scripts\defaultSettings.js" />
@@ -103,6 +108,8 @@
     <Content Include="ps\1_npm install vss-web-extension-sdk.ps" />
     <Content Include="package-lock.json" />
     <Content Include="package.json" />
+    <Content Include="doc\manifestExample.json" />
+    <Content Include="overview.md" />
     <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

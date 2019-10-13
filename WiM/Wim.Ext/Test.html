@@ -30,7 +30,7 @@
             <div class="open-existing-work-item">
                 <label for="existing-wit-id">PBI:</label>
                 <input id="existing-wit-id" value="workitem ID" onfocus="ExistingWitFieldFocussed()" onkeypress="MainPageEnterPressed(event)">
-                <Button id="existing-wit-button" type="button" value="Open..." onclick="OpenButtonClicked(this)">Open</Button>
+                <Button id="existing-wit-button" type="button" value="Open..." onclick="OpenButtonClicked(this)">Find</Button>
             </div>
 
             <div>
@@ -39,7 +39,7 @@
 
             <div id="tasks">
                 <div id="tasksLabel">
-                    Voeg taken toe: </br></br>
+                    Add task(s): </br></br>
                 </div>
                 <div id="tasks-check-all">
                     <input class="checkbox" type="checkbox" id="tasks-check-all-checkbox" name="checkall" checked="false" onclick="CheckUnckeck(this)" />
@@ -51,7 +51,7 @@
                         <fieldset class="checkbox" id="task-checkbox" type="checkbox"></fieldset>
                     </form>
                     </br>
-                    <Button type="button" id="addTasksButton" onclick="AddTasksButtonClicked()">Zetten</Button>
+                    <Button type="button" id="addTasksButton" onclick="AddTasksButtonClicked()">Add</Button>
                 </div>
             </div>
 

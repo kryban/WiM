@@ -1,0 +1,315 @@
+{
+  "manifestVersion": 1,
+  "id": "vsts-developer-tools-build-tasks",
+  "publisher": "ms-devlabs",
+  "name": "Azure DevOps Extension Tasks",
+  "version": "1.2.0",
+  "description": "Azure Pipelines tasks for packaging and publishing Azure Devops and Visual Studio (coming soon) extensions to the Visual Studio Marketplace.",
+  "tags": [
+    "Extension",
+    "Marketplace",
+    "Publish",
+    "Package",
+    "Install",
+    "Continuous Integration",
+    "Continuous Delivery",
+    "Build",
+    "Release",
+    "Azure Pipelines",
+    "Azure DevOps Extensions",
+    "Visual Studio Extensions"
+  ],
+  "icons": {
+    "default": "tools-icon.png"
+  },
+  "public": true,
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "scopes": [],
+  "categories": [
+    "Azure Pipelines"
+  ],
+  "content": {
+    "details": {
+      "path": "overview.md"
+    },
+    "license": {
+      "path": "license.txt"
+    }
+  },
+  "links": {
+    "repository": {
+      "uri": "https://github.com/Microsoft/azure-devops-extension-tasks"
+    },
+    "issues": {
+      "uri": "https://github.com/Microsoft/azure-devops-extension-tasks/issues"
+    },
+    "support": {
+      "uri": "mailto:azdevopsintegrations@microsoft.com"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "uri": "https://github.com/Microsoft/azure-devops-extension-tasks"
+  },
+  "badges": [
+    {
+      "href": "https://almrangers.visualstudio.com/ALM/_build?definitionId=127",
+      "uri": "https://almrangers.visualstudio.com/ALM/_apis/build/status/Extensions/Azure%20DevOps%20Extension%20Tasks",
+      "description": "Build"
+    },
+    {
+      "href": "https://almrangers.visualstudio.com/ALM/_releaseDefinition?definitionId=25",
+      "uri": "https://almrangers.vsrm.visualstudio.com/_apis/public/Release/badge/7f3cfb9a-d1cb-4e66-9d36-1af87b906fe9/25/70",
+      "description": "Release"
+    }
+  ],
+  "files": [
+    {
+      "path": "BuildTasks/ExtensionVersion"
+    },
+    {
+      "path": "BuildTasks/InstallExtension"
+    },
+    {
+      "path": "BuildTasks/IsValidExtension"
+    },
+    {
+      "path": "BuildTasks/IsValidExtensionAgent"
+    },
+    {
+      "path": "BuildTasks/PackageExtension"
+    },
+    {
+      "path": "BuildTasks/PublishExtension"
+    },
+    {
+      "path": "BuildTasks/PublishVSExtension"
+    },
+    {
+      "path": "BuildTasks/ShareExtension"
+    },
+    {
+      "path": "BuildTasks/TfxInstaller"
+    },
+    {
+      "path": "add-task.png",
+      "addressable": true
+    },
+    {
+      "path": "permissions.png",
+      "addressable": true
+    }
+  ],
+  "contributions": [
+    {
+      "id": "package-extension-build-task",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "BuildTasks/PackageExtension"
+      }
+    },
+    {
+      "id": "publish-extension-build-task",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "BuildTasks/PublishExtension"
+      }
+    },
+    {
+      "id": "publish-vs-extension-build-task",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "BuildTasks/PublishVSExtension"
+      }
+    },
+    {
+      "id": "install-extension-build-task",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "BuildTasks/InstallExtension"
+      }
+    },
+    {
+      "id": "is-valid-extension-build-task",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "BuildTasks/IsValidExtension"
+      }
+    },
+    {
+      "id": "is-valid-extension-agent-build-task",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "BuildTasks/IsValidExtensionAgent"
+      }
+    },
+    {
+      "id": "extension-version-build-task",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "BuildTasks/ExtensionVersion"
+      }
+    },
+    {
+      "id": "share-extension-build-task",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "BuildTasks/ShareExtension"
+      }
+    },
+    {
+      "id": "tfx-installer-build-task",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "BuildTasks/TfxInstaller"
+      }
+    },
+    {
+      "id": "vsts-marketplace-endpoint-type",
+      "type": "ms.vss-endpoint.service-endpoint-type",
+      "targets": [
+        "ms.vss-endpoint.endpoint-types"
+      ],
+      "properties": {
+        "name": "VstsMarketplacePublishing",
+        "displayName": "Visual Studio Marketplace",
+        "url": {
+          "displayName": "Marketplace URL",
+          "value": "https://marketplace.visualstudio.com"
+        },
+        "helpMarkDown": "Required permissions: <ul><li><b>Publish</b>: All accessible organisations, Marketplace (Publish)</li><li><b>Share</b>: All accessible organisations, Marketplace Publish</li><li><b>Install</b>: All accessible organisations or a specific organisation, Extensions (read and manage), Marketplace (acquire)</li><li><b>Query Version</b>: All accessible organisations, Marketplace (read)</li><li><b>Is Valid Extension</b>: All accessible organisations, Marketplace (read)</li></ul><br/><a href='https://www.visualstudio.com/docs/setup-admin/team-services/use-personal-access-tokens-to-authenticate'>More information</a>.",
+        "authenticationSchemes": [
+          {
+            "type": "ms.vss-endpoint.endpoint-auth-scheme-basic",
+            "inputDescriptors": [
+              {
+                "id": "username",
+                "name": "Username",
+                "description": "Username",
+                "inputMode": "textbox",
+                "isConfidential": false,
+                "validation": {
+                  "isRequired": false,
+                  "dataType": "string",
+                  "maxLength": 300
+                },
+                "values": {
+                  "inputId": "username",
+                  "isDisabled": true,
+                  "defaultValue": ""
+                }
+              },
+              {
+                "id": "password",
+                "name": "Personal access token",
+                "description": "Azure DevOps personal access token. Requires at least the Marketplace (publish) scope.",
+                "inputMode": "passwordbox",
+                "isConfidential": true,
+                "validation": {
+                  "isRequired": true,
+                  "dataType": "string",
+                  "maxLength": 300
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "tfs-marketplace-endpoint-type",
+      "type": "ms.vss-endpoint.service-endpoint-type",
+      "targets": [
+        "ms.vss-endpoint.endpoint-types"
+      ],
+      "properties": {
+        "name": "TFSMarketplacePublishing",
+        "displayName": "Azure DevOps Server Extension Local Gallery",
+        "helpMarkDown": "",
+        "url": {
+          "displayName": "Azure DevOps Server Url",
+          "description": "The Azure DevOps Server Url, e.g. `https://servername.domain.local/tfs`."
+        },
+        "authenticationSchemes": [
+          {
+            "type": "ms.vss-endpoint.endpoint-auth-scheme-token",
+            "inputDescriptors": [
+              {
+                "id": "apitoken",
+                "name": "Personal Access Token",
+                "description": "Personal Access Token (TFS 2017+ and Azure DevOps Server 2019).",
+                "inputMode": "passwordbox",
+                "isConfidential": true,
+                "validation": {
+                  "isRequired": true,
+                  "dataType": "string",
+                  "maxLength": 300
+                }
+              }
+            ]
+          },
+          {
+            "type": "ms.vss-endpoint.endpoint-auth-scheme-basic",
+            "inputDescriptors": [
+              {
+                "id": "username",
+                "name": "Username",
+                "description": "Username (TFS 2015.2+ with Basic Authentication enabled)",
+                "inputMode": "textbox",
+                "isConfidential": false,
+                "validation": {
+                  "isRequired": true,
+                  "dataType": "string",
+                  "maxLength": 300
+                }
+              },
+              {
+                "id": "password",
+                "name": "Password",
+                "description": "Password",
+                "inputMode": "passwordbox",
+                "isConfidential": true,
+                "validation": {
+                  "isRequired": true,
+                  "dataType": "string",
+                  "maxLength": 300
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
