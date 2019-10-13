@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "WimDevOpExtension",
-  "version": "0.0.31",
+  "version": "0.0.40",
   "name": "WorkitemManagerExtension",
   "baseUri": "https://localhost:44367",
   "publisher": "bandik",
@@ -90,6 +90,10 @@
     },
     {
       "path": "scripts",
+      "addressable": true
+    },
+    {
+      "path": "styles",
       "addressable": true
     },
     {
