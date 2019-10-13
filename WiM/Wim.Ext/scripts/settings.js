@@ -221,4 +221,12 @@ function GetAllTeamSettings() {
     });
 }
 
+function reloadHost() {
+    VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService) {
+        console.log("navigationService.reload()");
+        navigationService.reload();
+    });
+    log();
+}
+
 VSS.notifyLoadSucceeded();

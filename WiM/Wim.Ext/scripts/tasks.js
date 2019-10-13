@@ -78,7 +78,6 @@ function removeTaskFieldClickHandler(obj) {
             obj.parentNode.removeChild(obj.parentNode.firstChild);
         }
     }
-//    taskInpChangeHandler();
     log();
 }
 
@@ -184,50 +183,7 @@ function ConfigureTasks(teamnaam) {
 
 function OpenTaskConfiguratieDialoog(teamNaam) {
 
-    //VSS.getService(VSS.ServiceIds.Dialog).then(function (dialogService) {
-
-    //    var extensionCtx = VSS.getExtensionContext();
-    //    var contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".manage-tasks";
-
-    //    var dialogOptions = {
-    //        title: "Manage tasks"
-    //        , height: 400
-    //        , modal: true
-    //        , cancelText: "Annuleer"
-    //        , getDialogResult: function () {
-    //            //console.log("getDialogResult(): " + teamsForm);
-    //        }
-    //        , okCallback: function (result) {
-    //            VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService) {   
-    //                navigationService.reload();
-    //                log("reload app");
-    //            });
-    //        }
-    //    };
-
-    //    dialogService.openDialog(contributionId, dialogOptions).then(
-    //        function (dialog) {
-
-    //            dialog
-    //                .getContributionInstance("Bandik.WimDevOpExtension.manage-tasks")
-    //                .then(function (manageTeamsinstance) {
-    //                    teamsForm = manageTeamsinstance;
-    //                });
-
-    //            dialog.updateOkButton(true);
-
-    //            VSS.notifyLoadSucceeded();
-    //        }
-    //    );
-    //    VSS.notifyLoadSucceeded();
-    //});
-    /////////////////////////////////////////////////////////
-    //var updateButton = document.getElementById('updateDetails');
-
-    //var outputBox = document.getElementsByTagName('output')[0];
-    //var selectEl = document.getElementsByTagName('select')[0];
     var _taskConfirmBtn = document.getElementById('taskDialogConfirm');
-
 
     if (typeof tasksDialog.showModal === "function") {
         tasksDialog.showModal();
@@ -235,54 +191,10 @@ function OpenTaskConfiguratieDialoog(teamNaam) {
         alert("The dialog API is not supported by this browser");
     }
 
-    // “Update details” button opens the <dialog> modally
-    //updateButton.addEventListener('click', function onOpen() {
-    //    if (typeof favDialog.showModal === "function") {
-    //        favDialog.showModal();
-    //    } else {
-    //        alert("The dialog API is not supported by this browser");
-    //    }
-    //});
-    // "Favorite animal" input sets the value of the submit button
-    //selectEl.addEventListener('change', function onSelect(e) {
-    //    confirmBtn.value = selectEl.value;
-    //});
-    // "Confirm" button of form triggers "close" on dialog because of [method="dialog"]
     tasksDialog.addEventListener('close', function onClose() {
-        //teamInpChangeHandler();
         log("closing teamsettings");
     });
 }
-
-//(function () {
-//    var updateButton = document.getElementById('updateDetails');
-//    var favDialog = document.getElementById('favDialog');
-//    var outputBox = document.getElementsByTagName('output')[0];
-//    var selectEl = document.getElementsByTagName('select')[0];
-//    var confirmBtn = document.getElementById('confirmBtn');
-
-//    // “Update details” button opens the <dialog> modally
-//    updateButton.addEventListener('click', function onOpen() {
-//        if (typeof favDialog.showModal === "function") {
-//            favDialog.showModal();
-//        } else {
-//            alert("The dialog API is not supported by this browser");
-//        }
-//    });
-//    // "Favorite animal" input sets the value of the submit button
-//    selectEl.addEventListener('change', function onSelect(e) {
-//        confirmBtn.value = selectEl.value;
-//    });
-//    // "Confirm" button of form triggers "close" on dialog because of [method="dialog"]
-//    favDialog.addEventListener('close', function onClose() {
-//        outputBox.value = favDialog.returnValue + " button clicked - " + (new Date()).toString();
-//    });
-//})();
-
-
-//function executeInOrder(callback) {
-//    callback();
-//}
 
 function taskInpChangeHandler() {
 
@@ -334,6 +246,7 @@ function UpdateTasksDocs(tasks)
     });
 
     tasksDialog.close();
+    reloadHost();
 }
 
 function AddTasksDocs(tasks, teamName)
@@ -550,14 +463,6 @@ function AddTasksButtonClicked(obj) {
     log();
 }
 
-function reloadHost() {
-    VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService) {
-        console.log("navigationService.reload()");
-        navigationService.reload();
-    });
-    log();
-}
-
 var numberOfTasksHandled;
 
 function PairTasksToWorkitem(docs, parent) {
@@ -725,26 +630,6 @@ function GetSelectedCheckboxes(allCheckboxes) {
     log();
     return retval;
 }
-
-//function FindTask(tasks, selection) {
-
-//    var retval;
-
-//    tasks.forEach(
-//        function (element) {
-//            if (element.id === selection.id)
-//            {
-//                retval = element;
-//            }
-//        });
-
-//    return retval;
-//}
-
-//function AddTaskToWorkitem(task)
-//{
-//    alert("Adding task: " + task.title);
-//}
 
 function SetTeamInAction(teamnaam) {
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
