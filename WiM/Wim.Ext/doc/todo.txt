@@ -1,10 +1,11 @@
-﻿- verwijderen werk niet
+- Voor een sprint kunnen kiezen, waarna de taken in die sprint in een drop down getoond worden. Als een traak daaruit gekozen wordt, dan wordt dat de geselecteerde taak waaraan taken gekoppeld moeten worden. 
+
+- de huidige zoekscherm van PBI vervangen door een VSS control zoals die geimplementeerd is in Pull Requests, waar je ook gerelateerde BPI's kan zoeken.
+
+- meteen vanuit WiM een Bug of PBI aan kunnen maken, waarna bij opslaan de aangevinkte taken meteen aan toegevoeg worden
 
 - hoe komt UpdateTasksDocs aan zijn selectedTeams
   als argument meegeven ! 
-
-- type task uit een drop down kiezen
-  (hoe wordt dit vastgelegd ? )
 
 - readme maken
 
