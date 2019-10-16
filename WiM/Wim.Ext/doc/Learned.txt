@@ -29,3 +29,11 @@
 	Synchen met GitHub -> switchen naar locale repo -> Pushen van wijzigingen -> Builden - Releasen
 	Wisselen van repo kan eenvoudig door in de root van de solution in de (verborgen) .git folder de url in
 	de config aan te passen.
+	Wijzig
+	[remote "origin"]
+	url = https://devops-tst.wigo4it.local/tfs/DefaultCollection/DevOps%20Tooling/_git/WiM
+	naar
+	[remote "origin"]
+	url = https://github.com/kryban/WiM
+	en doe een sync om nieuwste wijzigingen binnen te halen.
+	Wijzig de url weer teurg en doe een push van de hele branch.
