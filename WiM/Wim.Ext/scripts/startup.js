@@ -5,7 +5,9 @@ var tasksDialog = document.getElementById('manage-tasks-dialog');
 document.addEventListener('DOMContentLoaded', function (event) {
 
     var name = window.location.pathname.split('/').slice(-1);
-
+    
+    alertWhenIE();
+    
     ControleerSettingsCollection();
     SetCheckBoxes();
 
@@ -15,6 +17,19 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     log("DocumentReady:" + name);
 });
+
+function isIE() {
+  ua = navigator.userAgent;
+  /* MSIE used to detect old browsers and Trident used to newer ones*/
+  var is_ie = ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1;
+  
+  return is_ie; 
+}
+
+function alertWhenIE(){
+if (isIE()){
+    alert('Sorry, this extension does not work in IE. Maybe future version will. Use Chrome. ');
+}}
 
 function log(txt) {
     var tekst = (txt !== null && typeof txt !== "undefined") ? txt : "";
