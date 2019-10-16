@@ -1,3 +1,5 @@
+0. BUG: Werkt niet in IE
+
 0. BUG: 
     - Open Manage Tasks
     - Kies geen Team
