@@ -81,8 +81,8 @@ function RegistreerButtonEvents() {
 
     //var confirmBtn = document.getElementById('dialogConfirm');;
 
-    teamCancelBtn.addEventListener("click", () => { teamDialog.close(); });
-    taskCancelBtn.addEventListener("click", () => { tasksDialog.close(); });
+    teamCancelBtn.addEventListener("click", function(){ teamDialog.close(); });
+    taskCancelBtn.addEventListener("click", function(){ tasksDialog.close(); });
 
     //confirmBtn.addEventListener("click",teamInpChangeHandler());
 
