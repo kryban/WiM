@@ -1,4 +1,4 @@
-﻿var TeamSettingsCollectionName = "WimCollection";
+r﻿var TeamSettingsCollectionName = "WimCollection";
 var teamDialog = document.getElementById('manage-teams-dialog');
 var tasksDialog = document.getElementById('manage-tasks-dialog');
 
