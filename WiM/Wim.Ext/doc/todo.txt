@@ -1,3 +1,10 @@
+0. BUG: 
+    - Open Manage Tasks
+    - Kies geen Team
+    - Voer een taak op
+    - Klik op verwijder taak
+    - Alle taken van alle teams worden zijn verwijderd ! 
+    
 0. Als een team weggegooid wordt, dan worden alle taken weggegooid.
 
 1 Voor een sprint kunnen kiezen, waarna de taken in die sprint in een drop down getoond worden. Als een traak daaruit gekozen wordt, dan wordt dat de geselecteerde taak waaraan taken gekoppeld moeten worden. 
