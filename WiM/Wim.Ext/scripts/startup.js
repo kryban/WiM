@@ -34,13 +34,13 @@ function FindCollection() {
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
         dataService.getDocuments(TeamSettingsCollectionName)
             .then(
-                (docs) => {
+                function(docs) {
                     if (docs.length < 1) {
                         CreateFirstTimeCollection();
                     }
                     log("Aantal gecvonden docs: " + docs.length);
                 },
-                (err) => {
+                function(err) {
                     CreateFirstTimeCollection();
                     log("Niets gevonden. Default aangemaakt");
                 }
