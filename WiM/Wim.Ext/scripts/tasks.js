@@ -492,14 +492,14 @@ function PairTasksToWorkitem(docs, parent) {
     var workItemPromises = [];
 
     docs.forEach(
-        (jsonPatchDoc) => {
+        function(jsonPatchDoc) {
             numberOfTasksHandled++;
             workItemPromises.push(client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task"));
         }
     );
 
     Promise.all(workItemPromises).then(
-        () => {
+        function() {
             var taakTaken = numberOfTasksHandled === 1 ? "taak" : "taken";
             alert(numberOfTasksHandled + " " + taakTaken + " toegevoegd aan PBI " + parent.id + " (" + parent.title + ").");
 

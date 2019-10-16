@@ -10,7 +10,7 @@ function CreateMenuBar(controls, menus) {
 
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
         dataService.getDocuments(TeamSettingsCollectionName).then(
-            (docs) => {
+            function(docs) {
                 menuFoo(docs, controls, menus);
             }
         );

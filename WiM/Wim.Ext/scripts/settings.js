@@ -145,7 +145,9 @@ function getExistingSettings(dataservice) {
 }
 
 function checkIfExistBeforeAdding(docs, teamName) {
-    result = docs.find(obj => obj.text === teamName); 
+    result = docs.find(function(obj) { return obj.text === teamName; }); 
+
+
     console.log("checkNew: " + result);
 }
 
@@ -169,7 +171,7 @@ function SetTeamSettings(teamName) {
         dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
             console.log("GetAllTeamSettings :" + docs.length);
 
-            result = docs.find(obj => { return obj.text === teamName; });
+            result = docs.find(function(obj) { return obj.text === teamName; });
             docs.forEach(
                 function (element) {
                     temp.push(element);
