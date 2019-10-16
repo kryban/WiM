@@ -283,7 +283,11 @@ function TeamSelectedHandler(obj) {
     if (selectedTeam === undefined) {
         selectedTeam = GetTeamInAction();
     }
+
     LoadTeamTasks(selectedTeam);
+
+    document.getElementById("voegTaskToe").removeAttribute("disabled");
+
     log();
 }
 
