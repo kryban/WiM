@@ -146,7 +146,7 @@ function removeTeamFieldClickHandler(obj) {
         var cancelBtn = document.getElementById('dialogCancel');
         var confirmBtn = document.getElementById('dialogConfirm');;
 
-        cancelBtn.addEventListener("click", () => { favDialog.close(); });
+        cancelBtn.addEventListener("click", function(){ favDialog.close(); });
         confirmBtn.addEventListener("click", teamInpChangeHandler());
 
         log();
