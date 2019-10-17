@@ -14,3 +14,16 @@
 
 5 help maken
 
+6 WorkItemTypes uit query halen en niet hard code?
+  Voorbeeld hier: https://github.com/microsoft/vsts-extension-samples/blob/master/work-item-form/workItemService.html
+  
+  var workItemTypesCombo;          
+  var witClient = _WorkItemRestClient.getClient();
+  witClient.getWorkItemTypes(VSS.getWebContext().project.name).then(function(workItemTypes) {
+      workItemTypesCombo = _Controls.create(_Combos.Combo, $(".work-item-types"), {
+          source: $.map(workItemTypes, function(wiType) { return wiType.name })
+      });
+      if (workItemTypes.length > 0) {
+          workItemTypesCombo.setText(workItemTypes[0].name);
+      }
+  });
