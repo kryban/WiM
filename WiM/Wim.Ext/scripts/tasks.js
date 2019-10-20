@@ -220,18 +220,22 @@ function UpdateTasksDocs(tasks)
 //            var filtered = taskDocs;
             var added = false;
 
+            var deletionPromises = [new Promise(function () { /*empty*/})];
+
             taskDocs.forEach(
                 function (element) {
-                    dataService.deleteDocument(TeamSettingsCollectionName, element.id).then(function (service) {
-
-                        if (!added) {
-                            AddTasksDocs(tasks, selectedTeam);
-                            added = true;
-                        }
-                        //log("add here ? ")
-                    });
+                    deletionPromises.push(dataService.deleteDocument(TeamSettingsCollectionName, element.id));
                 }
             );
+
+            Promise.all(deletionPromises).then(function (service) {
+
+                if (!added) {
+                    AddTasksDocs(tasks, selectedTeam);
+                    added = true;
+                }
+                //log("add here ? ")
+            });
 
             // todo: refactor dit is nodig, zodat als er niets te verwijderen valt (1e opgevoerde regel bij nieuwe team)
             // dan toch nog toevoegingen uitgevoerd worden.
@@ -247,8 +251,6 @@ function UpdateTasksDocs(tasks)
     });
 
     //tasksDialog.close();
-    closeTasksModal();
-    reloadHost();
 }
 
 function AddTasksDocs(tasks, teamName)
@@ -275,6 +277,9 @@ function AddTasksDocs(tasks, teamName)
             dataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
                 log("created document : " + doc.text);
             });
+
+            closeTasksModal();
+            reloadHost();
         }
         VSS.notifyLoadSucceeded();
     });
