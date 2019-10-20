@@ -61,7 +61,68 @@
     box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.2);
 }
 
+/*Final Croos brwoser tryout*/
 
+@import "compass/css3";
+
+.modal_tasks, .modal_teams { /* The div that shows/hides. */
+    display: none; /* starts out hidden */
+    z-index: 40001; /* High z-index to ensure it appears above all content */
+}
+
+.modal_tasks_overlay, .modal_teams_overlay { /* Shades out background when selector is active */
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: .5; /* Sets opacity so it's partly transparent */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; /* IE transparency */
+    filter: alpha(opacity=50); /* More IE transparency */
+    z-index: 40001;
+}
+
+.modal_tasks_vertical_offset, .modal_teams_vertical_offset { /* Fixed position to provide the vertical offset */
+    position: fixed;
+    top: 20%;
+    width: 100%;
+    z-index: 40002; /* ensures box appears above overlay */
+}
+
+.modal_tasks_box, .modal_teams_box { /* The actual box, centered in the fixed-position div */
+    width: 80%; /* Whatever width you want the box to be */
+    max-width: 560px;
+    position: relative;
+    margin: 0 auto;
+    /*Everything below is just visual styling */
+    background-color: white;
+    padding: 10px;
+    border: 1px solid black;
+}
+
+/* close button */
+
+#modal_tasks_closeModal, #modal_teams_closeModal {
+    position: absolute;
+    top: -12px; /* Half the icon's height */
+    right: -12px; /* half the icon's width */
+    z-index: 50;
+}
+
+.modal_tasks_videoWrapper, .modal_teams_videoWrapper {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 */
+    padding-top: 25px;
+    height: 0;
+}
+
+    .modal_tasks_videoWrapper iframe, modal_teams_videoWrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+/*//////////////////////////*/
 /*BROWSERSAFE MODAL TRYOUT*/
 .modal {
     display: block;

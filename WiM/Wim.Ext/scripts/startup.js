@@ -1,6 +1,6 @@
 var TeamSettingsCollectionName = "WimCollection";
-var teamDialog = document.getElementById('manage-teams-dialog');
-var tasksDialog = document.getElementById('manage-tasks-dialog');
+//var teamDialog = document.getElementById('manage-teams-dialog');
+//var tasksDialog = document.getElementById('manage-tasks-dialog');
 
 document.addEventListener('DOMContentLoaded', function (event) {
 
@@ -13,10 +13,44 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     MaakMenu();
 
-    RegistreerButtonEvents();
+    //RegistreerButtonEvents();
+
+    registerTasksModelButtonEvents();
+    registerTeamsModelButtonEvents();
+
 
     log("DocumentReady:" + name);
 });
+
+function registerTasksModelButtonEvents() {
+    //Show modal box
+    $('#modal_tasks_openModal').click(
+
+        function () { openTasksModal(); }
+    );
+    //Hide modal box
+    $('#modal_tasks_closeModal').click(
+        function () { closeTasksModal(); }
+    );
+}
+
+function registerTeamsModelButtonEvents() {
+    //Show modal box
+    $('#modal_teams_openModal').click(
+
+        function () { openTeamsModal(); }
+    );
+    //Hide modal box
+    $('#modal_teams_closeModal').click(
+        function () { closeTeamsModal(); }
+    );
+}
+
+function openTasksModal() { $('.modal_tasks').show(); }
+function closeTasksModal() { $('.modal_tasks').hide(); }
+function openTeamsModal() { $('.modal_teams').show(); }
+function closeTeamsModal() { $('.modal_teams').hide(); }
+
 
 function isIE() {
   ua = navigator.userAgent;
@@ -81,7 +115,8 @@ function CreateFirstTimeCollection() {
 }
 
 function SetCheckBoxes() {
-    var checkBoxes = Array.from(document.getElementsByClassName("checkbox"));
+    //var checkBoxes = Array.from(document.getElementsByClassName("checkbox"));
+    var checkBoxes = document.getElementsByClassName("checkbox");
     var addButton = document.getElementById("addTasksButton");
     if (checkBoxes !== null && addButton !== null &&
         (parentWorkItem === undefined || parentWorkItem === null)) {
@@ -96,8 +131,8 @@ function RegistreerButtonEvents() {
 
     //var confirmBtn = document.getElementById('dialogConfirm');;
 
-    teamCancelBtn.addEventListener("click", function(){ teamDialog.close(); });
-    taskCancelBtn.addEventListener("click", function(){ tasksDialog.close(); });
+    teamCancelBtn.addEventListener("click", function () { closeTeamsModal(); });
+    taskCancelBtn.addEventListener("click", function () { closeTasksModal(); });
 
     //confirmBtn.addEventListener("click",teamInpChangeHandler());
 
@@ -106,15 +141,15 @@ function RegistreerButtonEvents() {
 
 
 // Browserdafe Modal try-outs
-let modalBtn = document.getElementById("modal-btn");
+//let modalBtn = document.getElementById("modal-btn");
 let modal = document.querySelector(".modal");
 let closeBtn = document.querySelector(".close-btn");
-modalBtn.onclick = function () {
-    modal.style.display = "block";
-}
-closeBtn.onclick = function () {
-    modal.style.display = "none";
-}
+//modalBtn.onclick = function () {
+//    modal.style.display = "block";
+//}
+//closeBtn.onclick = function () {
+//    modal.style.display = "none";
+//}
 window.onclick = function (e) {
     if (e.target === modal) {
         modal.style.display = "none";

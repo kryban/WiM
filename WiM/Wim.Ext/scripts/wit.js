@@ -54,7 +54,7 @@ function OpenButtonClicked(obj) {
             witClient = _restWitClient.getClient();
 
             var witId = document.getElementById("existing-wit-id").value;
-            var checkBoxes = Array.from(document.getElementsByClassName("checkbox"));
+            var checkBoxes = document.getElementsByClassName("checkbox");
             var addButton = document.getElementById("addTasksButton");
 
             witClient.getWorkItem(witId)// when only specific fields required , ["System.Title", "System.WorkItemType"])
@@ -91,7 +91,8 @@ function CheckAllowedToAddTaskToPbi(parentWorkItem) {
 function ShowSelectedWorkitemOnPage(workItem) {
 
     var allowToAdd = CheckAllowedToAddTaskToPbi(workItem);
-    var checkBoxes = Array.from(document.getElementsByClassName("checkbox"));
+    //var checkBoxes = Array.from(document.getElementsByClassName("checkbox"));
+    var checkBoxes = document.getElementsByClassName("checkbox");
     var addButton = document.getElementById("addTasksButton");
 
     if (!allowToAdd) {
@@ -113,16 +114,24 @@ function ShowSelectedWorkitemOnPage(workItem) {
 }
 
 function EnableItems(checkBoxes, addButton) {
-    checkBoxes.forEach(function(element) {
-        element.disabled = false;
-    });
+    for (var i = 0; i < checkBoxes.length; i++) {
+        checkBoxes[i].disabled = true;
+    }
+    //checkBoxes.forEach(function(element) {
+    //    element.disabled = false;
+    //});
     addButton.disabled = false;
 }
 
 function DisableItems(checkBoxes, addButton) {
-    checkBoxes.forEach(function (element) {
-        element.disabled = true;
-    });
+
+    for (var i = 0; i < checkBoxes.length; i++) {
+        checkBoxes[i].disabled = true;
+    }
+
+    //checkBoxes.forEach(function (element) {
+    //    element.disabled = true;
+    //});
     addButton.disabled = true;
 }
 

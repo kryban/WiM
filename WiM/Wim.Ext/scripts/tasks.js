@@ -178,7 +178,8 @@ function ConfigureTasks(teamnaam) {
 
     log(parsedTeamnaam);
 
-    OpenTaskConfiguratieDialoog(parsedTeamnaam);
+    //OpenTaskConfiguratieDialoog(parsedTeamnaam);
+    openTasksModal();
 }
 
 function OpenTaskConfiguratieDialoog(teamNaam) {
@@ -245,7 +246,8 @@ function UpdateTasksDocs(tasks)
         VSS.notifyLoadSucceeded();
     });
 
-    tasksDialog.close();
+    //tasksDialog.close();
+    closeTasksModal();
     reloadHost();
 }
 
@@ -361,6 +363,15 @@ function LoadTeamTasks(selection)
     });
 }
 
+if (!String.prototype.startsWith) {
+    Object.defineProperty(String.prototype, 'startsWith', {
+        value: function (search, rawPos) {
+            var pos = rawPos > 0 ? rawPos | 0 : 0;
+            return this.substring(pos, pos + search.length) === search;
+        }
+    });
+}
+
 function LoadTasksOnMainWindow(teamnaam)
 {
     var parsedTeamnaam;
@@ -368,7 +379,7 @@ function LoadTasksOnMainWindow(teamnaam)
         var substringVanaf = "team_".length;
         parsedTeamnaam = teamnaam.substring(substringVanaf);
     }
-    else { parsedTeamnaam = teamnaam;}
+    else { parsedTeamnaam = teamnaam; }
 
     SetTeamInAction(parsedTeamnaam);
 

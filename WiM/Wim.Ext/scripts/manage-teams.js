@@ -73,7 +73,8 @@ function teamInpChangeHandler() {
         VSS.notifyLoadSucceeded();
     });
 
-    teamDialog.close();
+    //teamDialog.close();
+    closeTeamsModal();
     reloadHost();
     log("Finished");
 }

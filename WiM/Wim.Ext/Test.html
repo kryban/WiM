@@ -58,23 +58,22 @@
             <div id="combo-container"></div>
         </div>
 
-        <dialog id="manage-teams-dialog" class="dialog">
+        <!--<dialog id="manage-teams-dialog" class="dialog">
 
-            <h2 id="header">Manage teams</h2>
+        <h2 id="header">Manage teams</h2>
 
-            <div class="input_fields_container_part" id="teamInputFields">
-                <div>
-                    <button onclick="addTeamHandler(this)" id="voegTeamToe" class="btn btn-sm btn-primary voeg_toe">Voeg toe</button>
-                </div>
+        <div class="input_fields_container_part" id="teamInputFields">
+            <div>
+                <button onclick="addTeamHandler(this)" id="voegTeamToe" class="btn btn-sm btn-primary voeg_toe">Voeg toe</button>
             </div>
-            <menu>
-                <button id="teamDialogCancel" value="cancel">Cancel</button>
-                <button id="teamDialogConfirm" value="default" onclick="teamInpChangeHandler()">OK</button>
-            </menu>
+        </div>
+        <menu>
+            <button id="teamDialogCancel" value="cancel">Cancel</button>
+            <button id="teamDialogConfirm" value="default" onclick="teamInpChangeHandler()">OK</button>
+        </menu>
 
-        </dialog>
-
-        <dialog id="manage-tasks-dialog" class="dialog">
+    </dialog>-->
+        <!--<dialog id="manage-tasks-dialog" class="dialog">
 
         <h2 id="header">Manage tasks</h2>
         <div class="ui-dialog-title" id="header">Team</div>
@@ -86,8 +85,10 @@
         <div class="ui-dialog-title">Tasks</div>
         <div class="tasks_input_fields_container_part" id="taskInputFields">
             <div>
-                <button onclick="addTaskToConfigurationHandler()" id="voegTaskToe" 
-                        class="btn btn-sm btn-primary voeg_task_toe" disabled="true">Voeg toe</button>
+                <button onclick="addTaskToConfigurationHandler()" id="voegTaskToe"
+                        class="btn btn-sm btn-primary voeg_task_toe" disabled="true">
+                    Voeg toe
+                </button>
             </div>
         </div>
 
@@ -95,42 +96,116 @@
             <button id="taskDialogCancel" value="cancel">Cancel</button>
             <button id="takDialogConfirm" value="default" onclick="taskInpChangeHandler()">OK</button>
         </menu>
-    </dialog>
+    </dialog>-->
+        <!--Cross Browser Modal Dialog-->
+        <div class="modal_teams">
+
+            <div class="modal_teams_overlay">
+                &nbsp;
+            </div>
+            <div class="modal_teams_vertical_offset">
+                <div class="modal_teams_box">
+                    <div class="modal_teams_videoWrapper">
+                        <div class="modal_teams_content">
+
+                            <h2 id="header">Manage teams new !!</h2>
+
+                            <div class="input_fields_container_part" id="teamInputFields">
+                                <div>
+                                    <button onclick="addTeamHandler(this)" id="voegTeamToe" class="btn btn-sm btn-primary voeg_toe">Voeg toe</button>
+                                </div>
+                            </div>
+                            <menu>
+                                <button id="teamDialogCancel" value="cancel" onclick="closeTeamsModal()">Cancel</button>
+                                <button id="teamDialogConfirm" value="default" onclick="teamInpChangeHandler()">OK</button>
+                            </menu>
+
+                        </div>
+
+                    </div>
+                    <!--<a id="modal_teams_closeModal">CloseTeamsModal</a>-->
+                </div>
+            </div>
+        </div>
+
+        <div class="modal_tasks">
+
+            <div class="modal_tasks_overlay">
+                &nbsp;
+            </div>
+            <div class="modal_tasks_vertical_offset">
+                <div class="modal_tasks_box">
+                    <div class="modal_tasks_videoWrapper">
+                        <div class="modal_tasks_content">
+
+                            <h2 id="header">Manage tasks New!!</h2>
+                            <div class="ui-dialog-title" id="header">Team</div>
+
+                            <select class="teamSelect" onchange="TeamSelectedHandler(this)">
+                                <option selected="selected">select team</option>
+                            </select>
+
+                            <div class="ui-dialog-title">Tasks</div>
+                            <div class="tasks_input_fields_container_part" id="taskInputFields">
+                                <div>
+                                    <button onclick="addTaskToConfigurationHandler()" id="voegTaskToe"
+                                            class="btn btn-sm btn-primary voeg_task_toe">
+                                        Voeg toe
+                                    </button>
+                                </div>
+                            </div>
+
+                            <menu>
+                                <button id="taskDialogCancel" value="cancel" onclick="closeTasksModal()">Cancel</button>
+                                <button id="takDialogConfirm" value="default" onclick="taskInpChangeHandler()">OK</button>
+                            </menu>
+
+                        </div>
+
+                    </div>
+                    <!--<a id="modal_tasks_closeModal">Close</a>-->
+                </div>
+            </div>
+        </div>
+        <!-- /////////////////////////////// -->
+
+        <!--<a id="modal_tasks_openModal">OpenTasks</a>
+        <a id="modal_teams_openModal">OpenTeams</a>-->
 
         <!-- BROWSERSAFE MODAL TRYOUT-->
         <!--https://medium.com/@nerdplusdog/a-how-to-guide-for-modal-boxes-with-javascript-html-and-css-6a49d063987e
-        <span id="modal-btn">&times;</span>
-        <div class="modal">
-            <div class="modal-header">
-                <span class="close-btn">&times;</span>
-                <h1>I am the Header</h1>
-            </div>
-            <div class="modal-content">
+    <span id="modal-btn">&times;</span>
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-btn">&times;</span>
+            <h1>I am the Header</h1>
+        </div>
+        <div class="modal-content">
 
-                <h2 id="header">Manage tasks New!!</h2>
-                <div class="ui-dialog-title" id="header">Team</div>
+            <h2 id="header">Manage tasks New!!</h2>
+            <div class="ui-dialog-title" id="header">Team</div>
 
-                <select class="teamSelect" onchange="TeamSelectedHandler(this)">
-                    <option selected="selected">select team</option>
-                </select>
+            <select class="teamSelect" onchange="TeamSelectedHandler(this)">
+                <option selected="selected">select team</option>
+            </select>
 
-                <div class="ui-dialog-title">Tasks</div>
-                <div class="tasks_input_fields_container_part" id="taskInputFields">
-                    <div>
-                        <button onclick="addTaskToConfigurationHandler()" id="voegTaskToe" class="btn btn-sm btn-primary voeg_task_toe">Voeg toe</button>
-                    </div>
+            <div class="ui-dialog-title">Tasks</div>
+            <div class="tasks_input_fields_container_part" id="taskInputFields">
+                <div>
+                    <button onclick="addTaskToConfigurationHandler()" id="voegTaskToe" class="btn btn-sm btn-primary voeg_task_toe">Voeg toe</button>
                 </div>
-
-                <menu>
-                    <button id="taskDialogCancel" value="cancel">Cancel</button>
-                    <button id="takDialogConfirm" value="default" onclick="taskInpChangeHandler()">OK</button>
-                </menu>
-
             </div>
-            <div class="modal-footer">
-                <h2>I am the Footer</h2>
-            </div>
-        </div>-->
+
+            <menu>
+                <button id="taskDialogCancel" value="cancel">Cancel</button>
+                <button id="takDialogConfirm" value="default" onclick="taskInpChangeHandler()">OK</button>
+            </menu>
+
+        </div>
+        <div class="modal-footer">
+            <h2>I am the Footer</h2>
+        </div>
+    </div>-->
 
         <script src="scripts/startup.js"></script>
         <script src="scripts/manage-teams.js"></script>
