@@ -29,7 +29,7 @@ VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
 
 function teamInpChangeHandler() {
    
-    var c = document.getElementsByName("teamInpNaam");
+    var teamsOnForm = document.getElementsByName("teamInpNaam");
 
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
 
@@ -38,45 +38,63 @@ function teamInpChangeHandler() {
             // delete only teams setting. Not other settings
             var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
 
+            // always 1 element for at least 1 iteration in Promises.all
+            var teamDeletionPromises = [new Promise(function () { /*empty*/ })];
+            var added = false;
+
             teamDocs.forEach(
                 function (element) {
 
-                    dataService.deleteDocument(TeamSettingsCollectionName, element.id).then(function (service) {
-                        log("Doc verwijderd");
-                    });   
+                    teamDeletionPromises.push(dataService.deleteDocument(TeamSettingsCollectionName, element.id));
                 }
             );
 
-            for (var i = 0; i < c.length; i++) {
+            Promise.all(teamDeletionPromises).then(function (service) {
 
-                var teamnaam = c[i].value;
-                teamsForm.push(teamnaam);
+                if (!added) {
+                    log("Doc verwijderd");
+                    AddTeamDocs(teamsOnForm, dataService);
+                    VSS.notifyLoadSucceeded();
+                }
+            });
 
-                log(teamDocs.length);
-                log(teamnaam);
-
-                var newDoc = {
-                    type: "team",
-                    text: teamnaam
-                };
-
-                dataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
-                    // Even if no ID was passed to createDocument, one will be generated
-                    log(doc.text);
-                });
-
-                log("Setting NOT exists");
-
+            // refactor this
+            if (!added) {
+                log("Doc verwijderd");
+                AddTeamDocs(teamsOnForm, dataService);
+                VSS.notifyLoadSucceeded();
             }
-            VSS.notifyLoadSucceeded();
         });
-        VSS.notifyLoadSucceeded();
     });
 
+    log("Finished");
     //teamDialog.close();
     closeTeamsModal();
-    reloadHost();
-    log("Finished");
+}
+
+function AddTeamDocs(teamsCollection, dataService) {
+    for (var i = 0; i < teamsCollection.length; i++) {
+
+        var teamnaam = teamsCollection[i].value;
+        //teamsForm.push(teamnaam);
+
+        //log(teamDocs.length);
+        log(teamnaam);
+
+        var newDoc = {
+            type: "team",
+            text: teamnaam
+        };
+
+        dataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
+            // Even if no ID was passed to createDocument, one will be generated
+            log(doc.text);
+        });
+
+        log("Team Setting Added: " + teamnaam);
+
+        reloadHost();
+    }
 }
 
 var defaultTeamName = "Team naam";

@@ -17,7 +17,7 @@ function ConfigureTeams(command) {
     //OpenTeamsConfiguratieDialoog(command);
     $('.modal_teams').show();
 }
-var teamsForm = ["yo","yi"]; 
+//var teamsForm = ["yo","yi"]; 
 var extenralSetted;
 
 function OpenTeamsConfiguratieDialoog(title) {

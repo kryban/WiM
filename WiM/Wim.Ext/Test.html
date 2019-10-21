@@ -116,8 +116,8 @@
                                 </div>
                             </div>
                             <menu>
-                                <button id="teamDialogCancel" value="cancel" onclick="closeTeamsModal()">Cancel</button>
-                                <button id="teamDialogConfirm" value="default" onclick="teamInpChangeHandler()">OK</button>
+                                <button id="teamDialogCancelBtn" value="cancel" onclick="closeTeamsModal()">Cancel</button>
+                                <button id="teamDialogConfirmBtn" value="default" onclick="teamInpChangeHandler()">OK</button>
                             </menu>
 
                         </div>
@@ -149,15 +149,15 @@
                             <div class="tasks_input_fields_container_part" id="taskInputFields">
                                 <div>
                                     <button onclick="addTaskToConfigurationHandler()" id="voegTaskToe"
-                                            class="btn btn-sm btn-primary voeg_task_toe">
+                                            class="btn btn-sm btn-primary voeg_task_toe" disabled>
                                         Voeg toe
                                     </button>
                                 </div>
                             </div>
 
                             <menu>
-                                <button id="taskDialogCancel" value="cancel" onclick="closeTasksModal()">Cancel</button>
-                                <button id="takDialogConfirm" value="default" onclick="taskInpChangeHandler()">OK</button>
+                                <button id="taskDialogCancelBtn" value="cancel" onclick="closeTasksModal()">Cancel</button>
+                                <button id="taskDialogConfirmBtn" value="default" onclick="taskInpChangeHandler()" disabled>OK</button>
                             </menu>
 
                         </div>

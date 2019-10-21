@@ -126,8 +126,8 @@ function SetCheckBoxes() {
 
 function RegistreerButtonEvents() {
 
-    var teamCancelBtn = document.getElementById('teamDialogCancel');
-    var taskCancelBtn = document.getElementById('taskDialogCancel');
+    var teamCancelBtn = document.getElementById('teamDialogCancelBtn');
+    var taskCancelBtn = document.getElementById('taskDialogCancelBtn');
 
     //var confirmBtn = document.getElementById('dialogConfirm');;
 

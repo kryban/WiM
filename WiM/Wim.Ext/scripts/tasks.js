@@ -293,9 +293,14 @@ function TeamSelectedHandler(obj) {
 
     LoadTeamTasks(selectedTeam);
 
-    document.getElementById("voegTaskToe").removeAttribute("disabled");
+    EnableBtn("voegTaskToe");
+    EnableBtn("taskDialogConfirmBtn");
 
     log();
+}
+
+function EnableBtn(id) {
+    document.getElementById(id).removeAttribute("disabled");
 }
 
 function CreateTeamSelectElementInitially() {
