@@ -150,8 +150,9 @@ let closeBtn = document.querySelector(".close-btn");
 //closeBtn.onclick = function () {
 //    modal.style.display = "none";
 //}
-window.onclick = function (e) {
-    if (e.target === modal) {
-        modal.style.display = "none";
-    }
-}
+
+//window.onclick = function (e) {
+//    if (e.target === modal) {
+//        modal.style.display = "none";
+//    }
+//}

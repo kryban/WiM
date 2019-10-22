@@ -2,7 +2,7 @@
 //https://docs.microsoft.com/en-us/azure/devops/extend/develop/data-storage?view=azure-devops&viewFallbackFrom=vsts
 //see all settings
 //http://krylp:8080/tfs/DefaultCollection/_apis/ExtensionManagement/InstalledExtensions/bandik/WimDevOpExtension/Data/Scopes/Default/Current/Collections/WimCollection/Documents
-//DeleteCurrentTeams();
+
 //CreateTeams();
 
 var TeamSettingsCollectionName = "WimCollection";

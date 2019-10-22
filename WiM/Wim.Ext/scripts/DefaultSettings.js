@@ -1,35 +1,7 @@
 ﻿
 
-//DeleteAll();
-//DeleteCurrentTeams();
+//DeleteAllSettings();
 //CreateTeams();
-
-
-
-
-//function DeleteAll() {
-
-//    VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
-
-//        dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-
-//            docs.forEach(
-//                function (element) {
-//                    dataService.deleteDocument(TeamSettingsCollectionName, element.id).then(function () {
-//                        console.log("deleted");
-//                    });
-//                });
-
-//            console.log("DeleteAll() triggered.");
-//        });
-//        VSS.notifyLoadSucceeded();
-//    });
-//}
-
-function DeleteCurrentTeams() {
-    console.log("DeleteCurrentTeams()");
-    DeleteAllSettings();
-}
 
 function DeleteAllSettings() {
 

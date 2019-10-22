@@ -65,37 +65,39 @@
 
 @import "compass/css3";
 
-.modal_tasks, .modal_teams { /* The div that shows/hides. */
+.modal_tasks, .modal_teams, .modal_allOverlay { /* The div that shows/hides. */
     display: none; /* starts out hidden */
     z-index: 40001; /* High z-index to ensure it appears above all content */
 }
 
-.modal_tasks_overlay, .modal_teams_overlay { /* Shades out background when selector is active */
-    position: fixed;
+.modal_tasks, .modal_teams, .modal_allOverlay { /* Shades out background when selector is active */
+    position: fixed !important;
+    position: absolute;
     width: 100%;
     height: 100%;
-    background-color: black;
-    opacity: .5; /* Sets opacity so it's partly transparent */
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; /* IE transparency */
-    filter: alpha(opacity=50); /* More IE transparency */
+    background-color: red;
+    opacity: .99; /* Sets opacity so it's partly transparent */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=99)"; /* IE transparency */
+    filter: alpha(opacity=99); /* More IE transparency */
     z-index: 40001;
 }
 
 .modal_tasks_vertical_offset, .modal_teams_vertical_offset { /* Fixed position to provide the vertical offset */
     position: fixed;
-    top: 20%;
+    top: 5%;
     width: 100%;
     z-index: 40002; /* ensures box appears above overlay */
 }
 
 .modal_tasks_box, .modal_teams_box { /* The actual box, centered in the fixed-position div */
-    width: 80%; /* Whatever width you want the box to be */
-    max-width: 560px;
-    position: relative;
-    margin: 0 auto;
+    width: 95%; /* Whatever width you want the box to be */
+    max-width: 95%;
+    max-height: 450px;
+    position: absolute;
+    margin: auto;
     /*Everything below is just visual styling */
     background-color: white;
-    padding: 10px;
+    padding: 20px;
     border: 1px solid black;
 }
 
@@ -124,7 +126,7 @@
     }
 /*//////////////////////////*/
 /*BROWSERSAFE MODAL TRYOUT*/
-.modal {
+/*.modal {
     display: block;
     position: fixed;
     padding-top: 50px;
@@ -181,5 +183,5 @@
         top: 0;
         opacity: 1
     }
-}
+}*/
 
