@@ -20,6 +20,7 @@
 
 <body onload="CreateTeamSelectElementInitially()">
     <div class="modal_allOverlay">&nbsp;</div>
+
         <div id="vss-bandik-extension" style="height:95vh;">
 
             <div id="pageTitle" class="bandik-ext-title"> Workitem Manager </div>
@@ -74,11 +75,10 @@
                                 <h2 id="pageTitle">Manage teams</h2>
 
                                 <div class="input_fields_container_part" id="teamInputFields">
-                                    <div>
-                                        <button onclick="addTeamHandler(this)" id="voegTeamToe" class="btn btn-sm btn-primary voeg_toe">Voeg toe</button>
-                                    </div>
                                 </div>
                                 <menu>
+                                    <br />
+                                    <button id="voegTeamToe" onclick="addTeamHandler(this)" class="btn btn-sm btn-primary voeg_toe">Voeg toe</button>
                                     <button id="teamDialogCancelBtn" value="cancel" onclick="closeTeamsModal()">Cancel</button>
                                     <button id="teamDialogConfirmBtn" value="default" onclick="teamInpChangeHandler()">OK</button>
                                 </menu>
@@ -110,15 +110,14 @@
 
                                 <div class="ui-dialog-title">Tasks</div>
                                 <div class="tasks_input_fields_container_part" id="taskInputFields">
-                                    <div>
-                                        <button onclick="addTaskToConfigurationHandler()" id="voegTaskToe"
-                                                class="btn btn-sm btn-primary voeg_task_toe" disabled>
-                                            Voeg toe
-                                        </button>
-                                    </div>
+
                                 </div>
 
                                 <menu>
+                                    <button id="voegTaskToe" onclick="addTaskToConfigurationHandler()" 
+                                                class="btn btn-sm btn-primary voeg_task_toe" disabled>
+                                            Voeg toe
+                                    </buttonid="voegTaskToe">
                                     <button id="taskDialogCancelBtn" value="cancel" onclick="closeTasksModal()">Cancel</button>
                                     <button id="taskDialogConfirmBtn" value="default" onclick="taskInpChangeHandler()" disabled>OK</button>
                                 </menu>

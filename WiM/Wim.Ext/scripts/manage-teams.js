@@ -115,7 +115,7 @@ function addTeamHandler(name) {
     //        '</div>');
     //}
 
-    var teamTitle = name !== null ? name : defaultTeamName;
+    var teamTitle = (name !== null && typeof name !== "undefined") ? name : defaultTeamName;
 
     var teamRowNode = document.createElement("div");
     //teamRowNode.setAttribute("class", "taskInputRow");
@@ -158,18 +158,17 @@ function removeTeamFieldClickHandler(obj) {
             obj.parentNode.removeChild(obj.parentNode.firstChild);
         }
     }
-    //teamInpChangeHandler();
+}
 
-    function RegistreerButtonEvents() {
+function RegistreerButtonEvents() {
 
-        var cancelBtn = document.getElementById('dialogCancel');
-        var confirmBtn = document.getElementById('dialogConfirm');;
+    var cancelBtn = document.getElementById('dialogCancel');
+    var confirmBtn = document.getElementById('dialogConfirm');;
 
-        cancelBtn.addEventListener("click", function(){ favDialog.close(); });
-        confirmBtn.addEventListener("click", teamInpChangeHandler());
+    cancelBtn.addEventListener("click", function () { favDialog.close(); });
+    confirmBtn.addEventListener("click", teamInpChangeHandler());
 
-        log();
-    }
+    log();
 }
 
 

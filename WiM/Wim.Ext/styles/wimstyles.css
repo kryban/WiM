@@ -47,7 +47,7 @@
 }
 
 .tasks_input_fields_container_part {
-    height: 100px;
+    max-height: 225px;
     width: 100%;
     overflow: auto;
 }
