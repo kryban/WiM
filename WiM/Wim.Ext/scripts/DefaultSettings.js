@@ -1,7 +1,10 @@
 ﻿
 
-//DeleteAllSettings();
-//CreateTeams();
+
+if (window.confirm("Alle instellingen terugzetten naar standaard instellingen?")) {
+    DeleteAllSettings();
+    CreateTeams();
+}
 
 function DeleteAllSettings() {
 
