@@ -1,8 +1,9 @@
 {
   "manifestVersion": 1,
   "id": "WimDevOpExtension",
-  "version": "0.0.53",
+  "version": "0.0.56",
   "name": "WorkitemManagerExtension",
+  "baseUri": "http://localhost:50198/",
   "publisher": "bandik",
   "description": " A hub for adding multiple tasks in one click",
   "public": false,
