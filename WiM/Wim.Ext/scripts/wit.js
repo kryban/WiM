@@ -1,8 +1,8 @@
 ﻿
 // https://docs.microsoft.com/en-us/azure/devops/extend/reference/client/api/tfs/workitemtracking/restclient/workitemtrackinghttpclient2_1?view=vsts
-var wiTitle = "ttt";
+//var wiTitle = "ttt";
 var parentWorkItem;
-var defaultText_searchWI = "workitem ID";
+//var defaultText_searchWI = "workitem ID";
 //var chosenTeam="";
 
 //////////////////////startup/////////////////////////////////////////////////////////////////////////
@@ -15,10 +15,11 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     var name = window.location.pathname.split('/').slice(-1);
 
-    alertWhenIE();
+    //alertWhenIE();
 
-    ControleerSettingsCollection();
-    SetCheckBoxes();
+    CreateDefaultSettingsWhenEmpty();
+    DisableCheckBoxes();
+    DisableAddButton();
 
     MaakMenu();
 
@@ -60,27 +61,26 @@ function closeTasksModal() { $('.modal_tasks').hide(); }
 function openTeamsModal() { $('.modal_teams').show(); }
 function closeTeamsModal() { $('.modal_teams').hide(); }
 
+//function alertWhenIE() {
+//    if (isIE()) {
+//        alert('Sorry, this extension does not work in IE. Maybe future version will. Use Chrome. ');
+//    }
+//}
 
-function isIE() {
-    ua = navigator.userAgent;
-    /* MSIE used to detect old browsers and Trident used to newer ones*/
-    var is_ie = ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1;
+//function isIE() {
+//    ua = navigator.userAgent;
+//    /* MSIE used to detect old browsers and Trident used to newer ones*/
+//    var is_ie = ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1;
 
-    return is_ie;
-}
-
-function alertWhenIE() {
-    if (isIE()) {
-        alert('Sorry, this extension does not work in IE. Maybe future version will. Use Chrome. ');
-    }
-}
+//    return is_ie;
+//}
 
 function log(txt) {
     var tekst = (txt !== null && typeof txt !== "undefined") ? txt : "";
     console.log(arguments.callee.caller.name + " : " + tekst);
 }
 
-function ControleerSettingsCollection() {
+function CreateDefaultSettingsWhenEmpty() {
     try {
         FindCollection();
     }
@@ -97,11 +97,11 @@ function FindCollection() {
                     if (docs.length < 1) {
                         CreateFirstTimeCollection();
                     }
-                    log("Aantal gecvonden docs: " + docs.length);
-                },
+                    log("Number of docs found: " + docs.length);
+                }, // on reject
                 function (err) {
                     CreateFirstTimeCollection();
-                    log("Niets gevonden. Default aangemaakt");
+                    log("Nothing found. Default Created.");
                 }
             );
     });
@@ -124,13 +124,36 @@ function CreateFirstTimeCollection() {
     log();
 }
 
-function SetCheckBoxes() {
-    //var checkBoxes = Array.from(document.getElementsByClassName("checkbox"));
+function DisableCheckBoxes() {
     var checkBoxes = document.getElementsByClassName("checkbox");
+    if (checkBoxes !== null && (parentWorkItem === undefined || parentWorkItem === null))
+    {
+        for (var i = 0; i < checkBoxes.length; i++) {
+            checkBoxes[i].disabled = true;
+        }
+    }
+}
+
+function DisableAddButton() {
     var addButton = document.getElementById("addTasksButton");
-    if (checkBoxes !== null && addButton !== null &&
-        (parentWorkItem === undefined || parentWorkItem === null)) {
-        DisableItems(checkBoxes, addButton);
+    if (addButton !== null && (parentWorkItem === undefined || parentWorkItem === null)) {
+        addButton.disabled = true;
+    }
+}
+
+function EnableCheckBoxes() {
+    var checkBoxes = document.getElementsByClassName("checkbox");
+    if (checkBoxes !== null && (parentWorkItem !== undefined || parentWorkItem !== null)) {
+        for (var i = 0; i < checkBoxes.length; i++) {
+            checkBoxes[i].disabled = false;
+        }
+    }
+}
+
+function EnableAddButton() {
+    var addButton = document.getElementById("addTasksButton");
+    if (addButton !== null && (parentWorkItem !== undefined || parentWorkItem !== null)) {
+        addButton.disabled = false;
     }
 }
 
@@ -231,7 +254,8 @@ function OpenButtonClicked(obj) {
                     function () {
                         if (parentWorkItem === undefined || parentWorkItem === null) {
                             document.getElementById("existing-wit-text").innerHTML = "Workitem niet gevonden";
-                            DisableItems(checkBoxes, addButton);
+                            DisableCheckBoxes();
+                            DisableAddButton();
                         }
                     }
                 );
@@ -257,8 +281,8 @@ function ShowSelectedWorkitemOnPage(workItem) {
 
     var allowToAdd = CheckAllowedToAddTaskToPbi(workItem);
     //var checkBoxes = Array.from(document.getElementsByClassName("checkbox"));
-    var checkBoxes = document.getElementsByClassName("checkbox");
-    var addButton = document.getElementById("addTasksButton");
+    //var checkBoxes = document.getElementsByClassName("checkbox");
+    //var addButton = document.getElementById("addTasksButton");
 
     if (!allowToAdd) {
         document.getElementById("existing-wit-text").className = "existing-wit-text-not";
@@ -266,39 +290,41 @@ function ShowSelectedWorkitemOnPage(workItem) {
             "</br> " +
             "(" + workItem.id + ")" + workItem.title;
 
-        DisableItems(checkBoxes, addButton);
+         DisableCheckBoxes();
+         DisableAddButton();
     }
     else {
         document.getElementById("existing-wit-text").className = "existing-wit-text";
         document.getElementById("existing-wit-text").innerHTML = workItem.id + "</br> " + workItem.title;
 
-        EnableItems(checkBoxes, addButton);
+        EnableCheckBoxes();
+        EnableAddButton();
     }
 
     VSS.notifyLoadSucceeded();
 }
 
-function EnableItems(checkBoxes, addButton) {
-    for (var i = 0; i < checkBoxes.length; i++) {
-        checkBoxes[i].disabled = true;
-    }
-    //checkBoxes.forEach(function(element) {
-    //    element.disabled = false;
-    //});
-    addButton.disabled = false;
-}
+//function EnableItems(checkBoxes, addButton) {
+//    for (var i = 0; i < checkBoxes.length; i++) {
+//        checkBoxes[i].disabled = true;
+//    }
+//    //checkBoxes.forEach(function(element) {
+//    //    element.disabled = false;
+//    //});
+//    addButton.disabled = false;
+//}
 
-function DisableItems(checkBoxes, addButton) {
+//function DisableItems(checkBoxes, addButton) {
 
-    for (var i = 0; i < checkBoxes.length; i++) {
-        checkBoxes[i].disabled = true;
-    }
+//    for (var i = 0; i < checkBoxes.length; i++) {
+//        checkBoxes[i].disabled = true;
+//    }
 
-    //checkBoxes.forEach(function (element) {
-    //    element.disabled = true;
-    //});
-    addButton.disabled = true;
-}
+//    //checkBoxes.forEach(function (element) {
+//    //    element.disabled = true;
+//    //});
+//    addButton.disabled = true;
+//}
 
 function GetWorkItemTypes(callback) {
     VSS.require(["TFS/WorkItemTracking/RestClient"], function (_restWitClient) {

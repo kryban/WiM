@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     var name = window.location.pathname.split('/').slice(-1);
     
-    alertWhenIE();
+    //alertWhenIE();
     
     ControleerSettingsCollection();
     SetCheckBoxes();
@@ -60,10 +60,10 @@ function isIE() {
   return is_ie; 
 }
 
-function alertWhenIE(){
-if (isIE()){
-    alert('Sorry, this extension does not work in IE. Maybe future version will. Use Chrome. ');
-}}
+//function alertWhenIE(){
+//if (isIE()){
+//    alert('Sorry, this extension does not work in IE. Maybe future version will. Use Chrome. ');
+//}}
 
 function log(txt) {
     var tekst = (txt !== null && typeof txt !== "undefined") ? txt : "";
