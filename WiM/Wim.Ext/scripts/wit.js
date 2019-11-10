@@ -126,6 +126,8 @@ function CreateFirstTimeCollection() {
 
 function DisableCheckBoxes() {
     var checkBoxes = document.getElementsByClassName("checkbox");
+    // TODO: when it is not allowed to add a task, the the parent is not empty and then the button will not be disabled
+    // TODO" Create parentWorkItem Object, with additional infrormation about taks-add-allowance
     if (checkBoxes !== null && (parentWorkItem === undefined || parentWorkItem === null))
     {
         for (var i = 0; i < checkBoxes.length; i++) {
