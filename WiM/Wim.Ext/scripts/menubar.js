@@ -90,7 +90,7 @@ function menuFoo(docs, Controls, Menus) {
 // the center of all actions binded to menu items based on their names
 function menuBarAction(command) {
 
-    // all element ids begin with "team_", so we know user wants to switch teams
+    // all team element ids begin with "team_", so we know user wants to switch teams
     if (command.startsWith("team_")) {
         LoadTasksOnMainWindow(command);
     }

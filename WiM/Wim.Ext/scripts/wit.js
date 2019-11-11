@@ -126,9 +126,7 @@ function CreateFirstTimeCollection() {
 
 function DisableCheckBoxes() {
     var checkBoxes = document.getElementsByClassName("checkbox");
-    // TODO: when it is not allowed to add a task, the the parent is not empty and then the button will not be disabled
-    // TODO" Create parentWorkItem Object, with additional infrormation about taks-add-allowance
-    if (checkBoxes !== null && (parentWorkItem === undefined || parentWorkItem === null))
+    if (checkBoxes !== null || (parentWorkItem === undefined || parentWorkItem === null || !parentWorkItem.allowedToAddTasks))
     {
         for (var i = 0; i < checkBoxes.length; i++) {
             checkBoxes[i].disabled = true;
@@ -136,25 +134,26 @@ function DisableCheckBoxes() {
     }
 }
 
-function DisableAddButton() {
-    var addButton = document.getElementById("addTasksButton");
-    if (addButton !== null && (parentWorkItem === undefined || parentWorkItem === null)) {
-        addButton.disabled = true;
-    }
-}
-
 function EnableCheckBoxes() {
     var checkBoxes = document.getElementsByClassName("checkbox");
-    if (checkBoxes !== null && (parentWorkItem !== undefined || parentWorkItem !== null)) {
+    if (checkBoxes !== null && (parentWorkItem !== undefined && parentWorkItem !== null && parentWorkItem.allowedToAddTasks)) {
         for (var i = 0; i < checkBoxes.length; i++) {
             checkBoxes[i].disabled = false;
         }
     }
 }
 
+function DisableAddButton() {
+    var addButton = document.getElementById("addTasksButton");
+    if (addButton !== null && (parentWorkItem === undefined || parentWorkItem === null || !parentWorkItem.allowedToAddTasks)) {
+        addButton.disabled = true;
+    }
+}
+
 function EnableAddButton() {
     var addButton = document.getElementById("addTasksButton");
-    if (addButton !== null && (parentWorkItem !== undefined || parentWorkItem !== null)) {
+    if (addButton !== null && (parentWorkItem !== undefined && parentWorkItem !== null && parentWorkItem.allowedToAddTasks))
+    {
         addButton.disabled = false;
     }
 }
@@ -207,9 +206,9 @@ function workItem(wiResult)
         this.workItemIterationPath = "na";
         this.workItemAreaPath = "na";
         this.workItemTaskActivity = "na";
+        this.allowedToAddTasks = false;
     }
     else {
-
         this.id = wiResult.id;
         this.rev = wiResult.rev;
         this.url = wiResult.url;
@@ -219,6 +218,7 @@ function workItem(wiResult)
         this.workItemIterationPath = wiResult.fields[Enm_WorkitemFields.IterationPath];
         this.workItemAreaPath = wiResult.fields[Enm_WorkitemFields.AreaPath];
         this.workItemTaskActivity = Enm_WorkitemFields.TaskActivity;
+        this.allowedToAddTasks = CheckAllowedToAddTaskToPbi(this);
     }
 };
 
@@ -1188,6 +1188,7 @@ function LoadTasksOnMainWindow(teamnaam) {
 
                     var labelNode = document.createElement("label");
                     labelNode.setAttribute("for", element.id);
+                    labelNode.setAttribute("class", "labelforcheckbox");
                     labelNode.innerHTML = element.title;
 
                     taskFieldSet.appendChild(inputNode);
