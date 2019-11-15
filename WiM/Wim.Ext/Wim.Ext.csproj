@@ -73,9 +73,7 @@
     <Content Include="images\overview-manageTeams.png" />
     <Content Include="images\overview-switchTeam.png" />
     <Content Include="license.txt" />
-    <Content Include="styles\wimstyles.css" />
     <Content Include="doc\Learned.txt" />
-    <Content Include="HelloWorld.html" />
     <Content Include="images\logo.png" />
     <Content Include="images\logoHierarchical.png" />
     <Resource Include="images\tree1.ico" />
@@ -85,6 +83,10 @@
     <Resource Include="images\tree1_64.png" />
     <Resource Include="images\icon.png" />
     <Content Include="images\logo_wigo4it.png" />
+    <Content Include="main.html" />
+    <Content Include="node_modules\vss-web-extension-sdk\img\dependencies.png" />
+    <Content Include="node_modules\vss-web-extension-sdk\lib\VSS.SDK.js" />
+    <Content Include="node_modules\vss-web-extension-sdk\lib\VSS.SDK.min.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -95,6 +97,38 @@
     <Content Include="package.json" />
     <Content Include="doc\manifestExample.json" />
     <Content Include="overview.md" />
+    <Content Include="node_modules\%40types\jqueryui\LICENSE" />
+    <Content Include="node_modules\%40types\jqueryui\package.json" />
+    <Content Include="node_modules\%40types\jqueryui\README.md" />
+    <Content Include="node_modules\%40types\jquery\LICENSE" />
+    <Content Include="node_modules\%40types\jquery\package.json" />
+    <Content Include="node_modules\%40types\jquery\README.md" />
+    <Content Include="node_modules\%40types\knockout\LICENSE" />
+    <Content Include="node_modules\%40types\knockout\package.json" />
+    <Content Include="node_modules\%40types\knockout\README.md" />
+    <Content Include="node_modules\%40types\mousetrap\LICENSE" />
+    <Content Include="node_modules\%40types\mousetrap\package.json" />
+    <Content Include="node_modules\%40types\mousetrap\README.md" />
+    <Content Include="node_modules\%40types\q\package.json" />
+    <Content Include="node_modules\%40types\q\README.md" />
+    <Content Include="node_modules\%40types\q\types-metadata.json" />
+    <Content Include="node_modules\%40types\react\LICENSE" />
+    <Content Include="node_modules\%40types\react\package.json" />
+    <Content Include="node_modules\%40types\react\README.md" />
+    <Content Include="node_modules\%40types\requirejs\LICENSE" />
+    <Content Include="node_modules\%40types\requirejs\package.json" />
+    <Content Include="node_modules\%40types\requirejs\README.md" />
+    <Content Include="node_modules\%40types\sizzle\LICENSE" />
+    <Content Include="node_modules\%40types\sizzle\package.json" />
+    <Content Include="node_modules\%40types\sizzle\README.md" />
+    <Content Include="node_modules\vss-web-extension-sdk\bower.json" />
+    <Content Include="node_modules\vss-web-extension-sdk\LICENSE" />
+    <Content Include="node_modules\vss-web-extension-sdk\package.json" />
+    <Content Include="node_modules\vss-web-extension-sdk\README.md" />
+    <Content Include="node_modules\vss-web-extension-sdk\tsconfig.json" />
+    <Content Include="extManifest.json" />
+    <Content Include="doc\OLDManifest" />
+    <Content Include="doc\OLDpackage-lock.json" />
     <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -109,6 +143,30 @@
   <ItemGroup>
     <Folder Include="ps\" />
     <Folder Include="scripts\" />
+    <Folder Include="styles\" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="node_modules\%40types\jqueryui\index.d.ts" />
+    <TypeScriptCompile Include="node_modules\%40types\jquery\dist\jquery.slim.d.ts" />
+    <TypeScriptCompile Include="node_modules\%40types\jquery\index.d.ts" />
+    <TypeScriptCompile Include="node_modules\%40types\jquery\JQuery.d.ts" />
+    <TypeScriptCompile Include="node_modules\%40types\jquery\JQueryStatic.d.ts" />
+    <TypeScriptCompile Include="node_modules\%40types\jquery\legacy.d.ts" />
+    <TypeScriptCompile Include="node_modules\%40types\jquery\misc.d.ts" />
+    <TypeScriptCompile Include="node_modules\%40types\knockout\index.d.ts" />
+    <TypeScriptCompile Include="node_modules\%40types\mousetrap\index.d.ts" />
+    <TypeScriptCompile Include="node_modules\%40types\q\index.d.ts" />
+    <TypeScriptCompile Include="node_modules\%40types\react\index.d.ts" />
+    <TypeScriptCompile Include="node_modules\%40types\requirejs\index.d.ts" />
+    <TypeScriptCompile Include="node_modules\%40types\sizzle\index.d.ts" />
+    <TypeScriptCompile Include="node_modules\vss-web-extension-sdk\typings\charts.d.ts" />
+    <TypeScriptCompile Include="node_modules\vss-web-extension-sdk\typings\index.d.ts" />
+    <TypeScriptCompile Include="node_modules\vss-web-extension-sdk\typings\notifications.d.ts" />
+    <TypeScriptCompile Include="node_modules\vss-web-extension-sdk\typings\rmo.contracts.d.ts" />
+    <TypeScriptCompile Include="node_modules\vss-web-extension-sdk\typings\rmo.d.ts" />
+    <TypeScriptCompile Include="node_modules\vss-web-extension-sdk\typings\tfs.d.ts" />
+    <TypeScriptCompile Include="node_modules\vss-web-extension-sdk\typings\vss.d.ts" />
+    <TypeScriptCompile Include="node_modules\vss-web-extension-sdk\typings\VSS.SDK.d.ts" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

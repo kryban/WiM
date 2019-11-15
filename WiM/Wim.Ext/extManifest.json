@@ -1,0 +1,71 @@
+{
+  "manifestVersion": 1,
+  "id": "WiM",
+  "version": "0.1.22",
+  "name": "Workitem Manager",
+  "baseUri": "http://localhost:50198/",
+  "description": "A hub for adding multiple tasks in one click.",
+  "publisher": "bandik",
+  "public": false,
+  "content": {
+    "details": {
+      "path": "overview.md"
+    },
+    "license": {
+      "path": "license.txt"
+    }
+  },
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "icons": {
+    "default": "images/logo.png"
+  },
+  "contributions": [
+    {
+      "id": "wim",
+      "type": "ms.vss-web.hub",
+      "description": "Adds the 'WiM' hub to the Work hub group.",
+      "targets": [
+        "ms.vss-work-web.work-hub-group"
+      ],
+      "properties": {
+        "name": "WiM",
+        "order": 99,
+        "uri": "main.html",
+        "iconAsset": "bandik.wim/images/logo.png",
+        "_sharedData": {
+          "assets": [
+            "bandik.wim/images/logo.png"
+          ]
+        }
+      }
+    }
+  ],
+  "scopes": [
+    "vso.work_full"
+  ],
+  "categories": [
+    "Azure Boards"
+  ],
+  "files": [
+    {
+      "path": "main.html",
+      "addressable": true
+    },
+    {
+      "path": "scripts",
+      "addressable": true
+    },
+    {
+      "path": "styles",
+      "addressable": true
+    },
+    {
+      "path": "images",
+      "addressable": true
+    }
+  ]
+}
