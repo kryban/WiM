@@ -1,4 +1,8 @@
-﻿1. Wat is een extensie ? 
+﻿0.  npm install vss-web-extension-sdk
+	npm i -g tfx-cli
+	tfx extension create --manifest-globs WiM_Extension_Manifest.json 
+
+1. Wat is een extensie ? 
 	Een HTML pagina wat via Extension Points in een Iframe geladen wordt. 
 	Op welke punten DevOps uitgebreid kan worden ( extension points) staat vast. 
 

@@ -73,14 +73,7 @@
     <Content Include="images\overview-manageTeams.png" />
     <Content Include="images\overview-switchTeam.png" />
     <Content Include="license.txt" />
-    <Content Include="manage-tasks.html" />
-    <Content Include="manage-teams.html" />
-    <Content Include="scripts\defaultSettings.js" />
-    <Content Include="scripts\manage-teams.js" />
-    <Content Include="scripts\require.js" />
-    <Content Include="scripts\startup.js" />
     <Content Include="styles\wimstyles.css" />
-    <Content Include="teamsettings-form.html" />
     <Content Include="doc\Learned.txt" />
     <Content Include="HelloWorld.html" />
     <Content Include="images\logo.png" />
@@ -92,20 +85,12 @@
     <Resource Include="images\tree1_64.png" />
     <Resource Include="images\icon.png" />
     <Content Include="images\logo_wigo4it.png" />
-    <Content Include="scripts\settings.js" />
-    <Content Include="scripts\tasks.js" />
-    <Content Include="scripts\menubar.js" />
-    <Content Include="scripts\wit.js" />
-    <Content Include="SDK\scripts\VSS.SDK.js" />
-    <Content Include="Test.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="3_packageExtension.ps" />
-    <Content Include="ps\1_npm install vss-web-extension-sdk.ps" />
     <Content Include="package-lock.json" />
     <Content Include="package.json" />
     <Content Include="doc\manifestExample.json" />
@@ -117,13 +102,13 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <Content Include="WiM_Extension_Manifest.json" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="node_modules\" />
+    <Folder Include="ps\" />
+    <Folder Include="scripts\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
