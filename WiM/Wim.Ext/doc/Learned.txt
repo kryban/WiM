@@ -1,6 +1,6 @@
 ﻿0.  npm install vss-web-extension-sdk
 	npm i -g tfx-cli
-	tfx extension create --manifest-globs extManifest.json 
+	tfx extension create --manifest-globs extManifest.json
 
 1. Wat is een extensie ? 
 	Een HTML pagina wat via Extension Points in een Iframe geladen wordt. 
