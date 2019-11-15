@@ -41,3 +41,5 @@
 	url = https://github.com/kryban/WiM
 	en doe een sync om nieuwste wijzigingen binnen te halen.
 	Wijzig de url weer teurg en doe een push van de hele branch.
+
+
