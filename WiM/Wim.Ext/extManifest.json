@@ -3,7 +3,6 @@
   "id": "WiM",
   "version": "0.1.22",
   "name": "Workitem Manager",
-  "baseUri": "http://localhost:50198/",
   "description": "A hub for adding multiple tasks in one click.",
   "publisher": "bandik",
   "public": false,
