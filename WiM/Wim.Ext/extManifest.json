@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "WiM",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "name": "Workitem Manager",
   "description": "A hub for adding multiple tasks in one click.",
   "publisher": "bandik",
