@@ -1,7 +1,7 @@
 0. BUG: Werkt niet in IE
 
   
-0. Als een teamnaam gewijzigd wordt wordt, dan worden alle taken weggegooid.
+0. Als een teamnaam gewijzigd wordt wordt, dan worden alle taken weggegooid. (Die bestaan nog wel als document in settings, maar de owner kan niet meer gematched worden met een team, omdat de mathcintg op naam gebeurt. Ownewr zou daarom de GUID van een team moeten zijn niet niet een naam. Daarnaast moet bij het verwijderen van een team gecontroleerd worden of er nog trasks geconfigureerd staan en dat eventueel melden.)
 
 1 Voor een sprint kunnen kiezen, waarna de taken in die sprint in een drop down getoond worden. Als een traak daaruit gekozen wordt, dan wordt dat de geselecteerde taak waaraan taken gekoppeld moeten worden. 
 
