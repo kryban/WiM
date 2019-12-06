@@ -148,7 +148,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ps\" />
-    <Folder Include="ts\" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="node_modules\%40types\jqueryui\index.d.ts" />

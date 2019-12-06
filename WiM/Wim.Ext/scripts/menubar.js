@@ -23,7 +23,7 @@ function menuFoo(docs, Controls, Menus) {
 
     var bar = [];
 
-    console.log("CreateMenuBar() - getDocuments :" + docs.length);
+    log("CreateMenuBar() - getDocuments :" + docs.length);
 
     bar = docs.filter(function (d) { return d.type === 'team'; });
 
@@ -44,8 +44,8 @@ function menuFoo(docs, Controls, Menus) {
     var teamItemsStringified = JSON.stringify(teamMenuItems);
     var teamTasksItemsStringified = JSON.stringify(teamTasksMenuItems);
 
-    console.log("CreateMenuBar() - teamMenuItemsCreated :" + teamItemsStringified);
-    console.log("CreateMenuBar() - teamTaskMenuITemsreated:" + teamTasksItemsStringified);
+    log("teamMenuItemsCreated :" + teamItemsStringified);
+    log("teamTaskMenuITemsreated:" + teamTasksItemsStringified);
 
     var menuItems =
         '[' +
@@ -58,13 +58,9 @@ function menuFoo(docs, Controls, Menus) {
         '},' +
         '{' +
         '"id": "manage-teams", "text": "Manage teams"' +
-        //'"childItems":[{ "id": "add-new-team", "text": "Add new team" },' +
-        //'{ "id": "delete-team", "text": "Delete team" }' +
-        //']' +
         '},' +
         '{' +
         '"id": "configure-team-tasks", "text": "Manage team tasks" ' +
-        //', "childItems":' + teamTasksItemsStringified +
         '}' +
         ']' +
         '},' +

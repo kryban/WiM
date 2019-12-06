@@ -1,21 +1,14 @@
 ﻿
 // https://docs.microsoft.com/en-us/azure/devops/extend/reference/client/api/tfs/workitemtracking/restclient/workitemtrackinghttpclient2_1?view=vsts
-//var wiTitle = "ttt";
 var parentWorkItem;
-//var defaultText_searchWI = "workitem ID";
-//var chosenTeam="";
 
 //////////////////////startup/////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 var TeamSettingsCollectionName = "WimCollection";
-//var teamDialog = document.getElementById('manage-teams-dialog');
-//var tasksDialog = document.getElementById('manage-tasks-dialog');
 
 document.addEventListener('DOMContentLoaded', function (event) {
 
     var name = window.location.pathname.split('/').slice(-1);
-
-    //alertWhenIE();
 
     CreateDefaultSettingsWhenEmpty();
     DisableCheckBoxes();
@@ -23,11 +16,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     MaakMenu();
 
-    //RegistreerButtonEvents();
-
     registerTasksModelButtonEvents();
     registerTeamsModelButtonEvents();
-
 
     log("DocumentReady:" + name);
 });
@@ -117,7 +107,7 @@ function CreateFirstTimeCollection() {
         };
 
         dataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
-            log(doc.text);
+            log("Default document created: " + doc.text);
         });
     });
 
@@ -158,20 +148,20 @@ function EnableAddButton() {
     }
 }
 
-function RegistreerButtonEvents() {
+//function RegistreerButtonEvents() {
 
-    var teamCancelBtn = document.getElementById('teamDialogCancelBtn');
-    var taskCancelBtn = document.getElementById('taskDialogCancelBtn');
+//    var teamCancelBtn = document.getElementById('teamDialogCancelBtn');
+//    var taskCancelBtn = document.getElementById('taskDialogCancelBtn');
 
-    //var confirmBtn = document.getElementById('dialogConfirm');;
+//    //var confirmBtn = document.getElementById('dialogConfirm');;
 
-    teamCancelBtn.addEventListener("click", function () { closeTeamsModal(); });
-    taskCancelBtn.addEventListener("click", function () { closeTasksModal(); });
+//    teamCancelBtn.addEventListener("click", function () { closeTeamsModal(); });
+//    taskCancelBtn.addEventListener("click", function () { closeTasksModal(); });
 
-    //confirmBtn.addEventListener("click",teamInpChangeHandler());
+//    //confirmBtn.addEventListener("click",teamInpChangeHandler());
 
-    log();
-}
+//    log();
+//}
 
 
 // Browserdafe Modal try-outs
@@ -342,32 +332,32 @@ function GetWorkItemTypes(callback) {
 
 ///////////////manage-teams //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
-VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
+//VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
 
-    dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+//    dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
 
-        var x = 0;
+//        var x = 0;
 
-        // only teams setting. Not other settings
-        var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
-        log("Initial load team settings : " + teamDocs.length + " out of " + docs.length + " settings");
-        teamDocs.forEach(
-            function (element) {
-                //var inputId = "teamNaam" + x;
-                //x++;
-                //$('.input_fields_container_part').append(
-                //    '<div>' +
-                //    '<input onchange="teamInpChangeHandler()" onblur="teamInpChangeHandler()" type="text" class="teamNaamInput" name="teamInpNaam" id="' + inputId +'" value="' + element.text + '"/>' +
-                //    '<a href="#" onclick="removeTeamFieldClickHandler(this)" class="remove_field" style="margin-left:10px;">Verwijder</a>' +
-                //    '</div>');
-                addTeamHandler(element.text);
-            }
-        );
-        VSS.notifyLoadSucceeded();
+//        // only teams setting. Not other settings
+//        var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
+//        log("1-Initial load team settings : " + teamDocs.length + " out of " + docs.length + " settings");
+//        teamDocs.forEach(
+//            function (element) {
+//                //var inputId = "teamNaam" + x;
+//                //x++;
+//                //$('.input_fields_container_part').append(
+//                //    '<div>' +
+//                //    '<input onchange="teamInpChangeHandler()" onblur="teamInpChangeHandler()" type="text" class="teamNaamInput" name="teamInpNaam" id="' + inputId +'" value="' + element.text + '"/>' +
+//                //    '<a href="#" onclick="removeTeamFieldClickHandler(this)" class="remove_field" style="margin-left:10px;">Verwijder</a>' +
+//                //    '</div>');
+//                addTeamHandler(element.text);
+//            }
+//        );
+//        VSS.notifyLoadSucceeded();
 
-    });
-    VSS.notifyLoadSucceeded();
-});
+//    });
+//    VSS.notifyLoadSucceeded();
+//});
 
 
 function teamInpChangeHandler() {
@@ -496,16 +486,16 @@ function addTeamHandler(name) {
 
 
 
-function RegistreerButtonEvents() {
+//function RegistreerButtonEvents() {
 
-    var cancelBtn = document.getElementById('dialogCancel');
-    var confirmBtn = document.getElementById('dialogConfirm');;
+//    var cancelBtn = document.getElementById('dialogCancel');
+//    var confirmBtn = document.getElementById('dialogConfirm');;
 
-    cancelBtn.addEventListener("click", function () { favDialog.close(); });
-    confirmBtn.addEventListener("click", teamInpChangeHandler());
+//    cancelBtn.addEventListener("click", function () { favDialog.close(); });
+//    confirmBtn.addEventListener("click", teamInpChangeHandler());
 
-    log();
-}
+//    log();
+//}
 
 ///////////////manage-teams //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -817,12 +807,8 @@ var Enm_JsonPatchOperations =
 };
 
 function removeTeamFieldClickHandler(obj) {
-
-    if (obj !== null) {
-        while (obj.parentNode !== null && obj.parentNode.firstChild) {
-            obj.parentNode.removeChild(obj.parentNode.firstChild);
-        }
-    }
+    obj.parentNode.remove();
+    log("Fields removed.");
 }
 
 //function removeTeamFieldClickHandler(obj) {
@@ -837,13 +823,8 @@ function removeTeamFieldClickHandler(obj) {
 //}
 
 function removeTaskFieldClickHandler(obj) {
-
-    if (obj !== null) {
-        while (obj.parentNode !== null && obj.parentNode.firstChild) {
-            obj.parentNode.removeChild(obj.parentNode.firstChild);
-        }
-    }
-    log();
+    obj.parentNode.remove();
+    log("Fields removed.");
 }
 
 var defaultTaskTitle = "Taak titel";
@@ -1092,6 +1073,8 @@ function CreateTeamSelectElementInitially() {
                     teamSelecectOption.innerText = element.text;
 
                     teamSelectNode.appendChild(teamSelecectOption);
+
+                    addTeamHandler(element.text);
                 }
             );
 
@@ -1100,7 +1083,6 @@ function CreateTeamSelectElementInitially() {
 
         VSS.notifyLoadSucceeded();
     });
-
 }
 
 function LoadTeamTasks(selection) {
@@ -1134,14 +1116,14 @@ function LoadTeamTasks(selection) {
     });
 }
 
-if (!String.prototype.startsWith) {
-    Object.defineProperty(String.prototype, 'startsWith', {
-        value: function (search, rawPos) {
-            var pos = rawPos > 0 ? rawPos | 0 : 0;
-            return this.substring(pos, pos + search.length) === search;
-        }
-    });
-}
+//if (!String.prototype.startsWith) {
+//    Object.defineProperty(String.prototype, 'startsWith', {
+//        value: function (search, rawPos) {
+//            var pos = rawPos > 0 ? rawPos | 0 : 0;
+//            return this.substring(pos, pos + search.length) === search;
+//        }
+//    });
+//}
 
 function LoadTasksOnMainWindow(teamnaam) {
     var parsedTeamnaam;
