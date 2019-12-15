@@ -153,22 +153,6 @@ function EnableAddButton() {
     }
 }
 
-//function RegistreerButtonEvents() {
-
-//    var teamCancelBtn = document.getElementById('teamDialogCancelBtn');
-//    var taskCancelBtn = document.getElementById('taskDialogCancelBtn');
-
-//    //var confirmBtn = document.getElementById('dialogConfirm');;
-
-//    teamCancelBtn.addEventListener("click", function () { closeTeamsModal(); });
-//    taskCancelBtn.addEventListener("click", function () { closeTasksModal(); });
-
-//    //confirmBtn.addEventListener("click",teamInpChangeHandler());
-
-//    log();
-//}
-
-
 // Browserdafe Modal try-outs
 //let modalBtn = document.getElementById("modal-btn");
 let modal = document.querySelector(".modal");
@@ -277,9 +261,6 @@ function CheckAllowedToAddTaskToPbi(parentWorkItem) {
 function ShowSelectedWorkitemOnPage(workItem) {
 
     var allowToAdd = CheckAllowedToAddTaskToPbi(workItem);
-    //var checkBoxes = Array.from(document.getElementsByClassName("checkbox"));
-    //var checkBoxes = document.getElementsByClassName("checkbox");
-    //var addButton = document.getElementById("addTasksButton");
 
     if (!allowToAdd) {
         document.getElementById("existing-wit-text").className = "existing-wit-text-not";
@@ -531,52 +512,7 @@ var extenralSetted;
 
 function OpenTeamsConfiguratieDialoog(title) {
 
-    //VSS.getService(VSS.ServiceIds.Dialog).then(function (dialogService) {
-
-    //    var extensionCtx = VSS.getExtensionContext();
-    //    var contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".manage-teams";
-
-    //    var dialogOptions = {
-    //        title: "Manage teams"
-    //        , height: 500
-    //        , okText: "OKK"
-    //        //, cancelText: "Annuleer" 
-    //        , getDialogResult: function () {
-    //          }
-    //        , okCallback: function (result) {
-    //            VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService) {
-    //                // Reload whole page
-    //               log("navigationService.reload()");
-    //                navigationService.reload();
-    //                VSS.notifyLoadSucceeded();
-    //            });
-    //        }
-    //    };
-
-    //    dialogService.openDialog(contributionId, dialogOptions).then(
-    //        function (dialog) {
-
-    //            dialog
-    //                .getContributionInstance("Bandik.WimDevOpExtension.manage-teams")
-    //                .then(function(manageTeamsinstance) {
-    //                    teamsForm = manageTeamsinstance;
-    //                }
-    //            );
-
-    //            dialog.updateOkButton(true);
-    //            VSS.notifyLoadSucceeded();
-    //        }
-    //    );
-
-    //    VSS.notifyLoadSucceeded();
-    //});
-
-    //var updateButton = document.getElementById('updateDetails');
-
-    //var outputBox = document.getElementsByTagName('output')[0];
-    //var selectEl = document.getElementsByTagName('select')[0];
-    var _teamConfirmBtn = document.getElementById('teamDialogConfirm');
-
+    //var _teamConfirmBtn = document.getElementById('teamDialogConfirm');
 
     if (typeof teamDialog.showModal === "function") {
         teamDialog.showModal();
@@ -584,60 +520,15 @@ function OpenTeamsConfiguratieDialoog(title) {
         alert("The dialog API is not supported by this browser");
     }
 
-    // “Update details” button opens the <dialog> modally
-    //updateButton.addEventListener('click', function onOpen() {
-    //    if (typeof favDialog.showModal === "function") {
-    //        favDialog.showModal();
-    //    } else {
-    //        alert("The dialog API is not supported by this browser");
-    //    }
-    //});
-    // "Favorite animal" input sets the value of the submit button
-    //selectEl.addEventListener('change', function onSelect(e) {
-    //    confirmBtn.value = selectEl.value;
-    //});
-    // "Confirm" button of form triggers "close" on dialog because of [method="dialog"]
     teamDialog.addEventListener('close', function onClose() {
-        //teamInpChangeHandler();
         log("closing teamsettings");
     });
 }
-
-//(function () {
-//    var updateButton = document.getElementById('updateDetails');
-//    var favDialog = document.getElementById('favDialog');
-//    var outputBox = document.getElementsByTagName('output')[0];
-//    var selectEl = document.getElementsByTagName('select')[0];
-//    var confirmBtn = document.getElementById('confirmBtn');
-
-//    // “Update details” button opens the <dialog> modally
-//    updateButton.addEventListener('click', function onOpen() {
-//        if (typeof favDialog.showModal === "function") {
-//            favDialog.showModal();
-//        } else {
-//            alert("The dialog API is not supported by this browser");
-//        }
-//    });
-//    // "Favorite animal" input sets the value of the submit button
-//    selectEl.addEventListener('change', function onSelect(e) {
-//        confirmBtn.value = selectEl.value;
-//    });
-//    // "Confirm" button of form triggers "close" on dialog because of [method="dialog"]
-//    favDialog.addEventListener('close', function onClose() {
-//        outputBox.value = favDialog.returnValue + " button clicked - " + (new Date()).toString();
-//    });
-//})();
-
-
-//function executeInOrder(callback) {
-//    callback();
-//}
 
 function GetTeams() {
     console.log("GetTeams() executed");
     GetAllTeamSettings();
 }
-
 
 function getExistingSettings(dataservice) {
 
@@ -657,7 +548,6 @@ function getExistingSettings(dataservice) {
 
 function checkIfExistBeforeAdding(docs, teamName) {
     result = docs.find(function (obj) { return obj.text === teamName; });
-
 
     console.log("checkNew: " + result);
 }
@@ -709,18 +599,6 @@ function SetTeamSettings(teamName) {
         VSS.notifyLoadSucceeded();
     });
 }
-
-//function GetTeamSettings() {
-//    VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
-//        dataService.getDocument(TeamSettingsCollectionName, "MyDocumentId").then(function (doc) {
-//            console.log("Doc foo: " + doc.foo);
-//            VSS.notifyLoadSucceeded();
-//        });
-//        VSS.notifyLoadSucceeded();
-//    });
-//}
-
-//var foo = [];
 
 function GetAllTeamSettings() {
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
@@ -816,17 +694,6 @@ function removeTeamFieldClickHandler(obj) {
     log("Fields removed.");
 }
 
-//function removeTeamFieldClickHandler(obj) {
-
-//    if (obj !== null) {
-//        while (obj.parentNode !== null && obj.parentNode.firstChild) {
-//            obj.parentNode.removeChild(obj.parentNode.firstChild);
-//        }
-//    }
-//    teamInpChangeHandler();
-//    log();
-//}
-
 function removeTaskFieldClickHandler(obj) {
     obj.parentNode.remove();
     log("Fields removed.");
@@ -841,8 +708,6 @@ function addTaskToConfigurationHandler(title, type) {
     taskInputRowNode.setAttribute("class", "taskInputRow");
 
     var taskNaamInputNode = document.createElement("input");
-    //    taskNaamInputNode.setAttribute("onchange", "taskInpChangeHandler()");
-    //    taskNaamInputNode.setAttribute("onblur", "taskInpChangeHandler()");
     taskNaamInputNode.setAttribute("onfocus", "removeDefaultTextHandler(this)");
     taskNaamInputNode.setAttribute("type", "text");
     taskNaamInputNode.setAttribute("value", taskTitle);
@@ -851,7 +716,6 @@ function addTaskToConfigurationHandler(title, type) {
 
     var taskActivityTypeSelectNode = document.createElement("select");
     taskActivityTypeSelectNode.setAttribute("class", "taskActivityTypeSelect");
-    //    taskActivityTypeSelectNode.setAttribute("onchange", "taskInpChangeHandler()");
 
     var taskActivityTypeOptionNode1 = document.createElement("option");
     taskActivityTypeOptionNode1.setAttribute("class", "taskActivityTypeOption");
@@ -929,13 +793,12 @@ function ConfigureTasks(teamnaam) {
 
     log(parsedTeamnaam);
 
-    //OpenTaskConfiguratieDialoog(parsedTeamnaam);
     openTasksModal();
 }
 
 function OpenTaskConfiguratieDialoog(teamNaam) {
 
-    var _taskConfirmBtn = document.getElementById('taskDialogConfirm');
+    //var _taskConfirmBtn = document.getElementById('taskDialogConfirm');
 
     if (typeof tasksDialog.showModal === "function") {
         tasksDialog.showModal();
@@ -1120,15 +983,6 @@ function LoadTeamTasks(selection) {
         VSS.notifyLoadSucceeded();
     });
 }
-
-//if (!String.prototype.startsWith) {
-//    Object.defineProperty(String.prototype, 'startsWith', {
-//        value: function (search, rawPos) {
-//            var pos = rawPos > 0 ? rawPos | 0 : 0;
-//            return this.substring(pos, pos + search.length) === search;
-//        }
-//    });
-//}
 
 function LoadTasksOnMainWindow(teamnaam) {
     var parsedTeamnaam;
@@ -1416,8 +1270,7 @@ function GetTeamInAction() {
 
     log();
 }
-
-
+ 
 VSS.notifyLoadSucceeded();
 
 //FirstTimeSetupData();
