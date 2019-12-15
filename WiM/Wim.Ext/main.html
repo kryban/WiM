@@ -84,7 +84,9 @@
 							</div>
 							<menu>
 								<br />
-								<button id="voegTeamToe" onclick="addTeamHandler(this)" class="btn btn-sm btn-primary voeg_toe">Voeg toe</button>
+								<button id="voegTeamToe" onclick="addTeamHandler()" 
+                                        class="btn btn-sm btn-primary voeg_toe">
+                                Voeg toe</button>
 								<button id="teamDialogCancelBtn" value="cancel" onclick="closeTeamsModal()">Cancel</button>
 								<button id="teamDialogConfirmBtn" value="default" onclick="teamInpChangeHandler()">OK</button>
 							</menu>
@@ -121,9 +123,8 @@
 
 							<menu>
 								<button id="voegTaskToe" onclick="addTaskToConfigurationHandler()" 
-											class="btn btn-sm btn-primary voeg_task_toe" disabled>
-										Voeg toe
-								</buttonid="voegTaskToe">
+									    class="btn btn-sm btn-primary voeg_task_toe" disabled>
+										Voeg toe</button>
 								<button id="taskDialogCancelBtn" value="cancel" onclick="closeTasksModal()">Cancel</button>
 								<button id="taskDialogConfirmBtn" value="default" onclick="taskInpChangeHandler()" disabled>OK</button>
 							</menu>
