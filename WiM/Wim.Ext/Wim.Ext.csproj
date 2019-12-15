@@ -89,7 +89,6 @@
     <Content Include="node_modules\vss-web-extension-sdk\lib\VSS.SDK.min.js" />
     <Content Include="scripts\default.js" />
     <Content Include="scripts\menubar.js" />
-    <Content Include="scripts\require.js" />
     <Content Include="scripts\VSS.SDK.js" />
     <Content Include="scripts\wit.js" />
     <Content Include="styles\wimstyles.css" />

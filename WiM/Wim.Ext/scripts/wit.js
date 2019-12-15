@@ -22,6 +22,11 @@ document.addEventListener('DOMContentLoaded', function (event) {
     log("DocumentReady:" + name);
 });
 
+var controls = VSS.require("VSS/Controls", function (c) { controls = c; });
+var statusindicator = VSS.require("VSS/Controls/StatusIndicator", function (i) { statusindicator = i; });
+var vssService = VSS.require("VSS/Service", function (s) { vssService = s; });
+var wiTrackingClient = VSS.require("TFS/WorkItemTracking/RestClient", function (r) { wiTrackingClient = r; });
+
 function registerTasksModelButtonEvents() {
     //Show modal box
     $('#modal_tasks_openModal').click(
@@ -1243,11 +1248,7 @@ function PairTasksToWorkitem(docs, parent) {
         //}
     };
 
-    var controls = require("VSS/Controls");
-    var statusindicator = require("VSS/Controls/StatusIndicator");
     var waitcontrol = controls.create(statusindicator.WaitControl, container, options);
-    var vssService = require("VSS/Service");
-    var wiTrackingClient = require("TFS/WorkItemTracking/RestClient");
     var client = vssService.getCollectionClient(wiTrackingClient.WorkItemTrackingHttpClient);
 
     waitcontrol.startWait();
