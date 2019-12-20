@@ -5,11 +5,18 @@ var TeamSettingsCollectionName = "WimCollection";
 var witClient;
 var configuredTeams = [];
 var result;
-var extenralSetted;
+//var extenralSetted;
 var selectedTeam;
 var defaultTaskTitle = "Taak titel";
+var defaultTeamName = "Team naam";
 
-document.addEventListener('DOMContentLoaded', function (event) {
+var controls;
+var statusindicator; 
+var vssService;
+var wiTrackingClient; 
+var prepdataService;
+
+document.addEventListener('DOMContentLoaded', async function (event) {
 
     var name = window.location.pathname.split('/').slice(-1);
 
@@ -22,26 +29,30 @@ document.addEventListener('DOMContentLoaded', function (event) {
     registerTasksModelButtonEvents();
     registerTeamsModelButtonEvents();
 
+    LoadRequired();
+
+    await GetDataService();
+    await CreateTeamSelectElementInitially();
+
     log("DocumentReady:" + name);
 });
 
-var controls = VSS.require("VSS/Controls", function (c) { controls = c; });
-var statusindicator = VSS.require("VSS/Controls/StatusIndicator", function (i) { statusindicator = i; });
-var vssService = VSS.require("VSS/Service", function (s) { vssService = s; });
-var wiTrackingClient = VSS.require("TFS/WorkItemTracking/RestClient", function (r) { wiTrackingClient = r; });
-var prepdataService;
+async function LoadRequired() {
+    await VSS.require("VSS/Controls", function (c) { controls = c; });
+    log("0.1->" + controls);
+    await VSS.require("VSS/Controls/StatusIndicator", function (i) { statusindicator = i; log("0.2.2->" + statusindicator); });
+    log("0.2->" + statusindicator);
+    await VSS.require("VSS/Service", function (s) { vssService = s; });
+    log("0.3->" + vssService);
+    await VSS.require("TFS/WorkItemTracking/RestClient", function (r) { wiTrackingClient = r; });
+    log("0.4->" + wiTrackingClient);
+}
 
 async function GetDataService() {
-    log("1->"+prepdataService);
+    log("1->" + prepdataService);
     prepdataService = await VSS.getService(VSS.ServiceIds.ExtensionData);
-    log("2->" +prepdataService);
+    log("2->" + prepdataService);
 }
-
-async function LoadServices() {
-    await GetDataService();
-}
-
-LoadServices();
 
 function registerTasksModelButtonEvents() {
     //Show modal box
@@ -524,8 +535,6 @@ function removeTaskFieldClickHandler(obj) {
     log("Fields removed.");
 }
 
-var defaultTeamName = "Team naam";
-
 function addTeamHandler(name) {
     var teamTitle = (name !== null && typeof name !== "undefined") ? name : defaultTeamName;
     var teamRowNode = document.createElement("div");
@@ -748,9 +757,7 @@ function EnableBtn(id) {
 }
 
 async function CreateTeamSelectElementInitially() {
-    log("5: " + prepdataService);
-    await LoadServices();
-    log("5.1: " + prepdataService);
+    log("Received dataservice: " + prepdataService);
 
     prepdataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
         var x = 0;
