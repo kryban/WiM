@@ -26,29 +26,28 @@ window.onload = async function () {
     DisableCheckBoxes();
     DisableAddButton();
 
-    MaakMenu();
-
     registerTasksModelButtonEvents();
     registerTeamsModelButtonEvents();
 
-    LoadRequired();
-
+    await LoadRequired();
     await GetDataService();
     await CreateTeamSelectElementInitially();
+
+    MaakMenu();
 
     log("DocumentReady:" + name);
 };
 
 async function LoadRequired() {
-    await VSS.require("VSS/Controls", function (c) { vssControls = c; });
+    await VSS.require("VSS/Controls", function (c) { vssControls = c; log("Required vssControls: " + vssControls); });
     log("0.1->" + vssControls);
-    await VSS.require("VSS/Controls/StatusIndicator", function (i) { vssStatusindicator = i; log("Required vssStatusIndicator" + vssStatusindicator); });
+    await VSS.require("VSS/Controls/StatusIndicator", function (i) { vssStatusindicator = i; log("Required vssStatusIndicator: " + vssStatusindicator); });
     log("0.2->" + vssStatusindicator);
-    await VSS.require("VSS/Service", function (s) { vssService = s; });
+    await VSS.require("VSS/Service", function (s) { vssService = s; log("Required vssService: " + vssService); });
     log("0.3->" + vssService);
-    await VSS.require("TFS/WorkItemTracking/RestClient", function (r) { vssWiTrackingClient = r; });
+    await VSS.require("TFS/WorkItemTracking/RestClient", function (r) { vssWiTrackingClient = r; log("Required vssWiTrackingClient: " + vssWiTrackingClient); });
     log("0.4->" + vssWiTrackingClient);
-    await VSS.require("VSS/Controls/Menus", function (m) { vssMenus = m; log("Required Menus" + vssMenus); });
+    await VSS.require("VSS/Controls/Menus", function (m) { vssMenus = m; log("Required vssMenus: " + vssMenus); });
 }
 
 async function GetDataService() {
@@ -378,14 +377,14 @@ function OpenTeamsConfiguratieDialoog(title) {
 }
 
 function GetTeams() {
-    console.log("GetTeams() executed");
+    log("GetTeams() executed");
     GetAllTeamSettings();
 }
 
 function getExistingSettings(dataservice) {
     dataservice.getDocuments(TeamSettingsCollectionName).then(
         function (docs) {
-            console.log("GetAllTeamSettingsNew :" + docs.length);
+            log("GetAllTeamSettingsNew :" + docs.length);
 
             docs.forEach(
                 function (element) {
@@ -400,7 +399,7 @@ function getExistingSettings(dataservice) {
 function checkIfExistBeforeAdding(docs, teamName) {
     result = docs.find(function (obj) { return obj.text === teamName; });
 
-    console.log("checkNew: " + result);
+    log("checkNew: " + result);
 }
 
 function addSetting(dataService, teamName) {
@@ -409,10 +408,10 @@ function addSetting(dataService, teamName) {
     };
 
     dataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
-        console.log("SetTeamSetting (CreateTeamsNew) : " + doc.text);
+        log("SetTeamSetting (CreateTeamsNew) : " + doc.text);
     });
 
-    console.log("SettingNEw NOT exists.");
+    log("SettingNEw NOT exists.");
 }
 
 function SetTeamSettings(teamName) {
@@ -420,7 +419,7 @@ function SetTeamSettings(teamName) {
     var result;
 
     vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-        console.log("GetAllTeamSettings :" + docs.length);
+        log("GetAllTeamSettings :" + docs.length);
 
         result = docs.find(function (obj) { return obj.text === teamName; });
         docs.forEach(
@@ -432,7 +431,7 @@ function SetTeamSettings(teamName) {
     });
 
     if (typeof result === 'undefined') {
-        console.log("Setting exists.");
+        consolelog("Setting exists.");
     }
     else {
         var newDoc = {
@@ -441,17 +440,17 @@ function SetTeamSettings(teamName) {
         };
 
         vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
-            console.log("SetTeamSetting (CreateTeams) : " + doc.text);
+            log("SetTeamSetting (CreateTeams) : " + doc.text);
         });
 
-        console.log("Setting NOT exists.");
+        log("Setting NOT exists.");
     }
     VSS.notifyLoadSucceeded();
 }
 
 function GetAllTeamSettings() {
     vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-        console.log("GetAllTeamSettings :" + docs.length);
+        log("GetAllTeamSettings :" + docs.length);
 
         VSS.notifyLoadSucceeded();
         return docs;

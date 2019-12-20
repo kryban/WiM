@@ -1,9 +1,7 @@
 ﻿
 
 function MaakMenu() {
-    VSS.require(["VSS/Controls", "VSS/Controls/Menus"], function(Controls, Menus) {
-        CreateMenuBar(Controls, Menus);
-    });
+    CreateMenuBar(vssControls, vssMenus);
 }
 
 function CreateMenuBar(controls, menus) {
