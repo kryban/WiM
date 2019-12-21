@@ -29,25 +29,58 @@ window.onload = async function () {
     registerTasksModelButtonEvents();
     registerTeamsModelButtonEvents();
 
-    await LoadRequired();
-    await GetDataService();
-    await CreateTeamSelectElementInitially();
-
-    MaakMenu();
-
+    LoadRequired();
+    //await GetDataService();
+    //await CreateTeamSelectElementInitially();
+ 
     log("DocumentReady:" + name);
 };
 
-async function LoadRequired() {
-    await VSS.require("VSS/Controls", function (c) { vssControls = c; log("Required vssControls: " + vssControls); });
-    log("0.1->" + vssControls);
-    await VSS.require("VSS/Controls/StatusIndicator", function (i) { vssStatusindicator = i; log("Required vssStatusIndicator: " + vssStatusindicator); });
-    log("0.2->" + vssStatusindicator);
-    await VSS.require("VSS/Service", function (s) { vssService = s; log("Required vssService: " + vssService); });
-    log("0.3->" + vssService);
-    await VSS.require("TFS/WorkItemTracking/RestClient", function (r) { vssWiTrackingClient = r; log("Required vssWiTrackingClient: " + vssWiTrackingClient); });
-    log("0.4->" + vssWiTrackingClient);
-    await VSS.require("VSS/Controls/Menus", function (m) { vssMenus = m; log("Required vssMenus: " + vssMenus); });
+function LoadRequired() {
+    //VSS.ready(function () {
+    //    VSS.require("VSS/Controls", function (c) {
+    //        log("0.1->" + vssControls);
+    //        vssControls = c;
+    //        log("Required vssControls: " + vssControls);
+    //        VSS.require("VSS/Controls/StatusIndicator", function (i) {
+    //            log("0.2->" + vssStatusindicator);
+    //            vssStatusindicator = i;
+    //            log("Required vssStatusIndicator: " + vssStatusindicator);
+    //            VSS.require("VSS/Service", function (s) {
+    //                log("0.3->" + vssService);
+    //                vssService = s;
+    //                log("Required vssService: " + vssService);
+    //                VSS.require("TFS/WorkItemTracking/RestClient", function (r) {
+    //                    log("0.4->" + vssWiTrackingClient);
+    //                    vssWiTrackingClient = r;
+    //                    log("Required vssWiTrackingClient: " + vssWiTrackingClient);
+    //                    VSS.require("VSS/Controls/Menus", function (m) {
+    //                        log("0.5->" + vssMenus);
+    //                        vssMenus = m;
+    //                        log("Required vssMenus: " + vssMenus);
+    //                        GetDataService();
+    //                        MaakMenu(this.vssControls, this.vssMenus);
+    //                        CreateTeamSelectElementInitially(vssDataService);
+    //                    });
+    //                });
+    //            });
+    //        });
+    //    });
+
+    VSS.ready(async function () {
+        await VSS.require(["VSS/Controls", "VSS/Controls/StatusIndicator", "VSS/Service", "TFS/WorkItemTracking/RestClient", "VSS/Controls/Menus"],
+            function (c, i, s, r, m) {
+                vssControls = c; log("Required vssControls: " + vssControls);
+                vssStatusindicator = i; log("Required vssStatusIndicator: " + vssStatusindicator);
+                vssService = s; log("Required vssService: " + vssService);
+                vssWiTrackingClient = r; log("Required vssWiTrackingClient: " + vssWiTrackingClient);
+                vssMenus = m; log("Required vssMenus: " + vssMenus);
+
+                GetDataService();
+                MaakMenu(vssControls, vssMenus);
+                CreateTeamSelectElementInitially(vssDataService);
+            });
+    });
 }
 
 async function GetDataService() {
@@ -758,7 +791,7 @@ function EnableBtn(id) {
     document.getElementById(id).removeAttribute("disabled");
 }
 
-async function CreateTeamSelectElementInitially() {
+async function CreateTeamSelectElementInitially(vssDataService) {
     log("Received dataservice: " + vssDataService);
 
     vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {

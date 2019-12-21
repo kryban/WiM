@@ -1,6 +1,7 @@
 ﻿
 
-function MaakMenu() {
+function MaakMenu(vssControls, vssMenus) {
+    log("Start creating menu bar (vssControls; vssMenus): " + vssControls + "+" + vssMenus);
     CreateMenuBar(vssControls, vssMenus);
 }
 
