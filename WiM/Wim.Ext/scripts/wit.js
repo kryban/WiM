@@ -9,6 +9,7 @@ var result;
 var selectedTeam;
 var defaultTaskTitle = "Taak titel";
 var defaultTeamName = "Team naam";
+var numberOfTasksHandled;
 
 var vssControls;
 var vssStatusindicator; 
@@ -37,38 +38,12 @@ window.onload = async function () {
 };
 
 function LoadRequired() {
-    //VSS.ready(function () {
-    //    VSS.require("VSS/Controls", function (c) {
-    //        log("0.1->" + vssControls);
-    //        vssControls = c;
-    //        log("Required vssControls: " + vssControls);
-    //        VSS.require("VSS/Controls/StatusIndicator", function (i) {
-    //            log("0.2->" + vssStatusindicator);
-    //            vssStatusindicator = i;
-    //            log("Required vssStatusIndicator: " + vssStatusindicator);
-    //            VSS.require("VSS/Service", function (s) {
-    //                log("0.3->" + vssService);
-    //                vssService = s;
-    //                log("Required vssService: " + vssService);
-    //                VSS.require("TFS/WorkItemTracking/RestClient", function (r) {
-    //                    log("0.4->" + vssWiTrackingClient);
-    //                    vssWiTrackingClient = r;
-    //                    log("Required vssWiTrackingClient: " + vssWiTrackingClient);
-    //                    VSS.require("VSS/Controls/Menus", function (m) {
-    //                        log("0.5->" + vssMenus);
-    //                        vssMenus = m;
-    //                        log("Required vssMenus: " + vssMenus);
-    //                        GetDataService();
-    //                        MaakMenu(this.vssControls, this.vssMenus);
-    //                        CreateTeamSelectElementInitially(vssDataService);
-    //                    });
-    //                });
-    //            });
-    //        });
-    //    });
-
     VSS.ready(async function () {
-        await VSS.require(["VSS/Controls", "VSS/Controls/StatusIndicator", "VSS/Service", "TFS/WorkItemTracking/RestClient", "VSS/Controls/Menus"],
+        await VSS.require(["VSS/Controls",
+            "VSS/Controls/StatusIndicator",
+            "VSS/Service",
+            "TFS/WorkItemTracking/RestClient",
+            "VSS/Controls/Menus"],
             function (c, i, s, r, m) {
                 vssControls = c; log("Required vssControls: " + vssControls);
                 vssStatusindicator = i; log("Required vssStatusIndicator: " + vssStatusindicator);
@@ -92,7 +67,6 @@ async function GetDataService() {
 function registerTasksModelButtonEvents() {
     //Show modal box
     $('#modal_tasks_openModal').click(
-
         function () { openTasksModal(); }
     );
     //Hide modal box
@@ -104,7 +78,6 @@ function registerTasksModelButtonEvents() {
 function registerTeamsModelButtonEvents() {
     //Show modal box
     $('#modal_teams_openModal').click(
-
         function () { openTeamsModal(); }
     );
     //Hide modal box
@@ -246,32 +219,28 @@ function ExistingWitFieldFocussed() {
 
 function OpenButtonClicked(obj) {
     
-    VSS.require(["TFS/WorkItemTracking/RestClient"], // modulepath
-        function (_restWitClient) {
+    //VSS.require(["TFS/WorkItemTracking/RestClient"], function (_restWitClient) {
 
-            parentWorkItem = null;
-            witClient = _restWitClient.getClient();
+    parentWorkItem = null;
+    witClient = vssWiTrackingClient.getClient();
 
-            var witId = document.getElementById("existing-wit-id").value;
-            var checkBoxes = document.getElementsByClassName("checkbox");
-            var addButton = document.getElementById("addTasksButton");
+    var witId = document.getElementById("existing-wit-id").value;
+    var checkBoxes = document.getElementsByClassName("checkbox");
+    var addButton = document.getElementById("addTasksButton");
 
-            witClient.getWorkItem(witId)// when only specific fields required , ["System.Title", "System.WorkItemType"])
-                .then(function (workitemResult) {
-                    parentWorkItem = new workItem(workitemResult);
-                    ShowSelectedWorkitemOnPage(parentWorkItem);
-                })
-                .catch(
-                    function () {
-                        if (parentWorkItem === undefined || parentWorkItem === null) {
-                            document.getElementById("existing-wit-text").innerHTML = "Workitem niet gevonden";
-                            DisableCheckBoxes();
-                            DisableAddButton();
-                        }
-                    }
-                );
+    witClient.getWorkItem(witId)// when only specific fields required , ["System.Title", "System.WorkItemType"])
+        .then(function (workitemResult) {
+            parentWorkItem = new workItem(workitemResult);
+            ShowSelectedWorkitemOnPage(parentWorkItem);
+        })
+        .catch(function () {
+            if (parentWorkItem === undefined || parentWorkItem === null) {
+                document.getElementById("existing-wit-text").innerHTML = "Workitem niet gevonden";
+                DisableCheckBoxes();
+                DisableAddButton();
             }
-        );
+        });
+    //});
 }
 
 function MainPageEnterPressed(event) {
@@ -289,12 +258,12 @@ function CheckAllowedToAddTaskToPbi(parentWorkItem) {
 }
 
 function ShowSelectedWorkitemOnPage(workItem) {
-
     var allowToAdd = CheckAllowedToAddTaskToPbi(workItem);
 
     if (!allowToAdd) {
         document.getElementById("existing-wit-text").className = "existing-wit-text-not";
-        document.getElementById("existing-wit-text").innerHTML = "Aan een " + workItem.workItemType + " mag geen Task toegevoegd worden." +
+        document.getElementById("existing-wit-text").innerHTML =
+            "Aan een " + workItem.workItemType + " mag geen Task toegevoegd worden." +
             "</br> " +
             "(" + workItem.id + ")" + workItem.title;
 
@@ -819,13 +788,10 @@ async function CreateTeamSelectElementInitially(vssDataService) {
                 teamSelectNode.appendChild(teamSelecectOption);
 
                 addTeamHandler(element.text);
-            }
-        );
+            });
 
         VSS.notifyLoadSucceeded();
     });
-
-    VSS.notifyLoadSucceeded();
 }
 
 function LoadTeamTasks(selection) {
@@ -853,7 +819,6 @@ function LoadTeamTasks(selection) {
         );
         VSS.notifyLoadSucceeded();
     });
-    VSS.notifyLoadSucceeded();
 }
 
 function LoadTasksOnMainWindow(teamnaam) {
@@ -954,8 +919,6 @@ function AddTasksButtonClicked(obj) {
     LoadTasksOnMainWindow(selectedTeam);
     log();
 }
-
-var numberOfTasksHandled;
 
 function PairTasksToWorkitem(docs, parent) {
     numberOfTasksHandled = 0;
@@ -1090,10 +1053,9 @@ function CreateTasksToAdd(selectedCheckboxes) {
             task.workItemTaskActivity = element.ActivityType;
 
             retval.push(task);
-        }
-    );
+        });
 
-    log();
+    log("Created tasks: " + retval.length);
     return retval;
 }
 
@@ -1115,7 +1077,7 @@ function GetSelectedCheckboxes(allCheckboxes) {
         }
     );
 
-    log();
+    log("Selected checkboxes: " + retval.length);
     return retval;
 }
 
@@ -1128,13 +1090,10 @@ function SetTeamInAction(teamnaam) {
 
 function GetTeamInAction() {
     vssDataService.getValue("team-in-action").then(function (value) {
-        console.log("GetTeamInAction(): Retrieved team in action value - " + value);
+        log("Retrieved team in action value - " + value);
         return value;
     });
-    log();
 }
- 
-VSS.notifyLoadSucceeded();
 
 function FirstTimeSetupData() {
     //// First time setup code
