@@ -7,12 +7,9 @@
             "dom"
         ],
         "skipLibCheck": true,
-        "types": ["jquery"]
+        "types": []
     },
   "include": [
-    "typings/**/*.ts",
-    "../**/*.ts",
-    "./**/*.ts",
-    "../*.ts"
+    "*.ts"
   ]
 }
