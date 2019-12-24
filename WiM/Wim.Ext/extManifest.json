@@ -1,8 +1,9 @@
 {
   "manifestVersion": 1,
   "id": "WiM",
-  "version": "0.1.23",
+  "version": "0.1.27",
   "name": "Workitem Manager",
+  "baseUri": "http://localhost:50198/",
   "description": "A hub for adding multiple tasks in one click.",
   "publisher": "bandik",
   "public": false,
@@ -60,6 +61,10 @@
     },
     {
       "path": "styles",
+      "addressable": true
+    },
+    {
+      "path": "ts",
       "addressable": true
     },
     {

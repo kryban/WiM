@@ -1,4 +1,7 @@
-"use strict";
+///// <reference path="menubarts.ts" />
+/// <reference path="../node_modules/vss-web-extension-sdk/typings/tfs.d.ts" />
+/// <reference path="../node_modules/vss-web-extension-sdk/typings/vss.d.ts" />
+/// <reference path="../node_modules/vss-web-extension-sdk/typings/vss.sdk.d.ts" />
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,35 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var $ = require("jquery");
+//import * as $ from "jquery";
 // https://docs.microsoft.com/en-us/azure/devops/extend/reference/client/api/tfs/workitemtracking/restclient/workitemtrackinghttpclient2_1?view=vsts
 var parentWorkItem;
 var TeamSettingsCollectionName = "WimCollection";
@@ -58,7 +33,6 @@ function MaakMenu(vssControls, vssMenus) {
     log("Start creating menu bar (vssControls; vssMenus): " + vssControls + "+" + vssMenus);
     CreateMenuBar(vssControls, vssMenus);
 }
-exports.MaakMenu = MaakMenu;
 function CreateMenuBar(controls, menus) {
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
         dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
@@ -130,68 +104,49 @@ function menuBarAction(command) {
 }
 VSS.notifyLoadSucceeded();
 window.onload = function () {
-    return __awaiter(this, void 0, void 0, function () {
-        var name;
-        return __generator(this, function (_a) {
-            name = window.location.pathname.split('/').slice(-1);
-            //CreateDefaultSettingsWhenEmpty();
-            DisableCheckBoxes();
-            DisableAddButton();
-            registerTasksModelButtonEvents();
-            registerTeamsModelButtonEvents();
-            LoadRequired();
-            //await GetDataService();
-            //await CreateTeamSelectElementInitially();
-            log("DocumentReady:" + name);
-            return [2 /*return*/];
-        });
+    return __awaiter(this, void 0, void 0, function* () {
+        var name = window.location.pathname.split('/').slice(-1);
+        //CreateDefaultSettingsWhenEmpty();
+        DisableCheckBoxes();
+        DisableAddButton();
+        registerTasksModelButtonEvents();
+        registerTeamsModelButtonEvents();
+        LoadRequired();
+        //await GetDataService();
+        //await CreateTeamSelectElementInitially();
+        log("DocumentReady:" + name);
     });
 };
 function LoadRequired() {
     VSS.ready(function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, VSS.require(["VSS/Controls",
-                            "VSS/Controls/StatusIndicator",
-                            "VSS/Service",
-                            "TFS/WorkItemTracking/RestClient",
-                            "VSS/Controls/Menus"], function (c, i, s, r, m) {
-                            vssControls = c;
-                            log("Required vssControls: " + vssControls);
-                            vssStatusindicator = i;
-                            log("Required vssStatusIndicator: " + vssStatusindicator);
-                            vssService = s;
-                            log("Required vssService: " + vssService);
-                            vssWiTrackingClient = r;
-                            log("Required vssWiTrackingClient: " + vssWiTrackingClient);
-                            vssMenus = m;
-                            log("Required vssMenus: " + vssMenus);
-                            GetDataService();
-                            MaakMenu(vssControls, vssMenus);
-                            CreateTeamSelectElementInitially(vssDataService);
-                        })];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+        return __awaiter(this, void 0, void 0, function* () {
+            yield VSS.require(["VSS/Controls",
+                "VSS/Controls/StatusIndicator",
+                "VSS/Service",
+                "TFS/WorkItemTracking/RestClient",
+                "VSS/Controls/Menus"], function (c, i, s, r, m) {
+                vssControls = c;
+                log("Required vssControls: " + vssControls);
+                vssStatusindicator = i;
+                log("Required vssStatusIndicator: " + vssStatusindicator);
+                vssService = s;
+                log("Required vssService: " + vssService);
+                vssWiTrackingClient = r;
+                log("Required vssWiTrackingClient: " + vssWiTrackingClient);
+                vssMenus = m;
+                log("Required vssMenus: " + vssMenus);
+                GetDataService();
+                MaakMenu(vssControls, vssMenus);
+                CreateTeamSelectElementInitially(vssDataService);
             });
         });
     });
 }
 function GetDataService() {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    log("1->" + vssDataService);
-                    return [4 /*yield*/, VSS.getService(VSS.ServiceIds.ExtensionData)];
-                case 1:
-                    vssDataService = _a.sent();
-                    log("2->" + vssDataService);
-                    return [2 /*return*/];
-            }
-        });
+    return __awaiter(this, void 0, void 0, function* () {
+        log("1->" + vssDataService);
+        vssDataService = yield VSS.getService(VSS.ServiceIds.ExtensionData);
+        log("2->" + vssDataService);
     });
 }
 function registerTasksModelButtonEvents() {
@@ -308,14 +263,34 @@ function workItem(wiResult) {
     }
 }
 ;
-var WimWorkItem = /** @class */ (function () {
-    function WimWorkItem() {
+class WimWorkItem {
+    constructor(workItemQueryResult) {
+        if (workItemQueryResult == null || workItemQueryResult === undefined) {
+            this.id = 0;
+            this.rev = 0;
+            this.url = "na";
+            this.title = "na";
+            this.workItemType = "na";
+            this.workItemProjectName = "na";
+            this.workItemIterationPath = "na";
+            this.workItemAreaPath = "na";
+            this.workItemTaskActivity = "na";
+            this.allowedToAddTasks = false;
+        }
+        else {
+            this.id = workItemQueryResult.id;
+            this.rev = workItemQueryResult.rev;
+            this.url = workItemQueryResult.url;
+            this.title = workItemQueryResult.fields[Enm_WorkitemFields.Title];
+            this.workItemType = workItemQueryResult.fields[Enm_WorkitemFields.WorkItemType];
+            this.workItemProjectName = workItemQueryResult.fields[Enm_WorkitemFields.TeamProject];
+            this.workItemIterationPath = workItemQueryResult.fields[Enm_WorkitemFields.IterationPath];
+            this.workItemAreaPath = workItemQueryResult.fields[Enm_WorkitemFields.AreaPath];
+            this.workItemTaskActivity = Enm_WorkitemFields.TaskActivity;
+            this.allowedToAddTasks = CheckAllowedToAddTaskToPbi(this);
+        }
     }
-    return WimWorkItem;
-}());
-(function () {
-    constructor(workItemResult, Contracts.WorkItem);
-});
+}
 function MapWorkItemFields(witemObject, witem) {
     witemObject.Title = witem.fields["System.Title"];
 }
@@ -759,30 +734,27 @@ function EnableBtn(id) {
     document.getElementById(id).removeAttribute("disabled");
 }
 function CreateTeamSelectElementInitially(vssDataService) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            log("Received dataservice: " + vssDataService);
-            vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-                var x = 0;
-                // only teams setting. Not other settings
-                var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
-                log("Initial load team settings : " + teamDocs.length + " out of " + docs.length + " settings.");
-                var teamSelectNode = document.getElementsByClassName("teamSelect")[0];
-                teamDocs.forEach(function (element) {
-                    var inputId = "teamNaam" + x;
-                    x++;
-                    var teamSelecectOption = document.createElement("option");
-                    teamSelecectOption.setAttribute("class", "teamSelectOption");
-                    teamSelecectOption.setAttribute("id", inputId);
-                    teamSelecectOption.setAttribute("value", element.text);
-                    teamSelecectOption.setAttribute("onchange", "TeamSelectedHandler(this)");
-                    teamSelecectOption.innerText = element.text;
-                    teamSelectNode.appendChild(teamSelecectOption);
-                    addTeamHandler(element.text);
-                });
-                VSS.notifyLoadSucceeded();
+    return __awaiter(this, void 0, void 0, function* () {
+        log("Received dataservice: " + vssDataService);
+        vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+            var x = 0;
+            // only teams setting. Not other settings
+            var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
+            log("Initial load team settings : " + teamDocs.length + " out of " + docs.length + " settings.");
+            var teamSelectNode = document.getElementsByClassName("teamSelect")[0];
+            teamDocs.forEach(function (element) {
+                var inputId = "teamNaam" + x;
+                x++;
+                var teamSelecectOption = document.createElement("option");
+                teamSelecectOption.setAttribute("class", "teamSelectOption");
+                teamSelecectOption.setAttribute("id", inputId);
+                teamSelecectOption.setAttribute("value", element.text);
+                teamSelecectOption.setAttribute("onchange", "TeamSelectedHandler(this)");
+                teamSelecectOption.innerText = element.text;
+                teamSelectNode.appendChild(teamSelecectOption);
+                addTeamHandler(element.text);
             });
-            return [2 /*return*/];
+            VSS.notifyLoadSucceeded();
         });
     });
 }
@@ -981,7 +953,7 @@ function jsonPatchDoc(task) {
 function CreateTasksToAdd(selectedCheckboxes) {
     var retval = [];
     selectedCheckboxes.forEach(function (element) {
-        var task = new workItem();
+        var task = new WimWorkItem(null);
         task.title = element.Title;
         task.workItemType = "Task";
         task.workItemProjectName = parentWorkItem.workItemProjectName;

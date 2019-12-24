@@ -1,5 +1,6 @@
 ﻿0.  npm install vss-web-extension-sdk
 	npm i -g tfx-cli
+0.1 Maak extensie
 	tfx extension create --manifest-globs extManifest.json
 
 1. Wat is een extensie ? 

@@ -1,9 +1,12 @@
 ﻿
-/// <reference path="menubarts.ts" />
+///// <reference path="menubarts.ts" />
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/tfs.d.ts" />
+/// <reference path="../node_modules/vss-web-extension-sdk/typings/vss.d.ts" />
+/// <reference path="../node_modules/vss-web-extension-sdk/typings/vss.sdk.d.ts" />
 
-import TFSWitContracts = require("TFS/WorkItemTracking/Contracts");
-import * as $ from "jquery";
+
+import * as TFSWitContracts from "TFS/WorkItemTracking/Contracts";
+//import * as $ from "jquery";
 
 
 // https://docs.microsoft.com/en-us/azure/devops/extend/reference/client/api/tfs/workitemtracking/restclient/workitemtrackinghttpclient2_1?view=vsts
@@ -25,7 +28,7 @@ var vssWiTrackingClient;
 var vssDataService;
 var vssMenus;
 
-export function MaakMenu(vssControls, vssMenus) {
+function MaakMenu(vssControls, vssMenus) {
     log("Start creating menu bar (vssControls; vssMenus): " + vssControls + "+" + vssMenus);
     CreateMenuBar(vssControls, vssMenus);
 }
@@ -33,7 +36,7 @@ export function MaakMenu(vssControls, vssMenus) {
 function CreateMenuBar(controls, menus) {
 
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
-        dataService.getDocuments(TeamSettingsCollectionName).then(
+        (dataService as IExtensionDataService).getDocuments(TeamSettingsCollectionName).then(
             function (docs) {
                 menuFoo(docs, controls, menus);
             }
@@ -611,7 +614,7 @@ function GetAllTeamSettings() {
 function reloadHost() {
     VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService) {
         console.log("navigationService.reload()");
-        navigationService.reload();
+        (navigationService as IHostNavigationService).reload();
     });
     log(null);
 }

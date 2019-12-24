@@ -92,7 +92,6 @@
     <Content Include="scripts\VSS.SDK.js" />
     <Content Include="scripts\wit.js" />
     <Content Include="styles\wimstyles.css" />
-    <Content Include="ts\VSS.SDK.js" />
     <Content Include="ts\witTs.js" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -173,7 +172,6 @@
     <TypeScriptCompile Include="node_modules\vss-web-extension-sdk\typings\tfs.d.ts" />
     <TypeScriptCompile Include="node_modules\vss-web-extension-sdk\typings\vss.d.ts" />
     <TypeScriptCompile Include="node_modules\vss-web-extension-sdk\typings\VSS.SDK.d.ts" />
-    <TypeScriptCompile Include="ts\menubarTs.ts" />
     <TypeScriptCompile Include="ts\witTs.ts" />
   </ItemGroup>
   <PropertyGroup>
