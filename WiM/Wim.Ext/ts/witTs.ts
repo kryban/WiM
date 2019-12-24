@@ -28,9 +28,9 @@ var vssWiTrackingClient;
 var vssDataService;
 var vssMenus;
 
-function MaakMenu(vssControls, vssMenus) {
+async function MaakMenu(vssControls, vssMenus) {
     log("Start creating menu bar (vssControls; vssMenus): " + vssControls + "+" + vssMenus);
-    CreateMenuBar(vssControls, vssMenus);
+    await CreateMenuBar(vssControls, vssMenus);
 }
 
 function CreateMenuBar(controls, menus) {
@@ -38,14 +38,14 @@ function CreateMenuBar(controls, menus) {
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
         (dataService as IExtensionDataService).getDocuments(TeamSettingsCollectionName).then(
             function (docs) {
-                menuFoo(docs, controls, menus);
+                BuildMenu(docs, controls, menus);
             }
         );
         VSS.notifyLoadSucceeded();
     });
 }
 
-function menuFoo(docs, Controls, Menus) {
+function BuildMenu(docs, Controls, Menus) {
     var container = $(".menu-bar");
 
     var bar = [];
@@ -133,7 +133,6 @@ VSS.notifyLoadSucceeded();
 window.onload = async function () {
     var name = window.location.pathname.split('/').slice(-1);
 
-    //CreateDefaultSettingsWhenEmpty();
     DisableCheckBoxes();
     DisableAddButton();
 
@@ -141,8 +140,6 @@ window.onload = async function () {
     registerTeamsModelButtonEvents();
 
     LoadRequired();
-    //await GetDataService();
-    //await CreateTeamSelectElementInitially();
 
     log("DocumentReady:" + name);
 };
@@ -154,14 +151,14 @@ function LoadRequired() {
             "VSS/Service",
             "TFS/WorkItemTracking/RestClient",
             "VSS/Controls/Menus"],
-            function (c, i, s, r, m) {
+            async function (c, i, s, r, m) {
                 vssControls = c; log("Required vssControls: " + vssControls);
                 vssStatusindicator = i; log("Required vssStatusIndicator: " + vssStatusindicator);
                 vssService = s; log("Required vssService: " + vssService);
                 vssWiTrackingClient = r; log("Required vssWiTrackingClient: " + vssWiTrackingClient);
                 vssMenus = m; log("Required vssMenus: " + vssMenus);
 
-                GetDataService();
+                await GetDataService();
                 MaakMenu(vssControls, vssMenus);
                 CreateTeamSelectElementInitially(vssDataService);
             });
@@ -1035,7 +1032,7 @@ function SetPageTitle(teamnaam) {
     log(null);
 }
 
-function CheckUnckeck(obj) {
+function CheckUncheck(obj) {
     var tasks = document.getElementsByName("taskcheckbox");
 
     if (obj.checked) {
@@ -1047,7 +1044,7 @@ function CheckUnckeck(obj) {
     }
     else {
         tasks.forEach(function (element) {
-            if (!(element as HTMLInputElement).checked) {
+            if ((element as HTMLInputElement).checked) {
                 element.toggleAttribute("checked");
             }
         });

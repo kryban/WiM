@@ -30,18 +30,20 @@ var vssWiTrackingClient;
 var vssDataService;
 var vssMenus;
 function MaakMenu(vssControls, vssMenus) {
-    log("Start creating menu bar (vssControls; vssMenus): " + vssControls + "+" + vssMenus);
-    CreateMenuBar(vssControls, vssMenus);
+    return __awaiter(this, void 0, void 0, function* () {
+        log("Start creating menu bar (vssControls; vssMenus): " + vssControls + "+" + vssMenus);
+        yield CreateMenuBar(vssControls, vssMenus);
+    });
 }
 function CreateMenuBar(controls, menus) {
     VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
         dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-            menuFoo(docs, controls, menus);
+            BuildMenu(docs, controls, menus);
         });
         VSS.notifyLoadSucceeded();
     });
 }
-function menuFoo(docs, Controls, Menus) {
+function BuildMenu(docs, Controls, Menus) {
     var container = $(".menu-bar");
     var bar = [];
     log("CreateMenuBar() - getDocuments :" + docs.length);
@@ -106,14 +108,11 @@ VSS.notifyLoadSucceeded();
 window.onload = function () {
     return __awaiter(this, void 0, void 0, function* () {
         var name = window.location.pathname.split('/').slice(-1);
-        //CreateDefaultSettingsWhenEmpty();
         DisableCheckBoxes();
         DisableAddButton();
         registerTasksModelButtonEvents();
         registerTeamsModelButtonEvents();
         LoadRequired();
-        //await GetDataService();
-        //await CreateTeamSelectElementInitially();
         log("DocumentReady:" + name);
     });
 };
@@ -125,19 +124,21 @@ function LoadRequired() {
                 "VSS/Service",
                 "TFS/WorkItemTracking/RestClient",
                 "VSS/Controls/Menus"], function (c, i, s, r, m) {
-                vssControls = c;
-                log("Required vssControls: " + vssControls);
-                vssStatusindicator = i;
-                log("Required vssStatusIndicator: " + vssStatusindicator);
-                vssService = s;
-                log("Required vssService: " + vssService);
-                vssWiTrackingClient = r;
-                log("Required vssWiTrackingClient: " + vssWiTrackingClient);
-                vssMenus = m;
-                log("Required vssMenus: " + vssMenus);
-                GetDataService();
-                MaakMenu(vssControls, vssMenus);
-                CreateTeamSelectElementInitially(vssDataService);
+                return __awaiter(this, void 0, void 0, function* () {
+                    vssControls = c;
+                    log("Required vssControls: " + vssControls);
+                    vssStatusindicator = i;
+                    log("Required vssStatusIndicator: " + vssStatusindicator);
+                    vssService = s;
+                    log("Required vssService: " + vssService);
+                    vssWiTrackingClient = r;
+                    log("Required vssWiTrackingClient: " + vssWiTrackingClient);
+                    vssMenus = m;
+                    log("Required vssMenus: " + vssMenus);
+                    yield GetDataService();
+                    MaakMenu(vssControls, vssMenus);
+                    CreateTeamSelectElementInitially(vssDataService);
+                });
             });
         });
     });
@@ -827,7 +828,7 @@ function SetPageTitle(teamnaam) {
     document.getElementById("pageTitle").innerHTML = pageTitleText;
     log(null);
 }
-function CheckUnckeck(obj) {
+function CheckUncheck(obj) {
     var tasks = document.getElementsByName("taskcheckbox");
     if (obj.checked) {
         tasks.forEach(function (element) {
@@ -838,7 +839,7 @@ function CheckUnckeck(obj) {
     }
     else {
         tasks.forEach(function (element) {
-            if (!element.checked) {
+            if (element.checked) {
                 element.toggleAttribute("checked");
             }
         });
