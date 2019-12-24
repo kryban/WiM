@@ -76,21 +76,24 @@ function BuildMenu(docs, Controls, Menus) {
 
     var menuItems =
         '[' +
-        '{' +
-        '"id":"menu-setting", "text":"Settings", "icon":"icon-settings", "childItems":' +
-        '[' +
-        '{' +
-        '"id": "switch", "text": "Switch team", "childItems":' +
-        teamItemsStringified +
-        '},' +
-        '{' +
-        '"id": "manage-teams", "text": "Manage teams"' +
-        '},' +
-        '{' +
-        '"id": "configure-team-tasks", "text": "Manage team tasks" ' +
-        '}' +
-        ']' +
-        '},' +
+            '{' +
+            '"id":"menu-setting", "text":"Settings", "icon":"icon-settings", "childItems":' +
+                '[' +
+                    '{' +
+                        '"id": "switch", "text": "Switch team", "childItems":' +
+                        teamItemsStringified +
+                    '},' +
+                    '{' +
+                        '"id": "manage-teams", "text": "Manage teams"' +
+                    '},' +
+                    '{' +
+                        '"id": "configure-team-tasks", "text": "Manage team tasks" ' +
+                    '},' +
+                    '{' +
+                        '"id": "set-to-default", "text": "Set to default" ' +
+                    '}' +
+                ']' +
+            '},' +
         '{ "separator": "true" },' +
         '{ "id": "menu-help", "text": "Help", "icon": "icon-help", "tag": "test" }' +
         ']';
@@ -126,6 +129,12 @@ function menuBarAction(command) {
         //else if (command.startsWith("tasks_")) {
         ConfigureTasks(command);
     }
+
+    else if (command === "set-to-default") {
+        //else if (command.startsWith("tasks_")) {
+        SetToDefault();
+    }
+
 }
 
 VSS.notifyLoadSucceeded();
@@ -1243,77 +1252,155 @@ function GetTeamInAction() {
     });
 }
 
-function FirstTimeSetupData() {
-    //// First time setup code
+function SetToDefault() {
 
-    //DeleteAllSettings();
-    //CreateTeams();
+    if (window.confirm("Alle instellingen terugzetten naar standaard instellingen?")) {
+        DeleteAllSettings();
+        CreateTeams();
+    }
 
-    //var allTasks = [
-    //    { type: "task", owner: "xtreme",     title: "Kick-off",                             taskId: "xtremekickoff",                            activityType: "Requirements" },
-    //    { type: "task", owner: "xtreme",     title: "UC/UCR",                               taskId: "xtremeucr",                                activityType: "Requirements" },
-    //    { type: "task", owner: "xtreme",     title: "UC/UCR Review",                        taskId: "xtremeucrreview",                          activityType: "Requirements" },
-    //    { type: "task", owner: "xtreme",     title: "Code",                                 taskId: "xtremecode",                               activityType: "Development" },
-    //    { type: "task", owner: "xtreme",     title: "Code Review",                          taskId: "xtremecodereview",                         activityType: "Development" },
-    //    { type: "task", owner: "xtreme",     title: "Test",                                 taskId: "xtremetest",                               activityType: "Testing" },
-    //    { type: "task", owner: "xtreme",     title: "Test Review",                          taskId: "xtremetestreview",                         activityType: "Testing" },
-    //    { type: "task", owner: "xtreme",     title: "Regressietests aanmaken/aanpassen",    taskId: "xtremeregressietestsaanmakenaanpassen",    activityType: "Testing" },
-    //    { type: "task", owner: "xtreme",     title: "Wijzigingsverslag + Review",           taskId: "xtremewijzigingsverslagreview",            activityType: "Documentation" },
-    //    { type: "task", owner: "xtreme",     title: "Releasenotes",                         taskId: "xtremereleasenotes",                       activityType: "Documentation" },
-    //    { type: "task", owner: "xtreme",     title: "Reviewdocument",                       taskId: "xtremerevoewdcument",                      activityType: "Documentation" },
-    //    { type: "task", owner: "xtreme",     title: "Stuurdata aanvragen",                  taskId: "xtremestuurdataaanvragen",                 activityType: "Development" },
-    //    { type: "task", owner: "xtreme",     title: "Sonarmeldingen",                       taskId: "xtremesonarmeldingen",                     activityType: "Development" },
-    //    { type: "task", owner: "committers", title: "Bouw",                                 taskId: "committersbouw",                           activityType: "Development" },
-    //    { type: "task", owner: "committers", title: "Test",                                 taskId: "committerstest",                           activityType: "Testing" },
-    //    { type: "task", owner: "committers", title: "Code Review",                          taskId: "committerscodereview",                     activityType: "Development" },
-    //    { type: "task", owner: "committers", title: "Wijzigingsverslag",                    taskId: "committerswijzigingsverslag",              activityType: "Documentation" },
-    //    { type: "task", owner: "committers", title: "Releasenotes",                         taskId: "committersreleasenotes",                   activityType: "Documentation" },
-    //    { type: "task", owner: "committers", title: "DOD controle",                         taskId: "committersdodcontrole",                    activityType: "Requirements" },
-    //    { type: "task", owner: "test",       title: "TestBouw",                             taskId: "testbouw",                                 activityType: "Development" },
-    //    { type: "task", owner: "test",       title: "TestTest",                             taskId: "testtest",                                 activityType: "Testing" },
-    //    { type: "task", owner: "test",       title: "TeestCode Review",                     taskId: "testcodereview",                           activityType: "Development" }
-    //];
+    function DeleteAllSettings() {
 
-    //LoadAllTasksIntoConfig();
+        log("DeleteAllettings()");
 
-    //function LoadAllTasksIntoConfig() {
-    //    VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
+        VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
+            // Get all document under the collection
+            (dataService as IExtensionDataService).getDocuments(TeamSettingsCollectionName).then(function (docs) {
+                //console.log("There are " + docs.length + " in the collection.");
+                docs.forEach(
+                    function (element) {
+                        DeleteTeamSettings(dataService, element.id, element.text);
+                    }
+                );
+                VSS.notifyLoadSucceeded();
+            });
 
-    //        dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-    //            // delete only tasks setting. Not other settings
-    //            var taskDocs = docs.filter(function (d) { return d.type === 'task' });
+            VSS.notifyLoadSucceeded();
+        });
+    }
 
-    //            taskDocs.forEach(
-    //                function (element) {
+    function DeleteTeamSettings(dservice, docId, docText) {
 
-    //                    dataService.deleteDocument(TeamSettingsCollectionName, element.id).then(function (service) {
-    //                        console.log("LoadAllTasksIntoConfig(): Task docs verwijderd");
-    //                    });
-    //                }
-    //            );
+        log("DeleteTeamSettings() " + docId + " " + docText);
 
-    //            allTasks.forEach(
-    //                function (element) {
-    //                    var newDoc = {
-    //                        type: element.type,
-    //                        owner: element.owner,
-    //                        title: element.title,
-    //                        taskid: element.taskId,
-    //                        activityType: element.activityType
-    //                    };
+        if (dservice !== null) {
+            dservice.deleteDocument(TeamSettingsCollectionName, docId).then(function () {
+                log("Doc verwijderd");
+                VSS.notifyLoadSucceeded();
+            });
+        }
 
-    //                    dataService.createDocument(TeamSettingsCollectionName, newDoc).then(
-    //                        function (doc) {
-    //                            console.log("LoadAllTasksIntoConfig() CreateDocument : " + doc.id);
-    //                        });
+        VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
+            (dataService as IExtensionDataService).deleteDocument(TeamSettingsCollectionName, docId).then(function () {
+                log("Doc verwijderddd");
+                VSS.notifyLoadSucceeded();
+            });
+            VSS.notifyLoadSucceeded();
+        });
+    }
 
-    //                    VSS.notifyLoadSucceeded();
-    //                });
+    function CreateTeams() {
+        log("CreateTeams() executing");
+        SetTeamSettingsNew("Xtreme");
+        SetTeamSettingsNew("Committers");
+        SetTeamSettingsNew("Test");
+        SetTeamSettingsNew("NieuweTest");
+        log("CreateTeamsNew() executed.");
+    }
 
+    function SetTeamSettingsNew(teamName) {
 
-    //        });
-    //    });
+        log("SetTeamSettingsNew(): " + teamName);
 
-    //    VSS.notifyLoadSucceeded();
-    //}
+        VSS.getService(VSS.ServiceIds.ExtensionData).then(
+            function (dataService) {
+
+                var newDoc = {
+                    type: "team",
+                    text: teamName
+                };
+
+                (dataService as IExtensionDataService).createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
+                    // Even if no ID was passed to createDocument, one will be generated
+                    log("SetTeamSetting (CreateTeamsNew) : " + doc.text);
+                });
+
+                VSS.notifyLoadSucceeded();
+            });
+    }
 }
+
+//function FirstTimeSetupData() {
+//    //// First time setup code
+
+//    //DeleteAllSettings();
+//    //CreateTeams();
+
+//    //var allTasks = [
+//    //    { type: "task", owner: "xtreme",     title: "Kick-off",                             taskId: "xtremekickoff",                            activityType: "Requirements" },
+//    //    { type: "task", owner: "xtreme",     title: "UC/UCR",                               taskId: "xtremeucr",                                activityType: "Requirements" },
+//    //    { type: "task", owner: "xtreme",     title: "UC/UCR Review",                        taskId: "xtremeucrreview",                          activityType: "Requirements" },
+//    //    { type: "task", owner: "xtreme",     title: "Code",                                 taskId: "xtremecode",                               activityType: "Development" },
+//    //    { type: "task", owner: "xtreme",     title: "Code Review",                          taskId: "xtremecodereview",                         activityType: "Development" },
+//    //    { type: "task", owner: "xtreme",     title: "Test",                                 taskId: "xtremetest",                               activityType: "Testing" },
+//    //    { type: "task", owner: "xtreme",     title: "Test Review",                          taskId: "xtremetestreview",                         activityType: "Testing" },
+//    //    { type: "task", owner: "xtreme",     title: "Regressietests aanmaken/aanpassen",    taskId: "xtremeregressietestsaanmakenaanpassen",    activityType: "Testing" },
+//    //    { type: "task", owner: "xtreme",     title: "Wijzigingsverslag + Review",           taskId: "xtremewijzigingsverslagreview",            activityType: "Documentation" },
+//    //    { type: "task", owner: "xtreme",     title: "Releasenotes",                         taskId: "xtremereleasenotes",                       activityType: "Documentation" },
+//    //    { type: "task", owner: "xtreme",     title: "Reviewdocument",                       taskId: "xtremerevoewdcument",                      activityType: "Documentation" },
+//    //    { type: "task", owner: "xtreme",     title: "Stuurdata aanvragen",                  taskId: "xtremestuurdataaanvragen",                 activityType: "Development" },
+//    //    { type: "task", owner: "xtreme",     title: "Sonarmeldingen",                       taskId: "xtremesonarmeldingen",                     activityType: "Development" },
+//    //    { type: "task", owner: "committers", title: "Bouw",                                 taskId: "committersbouw",                           activityType: "Development" },
+//    //    { type: "task", owner: "committers", title: "Test",                                 taskId: "committerstest",                           activityType: "Testing" },
+//    //    { type: "task", owner: "committers", title: "Code Review",                          taskId: "committerscodereview",                     activityType: "Development" },
+//    //    { type: "task", owner: "committers", title: "Wijzigingsverslag",                    taskId: "committerswijzigingsverslag",              activityType: "Documentation" },
+//    //    { type: "task", owner: "committers", title: "Releasenotes",                         taskId: "committersreleasenotes",                   activityType: "Documentation" },
+//    //    { type: "task", owner: "committers", title: "DOD controle",                         taskId: "committersdodcontrole",                    activityType: "Requirements" },
+//    //    { type: "task", owner: "test",       title: "TestBouw",                             taskId: "testbouw",                                 activityType: "Development" },
+//    //    { type: "task", owner: "test",       title: "TestTest",                             taskId: "testtest",                                 activityType: "Testing" },
+//    //    { type: "task", owner: "test",       title: "TeestCode Review",                     taskId: "testcodereview",                           activityType: "Development" }
+//    //];
+
+//    //LoadAllTasksIntoConfig();
+
+//    //function LoadAllTasksIntoConfig() {
+//    //    VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
+
+//    //        dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+//    //            // delete only tasks setting. Not other settings
+//    //            var taskDocs = docs.filter(function (d) { return d.type === 'task' });
+
+//    //            taskDocs.forEach(
+//    //                function (element) {
+
+//    //                    dataService.deleteDocument(TeamSettingsCollectionName, element.id).then(function (service) {
+//    //                        console.log("LoadAllTasksIntoConfig(): Task docs verwijderd");
+//    //                    });
+//    //                }
+//    //            );
+
+//    //            allTasks.forEach(
+//    //                function (element) {
+//    //                    var newDoc = {
+//    //                        type: element.type,
+//    //                        owner: element.owner,
+//    //                        title: element.title,
+//    //                        taskid: element.taskId,
+//    //                        activityType: element.activityType
+//    //                    };
+
+//    //                    dataService.createDocument(TeamSettingsCollectionName, newDoc).then(
+//    //                        function (doc) {
+//    //                            console.log("LoadAllTasksIntoConfig() CreateDocument : " + doc.id);
+//    //                        });
+
+//    //                    VSS.notifyLoadSucceeded();
+//    //                });
+
+
+//    //        });
+//    //    });
+
+//    //    VSS.notifyLoadSucceeded();
+//    //}
+//}
