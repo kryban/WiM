@@ -18,7 +18,6 @@ var TeamSettingsCollectionName = "WimCollection";
 var witClient;
 var configuredTeams = [];
 var result;
-//var extenralSetted;
 var selectedTeam;
 var defaultTaskTitle = "Taak titel";
 var defaultTeamName = "Team naam";
@@ -29,24 +28,24 @@ var vssService;
 var vssWiTrackingClient;
 var vssDataService;
 var vssMenus;
-function MaakMenu(vssControls, vssMenus) {
+function MaakMenu(controls, menus, dataService) {
     return __awaiter(this, void 0, void 0, function* () {
-        log("Start creating menu bar (vssControls; vssMenus): " + vssControls + "+" + vssMenus);
-        yield CreateMenuBar(vssControls, vssMenus);
+        log(MaakMenu.name, "Start creating menu bar (vssControls; vssMenus, vssDataService): " + controls + "+" + menus + "+" + dataService);
+        yield CreateMenuBar(controls, menus, dataService);
     });
 }
-function CreateMenuBar(controls, menus) {
-    VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
-        dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-            BuildMenu(docs, controls, menus);
-        });
-        VSS.notifyLoadSucceeded();
+function CreateMenuBar(controls, menus, dataService) {
+    //VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
+    dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+        BuildMenu(docs, controls, menus);
     });
+    //});
+    VSS.notifyLoadSucceeded();
 }
 function BuildMenu(docs, Controls, Menus) {
     var container = $(".menu-bar");
     var bar = [];
-    log("CreateMenuBar() - getDocuments :" + docs.length);
+    log(BuildMenu.name, "CreateMenuBar() - getDocuments :" + docs.length);
     bar = docs.filter(function (d) { return d.type === 'team'; });
     var teamMenuItems = [];
     var teamTasksMenuItems = [];
@@ -56,8 +55,8 @@ function BuildMenu(docs, Controls, Menus) {
     });
     var teamItemsStringified = JSON.stringify(teamMenuItems);
     var teamTasksItemsStringified = JSON.stringify(teamTasksMenuItems);
-    log("teamMenuItemsCreated :" + teamItemsStringified);
-    log("teamTaskMenuITemsreated:" + teamTasksItemsStringified);
+    log(BuildMenu.name, "teamMenuItemsCreated :" + teamItemsStringified);
+    log(BuildMenu.name, "teamTaskMenuITemsreated:" + teamTasksItemsStringified);
     var menuItems = '[' +
         '{' +
         '"id":"menu-setting", "text":"Settings", "icon":"icon-settings", "childItems":' +
@@ -101,13 +100,10 @@ function menuBarAction(command) {
     else if (command === "manage-teams") {
         ConfigureTeams(command);
     }
-    // all element ids begin with "task_", so we know user wants to go to task management window
     else if (command === "configure-team-tasks") {
-        //else if (command.startsWith("tasks_")) {
         ConfigureTasks(command);
     }
     else if (command === "set-to-default") {
-        //else if (command.startsWith("tasks_")) {
         SetToDefault();
     }
 }
@@ -120,7 +116,7 @@ window.onload = function () {
         registerTasksModelButtonEvents();
         registerTeamsModelButtonEvents();
         LoadRequired();
-        log("DocumentReady:" + name);
+        log(window.onload.name, "DocumentReady:" + name);
     });
 };
 function LoadRequired() {
@@ -133,17 +129,17 @@ function LoadRequired() {
                 "VSS/Controls/Menus"], function (c, i, s, r, m) {
                 return __awaiter(this, void 0, void 0, function* () {
                     vssControls = c;
-                    log("Required vssControls: " + vssControls);
+                    log(LoadRequired.name, "Required vssControls: " + vssControls);
                     vssStatusindicator = i;
-                    log("Required vssStatusIndicator: " + vssStatusindicator);
+                    log(LoadRequired.name, "Required vssStatusIndicator: " + vssStatusindicator);
                     vssService = s;
-                    log("Required vssService: " + vssService);
+                    log(LoadRequired.name, "Required vssService: " + vssService);
                     vssWiTrackingClient = r;
-                    log("Required vssWiTrackingClient: " + vssWiTrackingClient);
+                    log(LoadRequired.name, "Required vssWiTrackingClient: " + vssWiTrackingClient);
                     vssMenus = m;
-                    log("Required vssMenus: " + vssMenus);
+                    log(LoadRequired.name, "Required vssMenus: " + vssMenus);
                     yield GetDataService();
-                    MaakMenu(vssControls, vssMenus);
+                    MaakMenu(vssControls, vssMenus, vssDataService);
                     CreateTeamSelectElementInitially(vssDataService);
                 });
             });
@@ -152,9 +148,9 @@ function LoadRequired() {
 }
 function GetDataService() {
     return __awaiter(this, void 0, void 0, function* () {
-        log("1->" + vssDataService);
+        log(GetDataService.name, "1->" + vssDataService);
         vssDataService = yield VSS.getService(VSS.ServiceIds.ExtensionData);
-        log("2->" + vssDataService);
+        log(GetDataService.name, "2->" + vssDataService);
     });
 }
 function registerTasksModelButtonEvents() {
@@ -173,9 +169,9 @@ function openTasksModal() { $('.modal_tasks').show(); }
 function closeTasksModal() { $('.modal_tasks').hide(); }
 function openTeamsModal() { $('.modal_teams').show(); }
 function closeTeamsModal() { $('.modal_teams').hide(); }
-function log(txt) {
-    var tekst = (txt !== null && typeof txt !== "undefined") ? txt : "";
-    console.log(arguments.callee.caller.name + " : " + tekst);
+function log(callerName, logTekst) {
+    var tekst = (logTekst !== null && typeof logTekst !== "undefined") ? logTekst : "";
+    console.log(callerName + ": " + tekst);
 }
 function CreateDefaultSettingsWhenEmpty() {
     try {
@@ -186,30 +182,30 @@ function CreateDefaultSettingsWhenEmpty() {
     }
 }
 function FindCollection() {
-    log("3: " + vssDataService);
+    log(FindCollection.name, "3: " + vssDataService);
     vssDataService.getDocuments(TeamSettingsCollectionName)
         .then(function (docs) {
         if (docs.length < 1) {
             CreateFirstTimeCollection();
         }
-        log("Number of docs found: " + docs.length);
+        log(FindCollection.name, "Number of docs found: " + docs.length);
     }, // on reject
     function (err) {
         CreateFirstTimeCollection();
-        log("Nothing found. Default Created.");
+        log(FindCollection.name, "Nothing found. Default Created.");
     });
-    log("Found");
+    log(FindCollection.name, "Found");
 }
 function CreateFirstTimeCollection() {
-    log("4: " + vssDataService);
+    log(CreateFirstTimeCollection.name, "4: " + vssDataService);
     var newDoc = {
         type: "team",
         text: "DefaultTeam"
     };
     vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
-        log("Default document created: " + doc.text);
+        log(CreateFirstTimeCollection.name, "Default document created: " + doc.text);
     });
-    log(null);
+    log(CreateFirstTimeCollection.name, "Done");
 }
 function DisableCheckBoxes() {
     var checkBoxes = document.getElementsByClassName("checkbox");
@@ -375,41 +371,42 @@ function teamInpChangeHandler() {
         // delete only teams setting. Not other settings
         var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
         // always 1 element for at least 1 iteration in Promises.all
-        var teamDeletionPromises = [new Promise(function () { })];
+        var teamDeletionPromises;
+        teamDeletionPromises.push(new Promise(function () { }));
         var added = false;
         teamDocs.forEach(function (element) {
             teamDeletionPromises.push(vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
         });
         Promise.all(teamDeletionPromises).then(function (service) {
             if (!added) {
-                log("Doc verwijderd");
+                log(teamInpChangeHandler.name, "Doc verwijderd");
                 AddTeamDocs(teamsOnForm, vssDataService);
                 VSS.notifyLoadSucceeded();
             }
         });
         // refactor this
         if (!added) {
-            log("Doc verwijderd");
+            log(teamInpChangeHandler.name, "Doc verwijderd");
             AddTeamDocs(teamsOnForm, vssDataService);
             VSS.notifyLoadSucceeded();
         }
     });
-    log("Finished");
+    log(teamInpChangeHandler.name, "Finished");
     closeTeamsModal();
 }
 function AddTeamDocs(teamsCollection, dataService) {
     for (var i = 0; i < teamsCollection.length; i++) {
         var teamnaam = teamsCollection[i].value;
-        log(teamnaam);
+        log(AddTeamDocs.name, teamnaam);
         var newDoc = {
             type: "team",
             text: teamnaam
         };
         dataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
             // Even if no ID was passed to createDocument, one will be generated
-            log(doc.text);
+            log(AddTeamDocs.name, doc.text);
         });
-        log("Team Setting Added: " + teamnaam);
+        log(AddTeamDocs.name, "Team Setting Added: " + teamnaam);
         reloadHost();
     }
 }
@@ -464,7 +461,7 @@ function SetTeamSettings(teamName) {
     var temp = [];
     var result;
     vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-        log("GetAllTeamSettings :" + docs.length);
+        log(SetTeamSettings.name, "GetAllTeamSettings :" + docs.length);
         result = docs.find(function (obj) { return obj.text === teamName; });
         docs.forEach(function (element) {
             temp.push(element);
@@ -472,7 +469,7 @@ function SetTeamSettings(teamName) {
         VSS.notifyLoadSucceeded();
     });
     if (typeof result === 'undefined') {
-        log("Setting exists.");
+        log(SetTeamSettings.name, "Setting exists.");
     }
     else {
         var newDoc = {
@@ -480,15 +477,15 @@ function SetTeamSettings(teamName) {
             text: teamName
         };
         vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
-            log("SetTeamSetting (CreateTeams) : " + doc.text);
+            log(SetTeamSettings.name, "SetTeamSetting (CreateTeams) : " + doc.text);
         });
-        log("Setting NOT exists.");
+        log(SetTeamSettings.name, "Setting NOT exists.");
     }
     VSS.notifyLoadSucceeded();
 }
 function GetAllTeamSettings() {
     vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-        log("GetAllTeamSettings :" + docs.length);
+        log(GetAllTeamSettings.name, "GetAllTeamSettings :" + docs.length);
         VSS.notifyLoadSucceeded();
         return docs;
     });
@@ -499,7 +496,7 @@ function reloadHost() {
         console.log("navigationService.reload()");
         navigationService.reload();
     });
-    log(null);
+    log(reloadHost.name, null);
 }
 VSS.notifyLoadSucceeded();
 var Enm_WorkitemPaths = {
@@ -559,11 +556,11 @@ var Enm_JsonPatchOperations = {
 };
 function removeTeamFieldClickHandler(obj) {
     obj.parentNode.remove();
-    log("Fields removed.");
+    log(removeTeamFieldClickHandler.name, "Fields removed.");
 }
 function removeTaskFieldClickHandler(obj) {
     obj.parentNode.remove();
-    log("Fields removed.");
+    log(removeTaskFieldClickHandler.name, "Fields removed.");
 }
 function addTeamHandler(name) {
     var teamTitle = (name !== null && typeof name !== "undefined") ? name : defaultTeamName;
@@ -657,12 +654,12 @@ function removeDefaultTextHandler(focusedObject) {
     if (focusedObject.value === defaultTaskTitle || focusedObject.value === defaultTeamName) {
         focusedObject.value = "";
     }
-    log(null);
+    log(removeDefaultTextHandler.name, null);
 }
 function ConfigureTasks(teamnaam) {
     var substringVanaf = "tasks_".length;
     var parsedTeamnaam = teamnaam.substring(substringVanaf);
-    log(parsedTeamnaam);
+    log(ConfigureTasks.name, parsedTeamnaam);
     openTasksModal();
 }
 //function OpenTaskConfiguratieDialoog(teamNaam) {
@@ -678,15 +675,16 @@ function ConfigureTasks(teamnaam) {
 function taskInpChangeHandler() {
     var t = document.getElementsByClassName('taskInputRow');
     UpdateTasksDocs(t);
-    log(null);
+    log(taskInpChangeHandler.name, null);
 }
 function UpdateTasksDocs(tasks) {
     vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
         // delete only tasks setting. Not other settings
         var taskDocs = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
-        log("Emptying task settings." + taskDocs.length + " settings will be removed.");
+        log(UpdateTasksDocs.name, "Emptying task settings." + taskDocs.length + " settings will be removed.");
         var added = false;
-        var deletionPromises = [new Promise(function () { })];
+        var deletionPromises;
+        deletionPromises.push(new Promise(function () { }));
         taskDocs.forEach(function (element) {
             deletionPromises.push(vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
         });
@@ -703,7 +701,7 @@ function UpdateTasksDocs(tasks) {
             AddTasksDocs(tasks, selectedTeam);
             added = true;
         }
-        log("adding new doc- "); // + newDoc.taskId);
+        log(UpdateTasksDocs.name, "adding new doc- "); // + newDoc.taskId);
     });
     VSS.notifyLoadSucceeded();
 }
@@ -722,7 +720,9 @@ function AddTasksDocs(tasks, teamName) {
             activityType: taskActivityType
         };
         vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
-            log("created document : " + doc.text);
+            function AddTasksDocs(tasks, teamName) {
+                log(AddTasksDocs.name, "created document : " + doc.text);
+            }
         });
         closeTasksModal();
         reloadHost();
@@ -736,19 +736,19 @@ function TeamSelectedHandler(obj) {
     LoadTeamTasks(selectedTeam);
     EnableBtn("voegTaskToe");
     EnableBtn("taskDialogConfirmBtn");
-    log(null);
+    log(TeamSelectedHandler.name, null);
 }
 function EnableBtn(id) {
     document.getElementById(id).removeAttribute("disabled");
 }
 function CreateTeamSelectElementInitially(vssDataService) {
     return __awaiter(this, void 0, void 0, function* () {
-        log("Received dataservice: " + vssDataService);
+        log(CreateTeamSelectElementInitially.name, "Received dataservice: " + vssDataService);
         vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
             var x = 0;
             // only teams setting. Not other settings
             var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
-            log("Initial load team settings : " + teamDocs.length + " out of " + docs.length + " settings.");
+            log(CreateTeamSelectElementInitially.name, "Initial load team settings : " + teamDocs.length + " out of " + docs.length + " settings.");
             var teamSelectNode = document.getElementsByClassName("teamSelect")[0];
             teamDocs.forEach(function (element) {
                 var inputId = "teamNaam" + x;
@@ -764,21 +764,22 @@ function CreateTeamSelectElementInitially(vssDataService) {
             });
             VSS.notifyLoadSucceeded();
         });
+        log(CreateTeamSelectElementInitially.name, "Done loading teams.");
     });
 }
 function LoadTeamTasks(selection) {
     vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-        log(docs.length);
+        log(LoadTeamTasks.name, docs.length);
         var x = 0;
         if (selection === undefined) {
             selection = GetTeamInAction();
         }
         // only team task setting. Not other settings
         var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === selection; });
-        log("Initial load task settings : " + teamTasks.length + " out of " + teamTasks.length + " settings.");
+        log(LoadTeamTasks.name, "Initial load task settings : " + teamTasks.length + " out of " + teamTasks.length + " settings.");
         var taskInputRowDivs = $('div.taskInputRow');
         taskInputRowDivs.remove();
-        log('Build new list with ' + teamTasks.length + ' items.');
+        log(LoadTeamTasks.name, 'Build new list with ' + teamTasks.length + ' items.');
         teamTasks.forEach(function (element) {
             addTaskToConfigurationHandler(element.title, element.activityType);
         });
@@ -795,45 +796,47 @@ function LoadTasksOnMainWindow(teamnaam) {
         parsedTeamnaam = teamnaam;
     }
     SetTeamInAction(parsedTeamnaam);
-    log("Registered team-naam-in-actie ");
-    VSS.register("team-naam-in-actie", parsedTeamnaam);
-    SetPageTitle(parsedTeamnaam);
-    var taskFieldSet = document.getElementById("task-checkbox");
-    // eerst alles verwijderen
-    while (taskFieldSet.firstChild) {
-        taskFieldSet.removeChild(taskFieldSet.firstChild);
-    }
-    vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-        log(docs.length);
-        var x = 0;
-        // only team task setting. Not other settings or other tam tasks
-        var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam.toLowerCase(); });
-        // build up again
-        teamTasks.forEach(function (element) {
-            var inputNode = document.createElement("input");
-            inputNode.setAttribute("type", "checkbox");
-            inputNode.setAttribute("id", element.id);
-            inputNode.setAttribute("value", element.activityType);
-            inputNode.setAttribute("checked", "true");
-            inputNode.setAttribute("name", "taskcheckbox");
-            inputNode.setAttribute("class", "checkbox");
-            var labelNode = document.createElement("label");
-            labelNode.setAttribute("for", element.id);
-            labelNode.setAttribute("class", "labelforcheckbox");
-            labelNode.innerHTML = element.title;
-            taskFieldSet.appendChild(inputNode);
-            taskFieldSet.appendChild(labelNode);
-            taskFieldSet.appendChild(document.createElement("br"));
+    function LoadTasksOnMainWindow(teamnaam) {
+        log(LoadTasksOnMainWindow.name, "Registered team-naam-in-actie ");
+        VSS.register("team-naam-in-actie", parsedTeamnaam);
+        SetPageTitle(parsedTeamnaam);
+        var taskFieldSet = document.getElementById("task-checkbox");
+        // eerst alles verwijderen
+        while (taskFieldSet.firstChild) {
+            taskFieldSet.removeChild(taskFieldSet.firstChild);
+        }
+        vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+            log(LoadTasksOnMainWindow.name, docs.length);
+            var x = 0;
+            // only team task setting. Not other settings or other tam tasks
+            var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam.toLowerCase(); });
+            // build up again
+            teamTasks.forEach(function (element) {
+                var inputNode = document.createElement("input");
+                inputNode.setAttribute("type", "checkbox");
+                inputNode.setAttribute("id", element.id);
+                inputNode.setAttribute("value", element.activityType);
+                inputNode.setAttribute("checked", "true");
+                inputNode.setAttribute("name", "taskcheckbox");
+                inputNode.setAttribute("class", "checkbox");
+                var labelNode = document.createElement("label");
+                labelNode.setAttribute("for", element.id);
+                labelNode.setAttribute("class", "labelforcheckbox");
+                labelNode.innerHTML = element.title;
+                taskFieldSet.appendChild(inputNode);
+                taskFieldSet.appendChild(labelNode);
+                taskFieldSet.appendChild(document.createElement("br"));
+            });
+            VSS.notifyLoadSucceeded();
         });
         VSS.notifyLoadSucceeded();
-    });
-    VSS.notifyLoadSucceeded();
+    }
 }
 function SetPageTitle(teamnaam) {
     selectedTeam = teamnaam;
     var pageTitleText = "Workitem Manager for Team " + selectedTeam.charAt(0).toUpperCase() + selectedTeam.slice(1);
     document.getElementById("pageTitle").innerHTML = pageTitleText;
-    log(null);
+    log(SetPageTitle.name, null);
 }
 function CheckUncheck(obj) {
     var tasks = document.getElementsByName("taskcheckbox");
@@ -851,7 +854,7 @@ function CheckUncheck(obj) {
             }
         });
     }
-    log(null);
+    log(CheckUncheck.name, null);
 }
 function AddTasksButtonClicked(obj) {
     CheckAllowedToAddTaskToPbi(parentWorkItem);
@@ -861,7 +864,7 @@ function AddTasksButtonClicked(obj) {
     var jsonPatchDocs = CreateJsonPatchDocsForTasks(tasksToPairWithWorkitem);
     PairTasksToWorkitem(jsonPatchDocs, parentWorkItem);
     LoadTasksOnMainWindow(selectedTeam);
-    log(null);
+    log(AddTasksButtonClicked.name, null);
 }
 function PairTasksToWorkitem(docs, parent) {
     numberOfTasksHandled = 0;
@@ -889,14 +892,14 @@ function PairTasksToWorkitem(docs, parent) {
         waitcontrol.endWait();
         VSS.notifyLoadSucceeded();
     });
-    log(null);
+    log(PairTasksToWorkitem.name, null);
 }
 function CreateJsonPatchDocsForTasks(tasks) {
     var retval = [];
     tasks.forEach(function (element) {
         retval.push(new jsonPatchDoc(element).returnPatchDoc);
     });
-    log(null);
+    log(CreateJsonPatchDocsForTasks.name, null);
     return retval;
 }
 function jsonPatchDoc(task) {
@@ -956,7 +959,7 @@ function jsonPatchDoc(task) {
     // WEF_FA00BAB5AFBB4E299544ED2121CDE143_Kanban.Column.Done: false
     // dSZW.Socrates.TopDeskWijzigingNr: "W1245-5544"
     //return workItemTrackingClient.CreateWorkItemAsync(patchDocument, linkedWorkItemProjectName, "Task").Result;
-    log(null);
+    log(jsonPatchDoc.name, null);
 }
 function CreateTasksToAdd(selectedCheckboxes) {
     var retval = [];
@@ -970,13 +973,13 @@ function CreateTasksToAdd(selectedCheckboxes) {
         task.workItemTaskActivity = element.ActivityType;
         retval.push(task);
     });
-    log("Created tasks: " + retval.length);
+    log(CreateTasksToAdd.name, "Created tasks: " + retval.length);
     return retval;
 }
 function checkBoxInfo(title, activityType) {
     this.Title = title;
     this.ActivityType = activityType;
-    log(null);
+    log(checkBoxInfo.name, null);
 }
 function GetSelectedCheckboxes(allCheckboxes) {
     var retval = [];
@@ -985,18 +988,18 @@ function GetSelectedCheckboxes(allCheckboxes) {
             retval.push(new checkBoxInfo(element.labels[0].innerText, element.value));
         }
     });
-    log("Selected checkboxes: " + retval.length);
+    log(GetSelectedCheckboxes.name, "Selected checkboxes: " + retval.length);
     return retval;
 }
 function SetTeamInAction(teamnaam) {
     vssDataService.setValue("team-in-action", teamnaam).then(function () {
         console.log("SetTeamInAction(): Set team - " + teamnaam);
     });
-    log(null);
+    log(SetTeamInAction.name, null);
 }
 function GetTeamInAction() {
     vssDataService.getValue("team-in-action").then(function (value) {
-        log("Retrieved team in action value - " + value);
+        log(GetTeamInAction.name, "Retrieved team in action value - " + value);
         return value;
     });
 }
@@ -1006,7 +1009,7 @@ function SetToDefault() {
         CreateTeams();
     }
     function DeleteAllSettings() {
-        log("DeleteAllettings()");
+        log(SetToDefault.name, "DeleteAllettings()");
         VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
             // Get all document under the collection
             dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
@@ -1020,31 +1023,31 @@ function SetToDefault() {
         });
     }
     function DeleteTeamSettings(dservice, docId, docText) {
-        log("DeleteTeamSettings() " + docId + " " + docText);
+        log(DeleteTeamSettings.name, docId + " " + docText);
         if (dservice !== null) {
             dservice.deleteDocument(TeamSettingsCollectionName, docId).then(function () {
-                log("Doc verwijderd");
+                log(DeleteTeamSettings.name, "Doc verwijderd");
                 VSS.notifyLoadSucceeded();
             });
         }
         VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
             dataService.deleteDocument(TeamSettingsCollectionName, docId).then(function () {
-                log("Doc verwijderddd");
+                log(DeleteTeamSettings.name, "Doc verwijderddd");
                 VSS.notifyLoadSucceeded();
             });
             VSS.notifyLoadSucceeded();
         });
     }
     function CreateTeams() {
-        log("CreateTeams() executing");
+        log(CreateTeams.name, "executing");
         SetTeamSettingsNew("Xtreme");
         SetTeamSettingsNew("Committers");
         SetTeamSettingsNew("Test");
         SetTeamSettingsNew("NieuweTest");
-        log("CreateTeamsNew() executed.");
+        log(CreateTeams.name, "executed.");
     }
     function SetTeamSettingsNew(teamName) {
-        log("SetTeamSettingsNew(): " + teamName);
+        log(SetTeamSettingsNew.name, teamName);
         VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
             var newDoc = {
                 type: "team",
@@ -1052,7 +1055,7 @@ function SetToDefault() {
             };
             dataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
                 // Even if no ID was passed to createDocument, one will be generated
-                log("SetTeamSetting (CreateTeamsNew) : " + doc.text);
+                log(SetTeamSettingsNew.name, doc.text);
             });
             VSS.notifyLoadSucceeded();
         });
