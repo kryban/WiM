@@ -4,17 +4,15 @@
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/vss.d.ts" />
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/vss.sdk.d.ts" />
 
-
 import * as TFSWitContracts from "TFS/WorkItemTracking/Contracts";
 //import * as $ from "jquery";
-
 
 // https://docs.microsoft.com/en-us/azure/devops/extend/reference/client/api/tfs/workitemtracking/restclient/workitemtrackinghttpclient2_1?view=vsts
 var parentWorkItem;
 var TeamSettingsCollectionName = "WimCollection";
 var witClient;
-var configuredTeams = [];
-var result;
+// var configuredTeams = [];
+// var result;
 var selectedTeam;
 var defaultTaskTitle = "Taak titel";
 var defaultTeamName = "Team naam";
@@ -855,7 +853,7 @@ function UpdateTasksDocs(tasks) {
                 AddTasksDocs(tasks, selectedTeam);
                 added = true;
             }
-            //log("add here ? ")
+            log(UpdateTasksDocs.name, "Tasks updated")
         });
 
         // todo: refactor dit is nodig, zodat als er niets te verwijderen valt (1e opgevoerde regel bij nieuwe team)
@@ -865,7 +863,7 @@ function UpdateTasksDocs(tasks) {
             added = true;
         }
 
-        log(UpdateTasksDocs.name, "adding new doc- ");// + newDoc.taskId);
+        log(UpdateTasksDocs.name, "adding new doc ");// + newDoc.taskId);
     });
     VSS.notifyLoadSucceeded();
 }

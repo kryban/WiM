@@ -120,6 +120,7 @@ window.onload = function () {
     });
 };
 function LoadRequired() {
+    var methodName = this.name;
     VSS.ready(function () {
         return __awaiter(this, void 0, void 0, function* () {
             yield VSS.require(["VSS/Controls",
@@ -129,7 +130,7 @@ function LoadRequired() {
                 "VSS/Controls/Menus"], function (c, i, s, r, m) {
                 return __awaiter(this, void 0, void 0, function* () {
                     vssControls = c;
-                    log(LoadRequired.name, "Required vssControls: " + vssControls);
+                    log(methodName, "Required vssControls: " + vssControls);
                     vssStatusindicator = i;
                     log(LoadRequired.name, "Required vssStatusIndicator: " + vssStatusindicator);
                     vssService = s;
@@ -693,7 +694,7 @@ function UpdateTasksDocs(tasks) {
                 AddTasksDocs(tasks, selectedTeam);
                 added = true;
             }
-            //log("add here ? ")
+            log(UpdateTasksDocs.name, "Tasks updated");
         });
         // todo: refactor dit is nodig, zodat als er niets te verwijderen valt (1e opgevoerde regel bij nieuwe team)
         // dan toch nog toevoegingen uitgevoerd worden.
@@ -701,7 +702,7 @@ function UpdateTasksDocs(tasks) {
             AddTasksDocs(tasks, selectedTeam);
             added = true;
         }
-        log(UpdateTasksDocs.name, "adding new doc- "); // + newDoc.taskId);
+        log(UpdateTasksDocs.name, "adding new doc "); // + newDoc.taskId);
     });
     VSS.notifyLoadSucceeded();
 }
