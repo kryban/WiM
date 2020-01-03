@@ -8,8 +8,8 @@ import * as TFSWitContracts from "TFS/WorkItemTracking/Contracts";
 //import * as $ from "jquery";
 
 // https://docs.microsoft.com/en-us/azure/devops/extend/reference/client/api/tfs/workitemtracking/restclient/workitemtrackinghttpclient2_1?view=vsts
-var parentWorkItem;
-var TeamSettingsCollectionName = "WimCollection";
+var parentWorkItem: WimWorkItem;
+const TeamSettingsCollectionName: string = "WimCollection";
 var witClient;
 // var configuredTeams = [];
 // var result;
@@ -22,8 +22,8 @@ var vssControls;
 var vssStatusindicator;
 var vssService;
 var vssWiTrackingClient;
-var vssDataService: IExtensionDataService;
 var vssMenus;
+var vssDataService: IExtensionDataService;
 
 async function MaakMenu(controls, menus, dataService) {
     log(MaakMenu.name, "Start creating menu bar (vssControls; vssMenus, vssDataService): " + controls + "+" + menus + "+" + dataService);
@@ -168,7 +168,7 @@ function LoadRequired() {
 }
 
 async function GetDataService() {
-    log(GetDataService.name,"1->" + vssDataService);
+    log(GetDataService.name, "1->" + vssDataService);
     vssDataService = await VSS.getService(VSS.ServiceIds.ExtensionData);
     log(GetDataService.name,"2->" + vssDataService);
 }
@@ -286,34 +286,34 @@ function EnableAddButton() {
 //let modal = document.querySelector(".modal");
 //let closeBtn = document.querySelector(".close-btn");
 
-function workItem(wiResult) {
+//function workItem(wiResult) {
 
 
-    if (wiResult === null || wiResult === undefined) {
-        this.id = "na";
-        this.rev = "na";
-        this.url = "na";
-        this.title = "na";
-        this.workItemType = "na";
-        this.workItemProjectName = "na";
-        this.workItemIterationPath = "na";
-        this.workItemAreaPath = "na";
-        this.workItemTaskActivity = "na";
-        this.allowedToAddTasks = false;
-    }
-    else {
-        this.id = wiResult.id;
-        this.rev = wiResult.rev;
-        this.url = wiResult.url;
-        this.title = wiResult.fields[Enm_WorkitemFields.Title];
-        this.workItemType = wiResult.fields[Enm_WorkitemFields.WorkItemType];
-        this.workItemProjectName = wiResult.fields[Enm_WorkitemFields.TeamProject];
-        this.workItemIterationPath = wiResult.fields[Enm_WorkitemFields.IterationPath];
-        this.workItemAreaPath = wiResult.fields[Enm_WorkitemFields.AreaPath];
-        this.workItemTaskActivity = Enm_WorkitemFields.TaskActivity;
-        this.allowedToAddTasks = CheckAllowedToAddTaskToPbi(this);
-    }
-};
+//    if (wiResult === null || wiResult === undefined) {
+//        this.id = "na";
+//        this.rev = "na";
+//        this.url = "na";
+//        this.title = "na";
+//        this.workItemType = "na";
+//        this.workItemProjectName = "na";
+//        this.workItemIterationPath = "na";
+//        this.workItemAreaPath = "na";
+//        this.workItemTaskActivity = "na";
+//        this.allowedToAddTasks = false;
+//    }
+//    else {
+//        this.id = wiResult.id;
+//        this.rev = wiResult.rev;
+//        this.url = wiResult.url;
+//        this.title = wiResult.fields[Enm_WorkitemFields.Title];
+//        this.workItemType = wiResult.fields[Enm_WorkitemFields.WorkItemType];
+//        this.workItemProjectName = wiResult.fields[Enm_WorkitemFields.TeamProject];
+//        this.workItemIterationPath = wiResult.fields[Enm_WorkitemFields.IterationPath];
+//        this.workItemAreaPath = wiResult.fields[Enm_WorkitemFields.AreaPath];
+//        this.workItemTaskActivity = Enm_WorkitemFields.TaskActivity;
+//        this.allowedToAddTasks = CheckAllowedToAddTaskToPbi(this);
+//    }
+//};
 
 class WimWorkItem {
     id: number;
@@ -380,7 +380,7 @@ function OpenButtonClicked(obj) {
 
     witClient.getWorkItem(witId)// when only specific fields required , ["System.Title", "System.WorkItemType"])
         .then(function (workitemResult) {
-            parentWorkItem = new workItem(workitemResult);
+            parentWorkItem = new WimWorkItem(workitemResult);
             ShowSelectedWorkitemOnPage(parentWorkItem);
         })
         .catch(function () {
@@ -977,8 +977,8 @@ function LoadTeamTasks(selection) {
     });
 }
 
-function LoadTasksOnMainWindow(teamnaam) {
-    var parsedTeamnaam;
+function LoadTasksOnMainWindow(teamnaam: string) {
+    let parsedTeamnaam;
     if (teamnaam.startsWith("team_")) {
         var substringVanaf = "team_".length;
         parsedTeamnaam = teamnaam.substring(substringVanaf);
@@ -987,59 +987,55 @@ function LoadTasksOnMainWindow(teamnaam) {
 
     SetTeamInAction(parsedTeamnaam);
 
-    function LoadTasksOnMainWindow(teamnaam) {
-        log(LoadTasksOnMainWindow.name, "Registered team-naam-in-actie ");
-        VSS.register("team-naam-in-actie", parsedTeamnaam);
+    log(LoadTasksOnMainWindow.name, "Registered team-naam-in-actie ");
 
-        SetPageTitle(parsedTeamnaam);
+    VSS.register("team-naam-in-actie", parsedTeamnaam);
 
-        var taskFieldSet = document.getElementById("task-checkbox");
+    SetPageTitle(parsedTeamnaam);
 
-        // eerst alles verwijderen
-        while (taskFieldSet.firstChild) {
-            taskFieldSet.removeChild(taskFieldSet.firstChild);
-        }
+    var taskFieldSet = document.getElementById("task-checkbox");
 
-        vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-
-            log(LoadTasksOnMainWindow.name, docs.length as unknown as string);
-            var x = 0;
-
-            // only team task setting. Not other settings or other tam tasks
-            var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam.toLowerCase(); });
-
-            // build up again
-            teamTasks.forEach(
-                function (element) {
-                    var inputNode = document.createElement("input");
-                    inputNode.setAttribute("type", "checkbox");
-                    inputNode.setAttribute("id", element.id);
-                    inputNode.setAttribute("value", element.activityType);
-                    inputNode.setAttribute("checked", "true");
-                    inputNode.setAttribute("name", "taskcheckbox");
-                    inputNode.setAttribute("class", "checkbox");
-
-                    var labelNode = document.createElement("label");
-                    labelNode.setAttribute("for", element.id);
-                    labelNode.setAttribute("class", "labelforcheckbox");
-                    labelNode.innerHTML = element.title;
-
-                    taskFieldSet.appendChild(inputNode);
-                    taskFieldSet.appendChild(labelNode);
-                    taskFieldSet.appendChild(document.createElement("br"));
-                });
-
-            VSS.notifyLoadSucceeded();
-        });
-        VSS.notifyLoadSucceeded();
+    // first remove all 
+    while (taskFieldSet.firstChild) {
+        taskFieldSet.removeChild(taskFieldSet.firstChild);
     }
+
+    vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+        log(LoadTasksOnMainWindow.name, docs.length as unknown as string);
+
+        // only team task setting. Not other settings or other tam tasks
+        var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam.toLowerCase(); });
+
+        // build up again
+        teamTasks.forEach(
+            function (element) {
+                var inputNode = document.createElement("input");
+                inputNode.setAttribute("type", "checkbox");
+                inputNode.setAttribute("id", element.id);
+                inputNode.setAttribute("value", element.activityType);
+                inputNode.setAttribute("checked", "true");
+                inputNode.setAttribute("name", "taskcheckbox");
+                inputNode.setAttribute("class", "checkbox");
+
+                var labelNode = document.createElement("label");
+                labelNode.setAttribute("for", element.id);
+                labelNode.setAttribute("class", "labelforcheckbox");
+                labelNode.innerHTML = element.title;
+
+                taskFieldSet.appendChild(inputNode);
+                taskFieldSet.appendChild(labelNode);
+                taskFieldSet.appendChild(document.createElement("br"));
+            });
+    });
+    VSS.notifyLoadSucceeded();
 }
 
-function SetPageTitle(teamnaam) {
-    selectedTeam = teamnaam;
-    var pageTitleText = "Workitem Manager for Team " + selectedTeam.charAt(0).toUpperCase() + selectedTeam.slice(1);
+function SetPageTitle(teamname: string) {
+    const constantTitle = "Workitem Manager ";
+    let teamNameToPresent = teamname.charAt(0).toUpperCase() + teamname.slice(1);
+    let pageTitleText = constantTitle + "for team " + teamNameToPresent;
     document.getElementById("pageTitle").innerHTML = pageTitleText;
-    log(SetPageTitle.name, null);
+    log(SetPageTitle.name, "Selected team: " + teamname + " - Presented team: " + teamNameToPresent);
 }
 
 function CheckUncheck(obj) {
@@ -1063,77 +1059,77 @@ function CheckUncheck(obj) {
 }
 
 
-    function AddTasksButtonClicked(obj) {
+function AddTasksButtonClicked(obj) {
 
-        CheckAllowedToAddTaskToPbi(parentWorkItem);
-        var taskCheckboxes = document.getElementsByName("taskcheckbox");
-        var selectedCheckboxes = GetSelectedCheckboxes(taskCheckboxes);
+    CheckAllowedToAddTaskToPbi(parentWorkItem);
+    var taskCheckboxes = document.getElementsByName("taskcheckbox");
+    var selectedCheckboxes = GetSelectedCheckboxes(taskCheckboxes);
 
-        var tasksToPairWithWorkitem = CreateTasksToAdd(selectedCheckboxes);
+    var tasksToPairWithWorkitem = CreateTasksToAdd(selectedCheckboxes);
 
-        var jsonPatchDocs = CreateJsonPatchDocsForTasks(tasksToPairWithWorkitem);
+    var jsonPatchDocs = CreateJsonPatchDocsForTasks(tasksToPairWithWorkitem);
 
-        PairTasksToWorkitem(jsonPatchDocs, parentWorkItem);
+    PairTasksToWorkitem(jsonPatchDocs, parentWorkItem);
 
-        LoadTasksOnMainWindow(selectedTeam);
-        log(AddTasksButtonClicked.name, null);
-    }
+    LoadTasksOnMainWindow(selectedTeam);
+    log(AddTasksButtonClicked.name, null);
+}
 
-    function PairTasksToWorkitem(docs, parent) {
-        numberOfTasksHandled = 0;
+function PairTasksToWorkitem(docs, parent) {
+    numberOfTasksHandled = 0;
 
-        var container = $("#tasksContainer");
+    var container = $("#tasksContainer");
 
-        var options = {
-            //target: $("#tasksContainer"),
-            //cancellable: true,
-            //cancelTextFormat: "{0} to cancel",
-            //cancelCallback: function () {
-            //    console.log("cancelled");
-            //}
-        };
+    var options = {
+        //target: $("#tasksContainer"),
+        //cancellable: true,
+        //cancelTextFormat: "{0} to cancel",
+        //cancelCallback: function () {
+        //    console.log("cancelled");
+        //}
+    };
 
-        var waitcontrol = vssControls.create(vssStatusindicator.WaitControl, container, options);
-        var client = vssService.getCollectionClient(vssWiTrackingClient.WorkItemTrackingHttpClient);
+    var waitcontrol = vssControls.create(vssStatusindicator.WaitControl, container, options);
+    var client = vssService.getCollectionClient(vssWiTrackingClient.WorkItemTrackingHttpClient);
 
-        waitcontrol.startWait();
-        waitcontrol.setMessage("waiter waits.");
+    waitcontrol.startWait();
+    waitcontrol.setMessage("waiter waits.");
 
-        var workItemPromises = [];
+    var workItemPromises = [];
 
-        docs.forEach(
-            function (jsonPatchDoc) {
-                numberOfTasksHandled++;
-                workItemPromises.push(client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task"));
-            }
+    docs.forEach(
+        function (jsonPatchDoc) {
+            numberOfTasksHandled++;
+            workItemPromises.push(client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task"));
+        }
+    );
+
+    Promise.all(workItemPromises).then(
+        function () {
+            var taakTaken = numberOfTasksHandled === 1 ? "taak" : "taken";
+            alert(numberOfTasksHandled + " " + taakTaken + " toegevoegd aan PBI " + parent.id + " (" + parent.title + ").");
+
+            waitcontrol.endWait();
+
+            VSS.notifyLoadSucceeded();
+        }
+    );
+
+    log(PairTasksToWorkitem.name, null);
+}
+
+function CreateJsonPatchDocsForTasks(tasks) {
+    var retval = [];
+
+    tasks.forEach(function (element) {
+        retval.push(
+            new jsonPatchDoc(element).returnPatchDoc
         );
+    });
 
-        Promise.all(workItemPromises).then(
-            function () {
-                var taakTaken = numberOfTasksHandled === 1 ? "taak" : "taken";
-                alert(numberOfTasksHandled + " " + taakTaken + " toegevoegd aan PBI " + parent.id + " (" + parent.title + ").");
-
-                waitcontrol.endWait();
-
-                VSS.notifyLoadSucceeded();
-            }
-        );
-
-        log(PairTasksToWorkitem.name, null);
-    }
-
-    function CreateJsonPatchDocsForTasks(tasks) {
-        var retval = [];
-
-        tasks.forEach(function (element) {
-            retval.push(
-                new jsonPatchDoc(element).returnPatchDoc
-            );
-        });
-
-        log(CreateJsonPatchDocsForTasks.name, null);
-        return retval;
-    }
+    log(CreateJsonPatchDocsForTasks.name, null);
+    return retval;
+}
 
 function jsonPatchDoc(task) {
 
@@ -1240,11 +1236,15 @@ function CreateTasksToAdd(selectedCheckboxes) {
         return retval;
     }
 
-    function SetTeamInAction(teamnaam) {
+    function SetTeamInAction(teamnaam:string) {
         vssDataService.setValue("team-in-action", teamnaam).then(function () {
             console.log("SetTeamInAction(): Set team - " + teamnaam);
+
+            vssDataService.getValue("team-in-action").then(function (v) {
+                log(SetTeamInAction.name, "team-in-action is now: " + v);
+            });
         });
-        log(SetTeamInAction.name, null);
+        
     }
 
     function GetTeamInAction() {
@@ -1255,7 +1255,6 @@ function CreateTasksToAdd(selectedCheckboxes) {
     }
 
     function SetToDefault() {
-
         if (window.confirm("Alle instellingen terugzetten naar standaard instellingen?")) {
             DeleteAllSettings();
             CreateTeams();

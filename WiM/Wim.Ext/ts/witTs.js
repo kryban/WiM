@@ -14,10 +14,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 //import * as $ from "jquery";
 // https://docs.microsoft.com/en-us/azure/devops/extend/reference/client/api/tfs/workitemtracking/restclient/workitemtrackinghttpclient2_1?view=vsts
 var parentWorkItem;
-var TeamSettingsCollectionName = "WimCollection";
+const TeamSettingsCollectionName = "WimCollection";
 var witClient;
-var configuredTeams = [];
-var result;
+// var configuredTeams = [];
+// var result;
 var selectedTeam;
 var defaultTaskTitle = "Taak titel";
 var defaultTeamName = "Team naam";
@@ -26,8 +26,8 @@ var vssControls;
 var vssStatusindicator;
 var vssService;
 var vssWiTrackingClient;
-var vssDataService;
 var vssMenus;
+var vssDataService;
 function MaakMenu(controls, menus, dataService) {
     return __awaiter(this, void 0, void 0, function* () {
         log(MaakMenu.name, "Start creating menu bar (vssControls; vssMenus, vssDataService): " + controls + "+" + menus + "+" + dataService);
@@ -120,7 +120,6 @@ window.onload = function () {
     });
 };
 function LoadRequired() {
-    var methodName = this.name;
     VSS.ready(function () {
         return __awaiter(this, void 0, void 0, function* () {
             yield VSS.require(["VSS/Controls",
@@ -130,7 +129,7 @@ function LoadRequired() {
                 "VSS/Controls/Menus"], function (c, i, s, r, m) {
                 return __awaiter(this, void 0, void 0, function* () {
                     vssControls = c;
-                    log(methodName, "Required vssControls: " + vssControls);
+                    log(LoadRequired.name, "Required vssControls: " + vssControls);
                     vssStatusindicator = i;
                     log(LoadRequired.name, "Required vssStatusIndicator: " + vssStatusindicator);
                     vssService = s;
@@ -241,33 +240,32 @@ function EnableAddButton() {
 // Browserdafe Modal try-outs
 //let modal = document.querySelector(".modal");
 //let closeBtn = document.querySelector(".close-btn");
-function workItem(wiResult) {
-    if (wiResult === null || wiResult === undefined) {
-        this.id = "na";
-        this.rev = "na";
-        this.url = "na";
-        this.title = "na";
-        this.workItemType = "na";
-        this.workItemProjectName = "na";
-        this.workItemIterationPath = "na";
-        this.workItemAreaPath = "na";
-        this.workItemTaskActivity = "na";
-        this.allowedToAddTasks = false;
-    }
-    else {
-        this.id = wiResult.id;
-        this.rev = wiResult.rev;
-        this.url = wiResult.url;
-        this.title = wiResult.fields[Enm_WorkitemFields.Title];
-        this.workItemType = wiResult.fields[Enm_WorkitemFields.WorkItemType];
-        this.workItemProjectName = wiResult.fields[Enm_WorkitemFields.TeamProject];
-        this.workItemIterationPath = wiResult.fields[Enm_WorkitemFields.IterationPath];
-        this.workItemAreaPath = wiResult.fields[Enm_WorkitemFields.AreaPath];
-        this.workItemTaskActivity = Enm_WorkitemFields.TaskActivity;
-        this.allowedToAddTasks = CheckAllowedToAddTaskToPbi(this);
-    }
-}
-;
+//function workItem(wiResult) {
+//    if (wiResult === null || wiResult === undefined) {
+//        this.id = "na";
+//        this.rev = "na";
+//        this.url = "na";
+//        this.title = "na";
+//        this.workItemType = "na";
+//        this.workItemProjectName = "na";
+//        this.workItemIterationPath = "na";
+//        this.workItemAreaPath = "na";
+//        this.workItemTaskActivity = "na";
+//        this.allowedToAddTasks = false;
+//    }
+//    else {
+//        this.id = wiResult.id;
+//        this.rev = wiResult.rev;
+//        this.url = wiResult.url;
+//        this.title = wiResult.fields[Enm_WorkitemFields.Title];
+//        this.workItemType = wiResult.fields[Enm_WorkitemFields.WorkItemType];
+//        this.workItemProjectName = wiResult.fields[Enm_WorkitemFields.TeamProject];
+//        this.workItemIterationPath = wiResult.fields[Enm_WorkitemFields.IterationPath];
+//        this.workItemAreaPath = wiResult.fields[Enm_WorkitemFields.AreaPath];
+//        this.workItemTaskActivity = Enm_WorkitemFields.TaskActivity;
+//        this.allowedToAddTasks = CheckAllowedToAddTaskToPbi(this);
+//    }
+//};
 class WimWorkItem {
     constructor(workItemQueryResult) {
         if (workItemQueryResult == null || workItemQueryResult === undefined) {
@@ -314,7 +312,7 @@ function OpenButtonClicked(obj) {
     var addButton = document.getElementById("addTasksButton");
     witClient.getWorkItem(witId) // when only specific fields required , ["System.Title", "System.WorkItemType"])
         .then(function (workitemResult) {
-        parentWorkItem = new workItem(workitemResult);
+        parentWorkItem = new WimWorkItem(workitemResult);
         ShowSelectedWorkitemOnPage(parentWorkItem);
     })
         .catch(function () {
@@ -788,7 +786,7 @@ function LoadTeamTasks(selection) {
     });
 }
 function LoadTasksOnMainWindow(teamnaam) {
-    var parsedTeamnaam;
+    let parsedTeamnaam;
     if (teamnaam.startsWith("team_")) {
         var substringVanaf = "team_".length;
         parsedTeamnaam = teamnaam.substring(substringVanaf);
@@ -797,47 +795,44 @@ function LoadTasksOnMainWindow(teamnaam) {
         parsedTeamnaam = teamnaam;
     }
     SetTeamInAction(parsedTeamnaam);
-    function LoadTasksOnMainWindow(teamnaam) {
-        log(LoadTasksOnMainWindow.name, "Registered team-naam-in-actie ");
-        VSS.register("team-naam-in-actie", parsedTeamnaam);
-        SetPageTitle(parsedTeamnaam);
-        var taskFieldSet = document.getElementById("task-checkbox");
-        // eerst alles verwijderen
-        while (taskFieldSet.firstChild) {
-            taskFieldSet.removeChild(taskFieldSet.firstChild);
-        }
-        vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-            log(LoadTasksOnMainWindow.name, docs.length);
-            var x = 0;
-            // only team task setting. Not other settings or other tam tasks
-            var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam.toLowerCase(); });
-            // build up again
-            teamTasks.forEach(function (element) {
-                var inputNode = document.createElement("input");
-                inputNode.setAttribute("type", "checkbox");
-                inputNode.setAttribute("id", element.id);
-                inputNode.setAttribute("value", element.activityType);
-                inputNode.setAttribute("checked", "true");
-                inputNode.setAttribute("name", "taskcheckbox");
-                inputNode.setAttribute("class", "checkbox");
-                var labelNode = document.createElement("label");
-                labelNode.setAttribute("for", element.id);
-                labelNode.setAttribute("class", "labelforcheckbox");
-                labelNode.innerHTML = element.title;
-                taskFieldSet.appendChild(inputNode);
-                taskFieldSet.appendChild(labelNode);
-                taskFieldSet.appendChild(document.createElement("br"));
-            });
-            VSS.notifyLoadSucceeded();
-        });
-        VSS.notifyLoadSucceeded();
+    log(LoadTasksOnMainWindow.name, "Registered team-naam-in-actie ");
+    VSS.register("team-naam-in-actie", parsedTeamnaam);
+    SetPageTitle(parsedTeamnaam);
+    var taskFieldSet = document.getElementById("task-checkbox");
+    // first remove all 
+    while (taskFieldSet.firstChild) {
+        taskFieldSet.removeChild(taskFieldSet.firstChild);
     }
+    vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+        log(LoadTasksOnMainWindow.name, docs.length);
+        // only team task setting. Not other settings or other tam tasks
+        var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam.toLowerCase(); });
+        // build up again
+        teamTasks.forEach(function (element) {
+            var inputNode = document.createElement("input");
+            inputNode.setAttribute("type", "checkbox");
+            inputNode.setAttribute("id", element.id);
+            inputNode.setAttribute("value", element.activityType);
+            inputNode.setAttribute("checked", "true");
+            inputNode.setAttribute("name", "taskcheckbox");
+            inputNode.setAttribute("class", "checkbox");
+            var labelNode = document.createElement("label");
+            labelNode.setAttribute("for", element.id);
+            labelNode.setAttribute("class", "labelforcheckbox");
+            labelNode.innerHTML = element.title;
+            taskFieldSet.appendChild(inputNode);
+            taskFieldSet.appendChild(labelNode);
+            taskFieldSet.appendChild(document.createElement("br"));
+        });
+    });
+    VSS.notifyLoadSucceeded();
 }
-function SetPageTitle(teamnaam) {
-    selectedTeam = teamnaam;
-    var pageTitleText = "Workitem Manager for Team " + selectedTeam.charAt(0).toUpperCase() + selectedTeam.slice(1);
+function SetPageTitle(teamname) {
+    const constantTitle = "Workitem Manager ";
+    let teamNameToPresent = teamname.charAt(0).toUpperCase() + teamname.slice(1);
+    let pageTitleText = constantTitle + "for team " + teamNameToPresent;
     document.getElementById("pageTitle").innerHTML = pageTitleText;
-    log(SetPageTitle.name, null);
+    log(SetPageTitle.name, "Selected team: " + teamname + " - Presented team: " + teamNameToPresent);
 }
 function CheckUncheck(obj) {
     var tasks = document.getElementsByName("taskcheckbox");
@@ -995,8 +990,10 @@ function GetSelectedCheckboxes(allCheckboxes) {
 function SetTeamInAction(teamnaam) {
     vssDataService.setValue("team-in-action", teamnaam).then(function () {
         console.log("SetTeamInAction(): Set team - " + teamnaam);
+        vssDataService.getValue("team-in-action").then(function (v) {
+            log(SetTeamInAction.name, "team-in-action is now: " + v);
+        });
     });
-    log(SetTeamInAction.name, null);
 }
 function GetTeamInAction() {
     vssDataService.getValue("team-in-action").then(function (value) {
