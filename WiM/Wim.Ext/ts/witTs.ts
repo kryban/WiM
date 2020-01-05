@@ -1,10 +1,11 @@
 ﻿
-///// <reference path="menubarts.ts" />
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/tfs.d.ts" />
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/vss.d.ts" />
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/vss.sdk.d.ts" />
 
 import * as TFSWitContracts from "TFS/WorkItemTracking/Contracts";
+//import * as VssWitClient from "TFS/WorkItemTracking/RestClient";
+//import VssWitClient = require("TFS/WorkItemTracking/RestClient");
 //import * as $ from "jquery";
 
 // https://docs.microsoft.com/en-us/azure/devops/extend/reference/client/api/tfs/workitemtracking/restclient/workitemtrackinghttpclient2_1?view=vsts
@@ -372,7 +373,8 @@ function OpenButtonClicked(obj) {
     //VSS.require(["TFS/WorkItemTracking/RestClient"], function (_restWitClient) {
 
     parentWorkItem = null;
-    witClient = vssWiTrackingClient.getClient();
+    //witClient = vssWiTrackingClient.getClient();
+    witClient = VssWitClient.getClient();
 
     var witId = (document.getElementById("existing-wit-id") as HTMLInputElement).value;
     var checkBoxes = document.getElementsByClassName("checkbox");
@@ -1090,7 +1092,8 @@ function PairTasksToWorkitem(docs, parent) {
     };
 
     var waitcontrol = vssControls.create(vssStatusindicator.WaitControl, container, options);
-    var client = vssService.getCollectionClient(vssWiTrackingClient.WorkItemTrackingHttpClient);
+    //var client = vssService.getCollectionClient(vssWiTrackingClient.WorkItemTrackingHttpClient);
+    var client = vssService.getCollectionClient(VssWitClient.WorkItemTrackingHttpClient);
 
     waitcontrol.startWait();
     waitcontrol.setMessage("waiter waits.");
