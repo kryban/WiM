@@ -1,4 +1,3 @@
-///// <reference path="menubarts.ts" />
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/tfs.d.ts" />
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/vss.d.ts" />
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/vss.sdk.d.ts" />
@@ -11,6 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+//import * as VssWitClient from "TFS/WorkItemTracking/RestClient";
+//import VssWitClient = require("TFS/WorkItemTracking/RestClient");
 //import * as $ from "jquery";
 // https://docs.microsoft.com/en-us/azure/devops/extend/reference/client/api/tfs/workitemtracking/restclient/workitemtrackinghttpclient2_1?view=vsts
 var parentWorkItem;
@@ -306,8 +307,8 @@ function ExistingWitFieldFocussed() {
 function OpenButtonClicked(obj) {
     //VSS.require(["TFS/WorkItemTracking/RestClient"], function (_restWitClient) {
     parentWorkItem = null;
-    //witClient = vssWiTrackingClient.getClient();
-    witClient = VssWitClient.getClient();
+    witClient = vssWiTrackingClient.getClient();
+    //witClient = VssWitClient.getClient();
     var witId = document.getElementById("existing-wit-id").value;
     var checkBoxes = document.getElementsByClassName("checkbox");
     var addButton = document.getElementById("addTasksButton");
@@ -875,8 +876,8 @@ function PairTasksToWorkitem(docs, parent) {
     //}
     };
     var waitcontrol = vssControls.create(vssStatusindicator.WaitControl, container, options);
-    //var client = vssService.getCollectionClient(vssWiTrackingClient.WorkItemTrackingHttpClient);
-    var client = vssService.getCollectionClient(VssWitClient.WorkItemTrackingHttpClient);
+    var client = vssService.getCollectionClient(vssWiTrackingClient.WorkItemTrackingHttpClient);
+    //var client = vssService.getCollectionClient(VssWitClient.WorkItemTrackingHttpClient);
     waitcontrol.startWait();
     waitcontrol.setMessage("waiter waits.");
     var workItemPromises = [];

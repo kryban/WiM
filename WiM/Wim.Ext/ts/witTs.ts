@@ -373,8 +373,8 @@ function OpenButtonClicked(obj) {
     //VSS.require(["TFS/WorkItemTracking/RestClient"], function (_restWitClient) {
 
     parentWorkItem = null;
-    //witClient = vssWiTrackingClient.getClient();
-    witClient = VssWitClient.getClient();
+    witClient = vssWiTrackingClient.getClient();
+    //witClient = VssWitClient.getClient();
 
     var witId = (document.getElementById("existing-wit-id") as HTMLInputElement).value;
     var checkBoxes = document.getElementsByClassName("checkbox");
@@ -1092,8 +1092,8 @@ function PairTasksToWorkitem(docs, parent) {
     };
 
     var waitcontrol = vssControls.create(vssStatusindicator.WaitControl, container, options);
-    //var client = vssService.getCollectionClient(vssWiTrackingClient.WorkItemTrackingHttpClient);
-    var client = vssService.getCollectionClient(VssWitClient.WorkItemTrackingHttpClient);
+    var client = vssService.getCollectionClient(vssWiTrackingClient.WorkItemTrackingHttpClient);
+    //var client = vssService.getCollectionClient(VssWitClient.WorkItemTrackingHttpClient);
 
     waitcontrol.startWait();
     waitcontrol.setMessage("waiter waits.");
