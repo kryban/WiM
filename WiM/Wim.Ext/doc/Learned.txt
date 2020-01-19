@@ -1,6 +1,9 @@
-﻿0.  npm install vss-web-extension-sdk
-	npm i -g tfx-cli
-0.1 Maak extensie
+﻿0.  met npm de vss sdk installeren in de directory van je project.
+		npm install vss-web-extension-sdk --save
+		dit downloadt de css sdk en dependencies en maakt node_modules map aan met daarin @types en css-web-extension-sdk submappen
+0.1 Dan moet de packager geinstalleerd worden om .vsix bestanden te kunnen maken
+		npm i -g tfx-cli
+0.2 Om een extensie te makern (op basis van in dit geval extManifest.json)
 	tfx extension create --manifest-globs extManifest.json
 
 1. Wat is een extensie ? 
