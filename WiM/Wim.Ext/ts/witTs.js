@@ -305,26 +305,36 @@ function ExistingWitFieldFocussed() {
     }
 }
 function OpenButtonClicked(obj) {
-    //VSS.require(["TFS/WorkItemTracking/RestClient"], function (_restWitClient) {
-    parentWorkItem = null;
-    witClient = vssWiTrackingClient.getClient();
-    //witClient = VssWitClient.getClient();
-    var witId = document.getElementById("existing-wit-id").value;
-    var checkBoxes = document.getElementsByClassName("checkbox");
-    var addButton = document.getElementById("addTasksButton");
-    witClient.getWorkItem(witId) // when only specific fields required , ["System.Title", "System.WorkItemType"])
-        .then(function (workitemResult) {
-        parentWorkItem = new WimWorkItem(workitemResult);
-        ShowSelectedWorkitemOnPage(parentWorkItem);
-    })
-        .catch(function () {
-        if (parentWorkItem === undefined || parentWorkItem === null) {
-            document.getElementById("existing-wit-text").innerHTML = "Workitem niet gevonden";
-            DisableCheckBoxes();
-            DisableAddButton();
+    return __awaiter(this, void 0, void 0, function* () {
+        parentWorkItem = null;
+        witClient = vssWiTrackingClient.getClient();
+        var witId = parseInt(document.getElementById("existing-wit-id").value);
+        var checkBoxes = document.getElementsByClassName("checkbox");
+        var addButton = document.getElementById("addTasksButton");
+        try {
+            yield witClient.getWorkItem(witId) // when only specific fields required , ["System.Title", "System.WorkItemType"])
+                .then(function (workitemResult) {
+                parentWorkItem = new WimWorkItem(workitemResult);
+                ShowSelectedWorkitemOnPage(parentWorkItem);
+            });
+            if (parentWorkItem === undefined || parentWorkItem === null) {
+                WorkItemNietGevonden();
+            }
+        }
+        catch (e) {
+            let exc = e;
+            WorkItemNietGevonden(e);
         }
     });
-    //});
+}
+function WorkItemNietGevonden(e) {
+    let exceptionMessage = "";
+    if (e != null && e.message.length > 0) {
+        exceptionMessage = e.message;
+    }
+    document.getElementById("existing-wit-text").innerHTML = "Workitem niet gevonden. " + exceptionMessage;
+    DisableCheckBoxes();
+    DisableAddButton();
 }
 function MainPageEnterPressed(event) {
     if (event.key === "Enter") {
@@ -1123,3 +1133,4 @@ function SetToDefault() {
 //    //    VSS.notifyLoadSucceeded();
 //    //}
 //}
+//# sourceMappingURL=witTs.js.map

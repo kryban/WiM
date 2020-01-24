@@ -1,13 +1,14 @@
 {
-    "compilerOptions": {
-        "target": "es6",
-        "lib": [
-            "dom",
-            "es6"
-        ],
-        "skipLibCheck": true,
-        "types": []
-    },
+  "compilerOptions": {
+    "target": "es6",
+    "sourceMap": true,
+    "lib": [
+      "dom",
+      "es6"
+    ],
+    "skipLibCheck": true,
+    "types": []
+  },
   "include": [
     "*.ts"
   ]
