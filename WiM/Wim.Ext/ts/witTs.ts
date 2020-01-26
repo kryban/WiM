@@ -6,17 +6,14 @@
 import * as TFSWitContracts from "TFS/WorkItemTracking/Contracts";
 import { WorkItemTrackingHttpClient4_1 } from "TFS/WorkItemTracking/RestClient";
 
-//import * as VssWitClient from "TFS/WorkItemTracking/RestClient";
-//import VssWitClient = require("TFS/WorkItemTracking/RestClient");
-//import * as $ from "jquery";
-
-// https://docs.microsoft.com/en-us/azure/devops/extend/reference/client/api/tfs/workitemtracking/restclient/workitemtrackinghttpclient2_1?view=vsts
-var parentWorkItem: WimWorkItem;
 const TeamSettingsCollectionName: string = "WimCollection";
+
+var parentWorkItem: WimWorkItem;
 var witClient: WorkItemTrackingHttpClient4_1;
-    // var configuredTeams = [];
-// var result;
-var selectedTeam;
+
+var selectedTeam: string;
+
+
 var defaultTaskTitle = "Taak titel";
 var defaultTeamName = "Team naam";
 var numberOfTasksHandled;
@@ -913,7 +910,7 @@ function WorkItemNietGevonden(e?: Error) {
     function TeamSelectedHandler(obj) {
         selectedTeam = obj.value.toLowerCase(); //$(this).val();
         if (selectedTeam === undefined) {
-            selectedTeam = GetTeamInAction();
+            GetTeamInAction().then(function (v) { selectedTeam = v; });
         }
 
         LoadTeamTasks(selectedTeam);
@@ -1252,21 +1249,23 @@ function WorkItemNietGevonden(e?: Error) {
     }
 
     function SetTeamInAction(teamnaam: string) {
-        vssDataService.setValue("team-in-action", teamnaam).then(function () {
+        vssDataService.setValue("team-in-action", teamnaam).then(async function () {
             console.log("SetTeamInAction(): Set team - " + teamnaam);
 
-            vssDataService.getValue("team-in-action").then(function (v) {
-                log(SetTeamInAction.name, "team-in-action is now: " + v);
+            let teamInAction: string = await vssDataService.getValue("team-in-action");
+
+            log(SetTeamInAction.name, "team-in-action is now: " + teamInAction);
             });
-        });
+};
 
-    }
+    async function GetTeamInAction() :Promise<string> {
+        let retval: string
+        let teamInAction = await vssDataService.getValue("team-in-action");
 
-    function GetTeamInAction() {
-        vssDataService.getValue("team-in-action").then(function (value) {
-            log(GetTeamInAction.name, "Retrieved team in action value - " + value);
-            return value;
-        });
+        log(GetTeamInAction.name, "Retrieved team in action value - " + teamInAction);
+
+        retval = teamInAction as string;
+        return retval;
     }
 
 function SetToDefault() {

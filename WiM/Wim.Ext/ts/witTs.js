@@ -10,15 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-//import * as VssWitClient from "TFS/WorkItemTracking/RestClient";
-//import VssWitClient = require("TFS/WorkItemTracking/RestClient");
-//import * as $ from "jquery";
-// https://docs.microsoft.com/en-us/azure/devops/extend/reference/client/api/tfs/workitemtracking/restclient/workitemtrackinghttpclient2_1?view=vsts
-var parentWorkItem;
 const TeamSettingsCollectionName = "WimCollection";
+var parentWorkItem;
 var witClient;
-// var configuredTeams = [];
-// var result;
 var selectedTeam;
 var defaultTaskTitle = "Taak titel";
 var defaultTeamName = "Team naam";
@@ -742,7 +736,7 @@ function AddTasksDocs(tasks, teamName) {
 function TeamSelectedHandler(obj) {
     selectedTeam = obj.value.toLowerCase(); //$(this).val();
     if (selectedTeam === undefined) {
-        selectedTeam = GetTeamInAction();
+        GetTeamInAction().then(function (v) { selectedTeam = v; });
     }
     LoadTeamTasks(selectedTeam);
     EnableBtn("voegTaskToe");
@@ -1002,16 +996,21 @@ function GetSelectedCheckboxes(allCheckboxes) {
 }
 function SetTeamInAction(teamnaam) {
     vssDataService.setValue("team-in-action", teamnaam).then(function () {
-        console.log("SetTeamInAction(): Set team - " + teamnaam);
-        vssDataService.getValue("team-in-action").then(function (v) {
-            log(SetTeamInAction.name, "team-in-action is now: " + v);
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log("SetTeamInAction(): Set team - " + teamnaam);
+            let teamInAction = yield vssDataService.getValue("team-in-action");
+            log(SetTeamInAction.name, "team-in-action is now: " + teamInAction);
         });
     });
 }
+;
 function GetTeamInAction() {
-    vssDataService.getValue("team-in-action").then(function (value) {
-        log(GetTeamInAction.name, "Retrieved team in action value - " + value);
-        return value;
+    return __awaiter(this, void 0, void 0, function* () {
+        let retval;
+        let teamInAction = yield vssDataService.getValue("team-in-action");
+        log(GetTeamInAction.name, "Retrieved team in action value - " + teamInAction);
+        retval = teamInAction;
+        return retval;
     });
 }
 function SetToDefault() {
