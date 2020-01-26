@@ -5,18 +5,16 @@
 
 import * as TFSWitContracts from "TFS/WorkItemTracking/Contracts";
 import { WorkItemTrackingHttpClient4_1 } from "TFS/WorkItemTracking/RestClient";
+//import * as VssControls from "VSS/Controls";
 
 const TeamSettingsCollectionName: string = "WimCollection";
+const defaultTaskTitle: string = "Taak titel";
+const defaultTeamName: string = "Team naam";
 
 var parentWorkItem: WimWorkItem;
 var witClient: WorkItemTrackingHttpClient4_1;
 
 var selectedTeam: string;
-
-
-var defaultTaskTitle = "Taak titel";
-var defaultTeamName = "Team naam";
-var numberOfTasksHandled;
 
 var vssControls;
 var vssStatusindicator;
@@ -1086,8 +1084,8 @@ function WorkItemNietGevonden(e?: Error) {
         log(AddTasksButtonClicked.name, null);
     }
 
-    function PairTasksToWorkitem(docs, parent) {
-        numberOfTasksHandled = 0;
+function PairTasksToWorkitem(docs, parent) {
+    let numberOfTasksHandled: number = 0;
 
         var container = $("#tasksContainer");
 

@@ -10,13 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+//import * as VssControls from "VSS/Controls";
 const TeamSettingsCollectionName = "WimCollection";
+const defaultTaskTitle = "Taak titel";
+const defaultTeamName = "Team naam";
 var parentWorkItem;
 var witClient;
 var selectedTeam;
-var defaultTaskTitle = "Taak titel";
-var defaultTeamName = "Team naam";
-var numberOfTasksHandled;
 var vssControls;
 var vssStatusindicator;
 var vssService;
@@ -869,7 +869,7 @@ function AddTasksButtonClicked(obj) {
     log(AddTasksButtonClicked.name, null);
 }
 function PairTasksToWorkitem(docs, parent) {
-    numberOfTasksHandled = 0;
+    let numberOfTasksHandled = 0;
     var container = $("#tasksContainer");
     var options = {
     //target: $("#tasksContainer"),
