@@ -1,13 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "ES5",
+    "module": "AMD",
+    "moduleResolution": "Node",
     "sourceMap": true,
     "lib": [
       "dom",
-      "es6"
+      "es5",
+      "ES6"
     ],
     "skipLibCheck": true,
-    "types": []
+    "types": [ "jquery", "jqueryui", "knockout", "mousetrap", "q", "react", "requirejs", "sizzle", "vss-web-extension-sdk" ]
   },
   "include": [
     "*.ts"
