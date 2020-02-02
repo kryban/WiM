@@ -246,6 +246,53 @@ class ViewHelper {
             this.CreateTeams(this.dataservice);
         }
     }
+    addTeamHandler(name) {
+    }
+    CreateTeamSelectElementInitially() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let logger = new Logger();
+            logger.Log("CreateTeamSelectElementInitially", "Received dataservice: " + this.dataservice);
+            this.dataservice.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+                var x = 0;
+                // only teams setting. Not other settings
+                var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
+                logger.Log("CreateTeamSelectElementInitially", "Initial load team settings : " + teamDocs.length + " out of " + docs.length + " settings.");
+                var teamSelectNode = document.getElementsByClassName("teamSelect")[0];
+                teamDocs.forEach(function (element) {
+                    var inputId = "teamNaam" + x;
+                    x++;
+                    var teamSelecectOption = document.createElement("option");
+                    teamSelecectOption.setAttribute("class", "teamSelectOption");
+                    teamSelecectOption.setAttribute("id", inputId);
+                    teamSelecectOption.setAttribute("value", element.text);
+                    teamSelecectOption.setAttribute("onchange", "TeamSelectedHandler(this)");
+                    teamSelecectOption.innerText = element.text;
+                    teamSelectNode.appendChild(teamSelecectOption);
+                    var teamTitle = (element.text !== null && typeof element.text !== "undefined") ? element.text : defaultTeamName;
+                    var teamRowNode = document.createElement("div");
+                    var teamNaamInputNode = document.createElement("input");
+                    teamNaamInputNode.setAttribute("onfocus", "removeDefaultTextHandler(this)");
+                    teamNaamInputNode.setAttribute("type", "text");
+                    teamNaamInputNode.setAttribute("value", teamTitle);
+                    teamNaamInputNode.setAttribute("name", "teamInpNaam");
+                    teamNaamInputNode.setAttribute("class", "teamNaamInput");
+                    var removeTeamFieldNode = document.createElement("a");
+                    removeTeamFieldNode.setAttribute("onclick", "removeTeamFieldClickHandler(this)");
+                    removeTeamFieldNode.setAttribute("href", "#");
+                    removeTeamFieldNode.setAttribute("style", "margin-left:10px;");
+                    removeTeamFieldNode.setAttribute("class", "remove_field");
+                    removeTeamFieldNode.innerText = "Verwijder teamm";
+                    var teamInputContainer = document.getElementsByClassName("input_fields_container_part")[0];
+                    teamInputContainer.appendChild(teamRowNode);
+                    teamRowNode.appendChild(teamNaamInputNode);
+                    teamRowNode.appendChild(removeTeamFieldNode);
+                    teamRowNode.appendChild(document.createElement("br"));
+                });
+                VSS.notifyLoadSucceeded();
+            });
+            logger.Log("CreateTeamSelectElementInitially", "Done loading teams.");
+        });
+    }
 }
 class ServiceHelper {
     GetDataService() {
@@ -358,7 +405,7 @@ class PreLoader {
                             logger.Log("LoadRequired", "Required vssMenus: " + vssMenus);
                             let vssDataService = yield new ServiceHelper().GetDataService();
                             yield new MenuBuilderClass(vssDataService).BuildMenu(vssControls, vssMenus);
-                            () => this.CreateTeamSelectElementInitially(vssDataService);
+                            new ViewHelper(vssDataService).CreateTeamSelectElementInitially();
                             VSS.notifyLoadSucceeded();
                         });
                     });
@@ -441,21 +488,6 @@ class MenuBuilderClass {
             return menusettings;
         });
     }
-    MenuBarAction(command) {
-        // all team element ids begin with "team_", so we know user wants to switch teams
-        if (command.startsWith("team_")) {
-            new ViewHelper(this.dataservice).LoadTasksOnMainWindow(command);
-        }
-        else if (command === "manage-teams") {
-            new ViewHelper(this.dataservice).ConfigureTeams(command);
-        }
-        else if (command === "configure-team-tasks") {
-            new ViewHelper(this.dataservice).ConfigureTasks(command);
-        }
-        else if (command === "set-to-default") {
-            new ViewHelper(this.dataservice).SetToDefault();
-        }
-    }
     BuildMenuItems(docs, Controls, Menus) {
         let logger = new Logger();
         var container = $(".menu-bar");
@@ -500,7 +532,20 @@ class MenuBuilderClass {
             items: menuItemsParsed,
             executeAction: function (args) {
                 var command = args.get_commandName();
-                this.MenuBarAction(command);
+                //this.MenuBarAction(command);
+                // all team element ids begin with "team_", so we know user wants to switch teams
+                if (command.startsWith("team_")) {
+                    new ViewHelper(this.dataservice).LoadTasksOnMainWindow(command);
+                }
+                else if (command === "manage-teams") {
+                    new ViewHelper(this.dataservice).ConfigureTeams(command);
+                }
+                else if (command === "configure-team-tasks") {
+                    new ViewHelper(this.dataservice).ConfigureTasks(command);
+                }
+                else if (command === "set-to-default") {
+                    new ViewHelper(this.dataservice).SetToDefault();
+                }
             }
         };
         var menubar = Controls.create(Menus.MenuBar, container, menubarOptions);
@@ -945,27 +990,6 @@ class WitTsClass {
         obj.parentNode.remove();
         new Logger().Log("removeTaskFieldClickHandler", "Fields removed.");
     }
-    addTeamHandler(name) {
-        var teamTitle = (name !== null && typeof name !== "undefined") ? name : defaultTeamName;
-        var teamRowNode = document.createElement("div");
-        var teamNaamInputNode = document.createElement("input");
-        teamNaamInputNode.setAttribute("onfocus", "removeDefaultTextHandler(this)");
-        teamNaamInputNode.setAttribute("type", "text");
-        teamNaamInputNode.setAttribute("value", teamTitle);
-        teamNaamInputNode.setAttribute("name", "teamInpNaam");
-        teamNaamInputNode.setAttribute("class", "teamNaamInput");
-        var removeTeamFieldNode = document.createElement("a");
-        removeTeamFieldNode.setAttribute("onclick", "removeTeamFieldClickHandler(this)");
-        removeTeamFieldNode.setAttribute("href", "#");
-        removeTeamFieldNode.setAttribute("style", "margin-left:10px;");
-        removeTeamFieldNode.setAttribute("class", "remove_field");
-        removeTeamFieldNode.innerText = "Verwijder teamm";
-        var teamInputContainer = document.getElementsByClassName("input_fields_container_part")[0];
-        teamInputContainer.appendChild(teamRowNode);
-        teamRowNode.appendChild(teamNaamInputNode);
-        teamRowNode.appendChild(removeTeamFieldNode);
-        teamRowNode.appendChild(document.createElement("br"));
-    }
     addTaskToConfigurationHandler(title, type) {
         var taskTitle = (title !== null && typeof title !== "undefined") ? title : defaultTaskTitle;
         var taskInputRowNode = document.createElement("div");
@@ -1117,33 +1141,6 @@ class WitTsClass {
     }
     EnableBtn(id) {
         document.getElementById(id).removeAttribute("disabled");
-    }
-    CreateTeamSelectElementInitially(vssDataService) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let logger = new Logger();
-            logger.Log("CreateTeamSelectElementInitially", "Received dataservice: " + vssDataService);
-            vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-                var x = 0;
-                // only teams setting. Not other settings
-                var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
-                this.log("CreateTeamSelectElementInitially", "Initial load team settings : " + teamDocs.length + " out of " + docs.length + " settings.");
-                var teamSelectNode = document.getElementsByClassName("teamSelect")[0];
-                teamDocs.forEach(function (element) {
-                    var inputId = "teamNaam" + x;
-                    x++;
-                    var teamSelecectOption = document.createElement("option");
-                    teamSelecectOption.setAttribute("class", "teamSelectOption");
-                    teamSelecectOption.setAttribute("id", inputId);
-                    teamSelecectOption.setAttribute("value", element.text);
-                    teamSelecectOption.setAttribute("onchange", "TeamSelectedHandler(this)");
-                    teamSelecectOption.innerText = element.text;
-                    teamSelectNode.appendChild(teamSelecectOption);
-                    this.addTeamHandler(element.text);
-                });
-                VSS.notifyLoadSucceeded();
-            });
-            logger.Log("CreateTeamSelectElementInitially", "Done loading teams.");
-        });
     }
     LoadTeamTasks(selection) {
         vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
