@@ -227,7 +227,7 @@ class ViewHelper {
 
         new Logger().Log("ConfigureTasks", parsedTeamnaam);
 
-        this.openTasksModal();
+        new ModalHelper().openTasksModal();
     }
 
     DeleteTeamSettings(docs: any[], dservice: IExtensionDataService) {
@@ -305,9 +305,9 @@ class ServiceHelper {
     async GetDataService() {
         let logger = new Logger();
         let retVal;
-        logger.Log("GetDataService", "1->" + vssDataService);
+        logger.Log("GetDataService", "1->" + retVal);
         retVal = await VSS.getService(VSS.ServiceIds.ExtensionData);
-        logger.Log(".GetDataService", "2->" + vssDataService);
+        logger.Log(".GetDataService", "2->" + retVal);
         return retVal;
     }
 }
@@ -442,8 +442,8 @@ class PreLoader
                     logger.Log("LoadRequired", "Required vssWiTrackingClient: " + vssWiTrackingClient);
                     logger.Log("LoadRequired", "Required vssMenus: " + vssMenus);
 
-                    let vssDataService = new ServiceHelper().GetDataService();
-                    new MenuBuilderClass(vssDataService).BuildMenu(vssControls, vssMenus);
+                    let vssDataService = await new ServiceHelper().GetDataService();
+                    await new MenuBuilderClass(vssDataService).BuildMenu(vssControls, vssMenus);
                     () => this.CreateTeamSelectElementInitially(vssDataService);
 
                     VSS.notifyLoadSucceeded();
@@ -517,23 +517,26 @@ class ButtonHelper {
 
 class MenuBuilderClass
 {
-    menuSettings: any[];
+    menuSettings;
     dataservice: IExtensionDataService;
+
     constructor(dataService) {
         this.dataservice = dataService;
     }
     
-    GetMenuSettings(controls, menus) {
-        let menusettings = this.menuSettings;
-        this.dataservice.getDocuments(TeamSettingsCollectionName).then(
-            function (docs, ) {
-                menusettings.push(docs, controls, menus);
+    async GetMenuSettings():Promise<any[]> {
+        let menusettings = [];
+        await this.dataservice.getDocuments(TeamSettingsCollectionName).then(
+            async function (docs) {
+                await docs.forEach(
+                    async function (element ) {
+                        await menusettings.push(element)
+                    }
+                )
             }
         );
 
-        this.menuSettings = menusettings;
-
-        VSS.notifyLoadSucceeded();
+        return menusettings;
     }
 
     MenuBarAction(command)
@@ -626,8 +629,8 @@ class MenuBuilderClass
         VSS.notifyLoadSucceeded();
     }
 
-    BuildMenu(controls, menus) {
-        this.GetMenuSettings(controls, menus);
+    async BuildMenu(controls, menus) {
+        this.menuSettings = await this.GetMenuSettings().then(function (s) { return s; });
         this.BuildMenuItems(this.menuSettings, controls, menus);
     }
 }
@@ -900,42 +903,43 @@ class WitTsClass
 //    }
 //};
 
-MapWorkItemFields(witemObject, witem) {
-    witemObject.Title = witem.fields["System.Title"];
-}
-
-ExistingWitFieldFocussed() {
-    var field = document.getElementById("existing-wit-id") as HTMLInputElement;
-    if (field.value === "workitem ID") {
-        field.value = "";
+    MapWorkItemFields(witemObject, witem) {
+        witemObject.Title = witem.fields["System.Title"];
     }
-}
 
-async OpenButtonClicked(obj) {
-
-    parentWorkItem = null;
-    witClient = vssWiTrackingClient.getClient();
-
-    var witId = parseInt((document.getElementById("existing-wit-id") as HTMLInputElement).value);
-    var checkBoxes = document.getElementsByClassName("checkbox");
-    var addButton = document.getElementById("addTasksButton");
-
-    try {
-        await witClient.getWorkItem(witId)// when only specific fields required , ["System.Title", "System.WorkItemType"])
-            .then(function (workitemResult) {
-                parentWorkItem = new WimWorkItem(workitemResult);
-                this.ShowSelectedWorkitemOnPage(parentWorkItem);
-            });
-
-        if (parentWorkItem === undefined || parentWorkItem === null) {
-            new WorkItemHelper().WorkItemNietGevonden();
+    ExistingWitFieldFocussed() {
+        var field = document.getElementById("existing-wit-id") as HTMLInputElement;
+        if (field.value === "workitem ID") {
+            field.value = "";
         }
-
-    } catch (e) {
-        let exc: Error = e;
-        new WorkItemHelper().WorkItemNietGevonden(e);
     }
-}
+
+    async OpenButtonClicked(obj) {
+
+        parentWorkItem = null;
+        witClient = vssWiTrackingClient.getClient();
+
+        var witId = parseInt((document.getElementById("existing-wit-id") as HTMLInputElement).value);
+        var checkBoxes = document.getElementsByClassName("checkbox");
+        var addButton = document.getElementById("addTasksButton");
+
+        try {
+            await witClient.getWorkItem(witId)// when only specific fields required , ["System.Title", "System.WorkItemType"])
+                .then(function (workitemResult) {
+                    parentWorkItem = new WimWorkItem(workitemResult);
+                    this.ShowSelectedWorkitemOnPage(parentWorkItem);
+                });
+
+            if (parentWorkItem === undefined || parentWorkItem === null) {
+                new WorkItemHelper().WorkItemNietGevonden();
+            }
+
+        } catch (e) {
+            let exc: Error = e;
+            new WorkItemHelper().WorkItemNietGevonden(e);
+        }
+    }
+
     MainPageEnterPressed(event) {
         if (event.key === "Enter") {
             event.preventDefault();
@@ -960,15 +964,15 @@ async OpenButtonClicked(obj) {
                 "</br> " +
                 "(" + workItem.id + ")" + workItem.title;
 
-            this.DisableCheckBoxes();
-            this.DisableAddButton();
+            new CheckboxHelper().DisableCheckBoxes();
+            new ButtonHelper().DisableAddButton();
         }
         else {
             document.getElementById("existing-wit-text").className = "existing-wit-text";
             document.getElementById("existing-wit-text").innerHTML = workItem.id + "</br> " + workItem.title;
 
-            this.EnableCheckBoxes();
-            this.EnableAddButton();
+            new CheckboxHelper().EnableCheckBoxes();
+            new ButtonHelper().EnableAddButton();
         }
 
         VSS.notifyLoadSucceeded();
@@ -1024,7 +1028,7 @@ async OpenButtonClicked(obj) {
         });
 
         new Logger().Log("teamInpChangeHandler", "Finished");
-        this.closeTeamsModal();
+        new ModalHelper().closeTeamsModal();
     }
 
     AddTeamDocs(teamsCollection, dataService) {
@@ -1367,7 +1371,7 @@ async OpenButtonClicked(obj) {
                 }
             });
 
-            this.closeTasksModal();
+            new ModalHelper().closeTasksModal();
             this.reloadHost();
         }
     }
@@ -1488,7 +1492,7 @@ async OpenButtonClicked(obj) {
 
         this.PairTasksToWorkitem(jsonPatchDocs, parentWorkItem);
 
-        this.LoadTasksOnMainWindow(selectedTeam);
+        new ViewHelper(vssDataService).LoadTasksOnMainWindow(selectedTeam);
         new Logger().Log("AddTasksButtonClicked", null);
     }
 
