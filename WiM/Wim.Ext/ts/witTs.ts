@@ -4,6 +4,7 @@
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/vss.sdk.d.ts" />
 import * as TFSWitContracts from "TFS/WorkItemTracking/Contracts";
 import { WorkItemTrackingHttpClient4_1 } from "TFS/WorkItemTracking/RestClient";
+import { ExtensionDataService } from "VSS/SDK/Services/ExtensionData";
 //import * as VssControls from "VSS/Controls";
 const TeamSettingsCollectionName: string = "WimCollection";
 const defaultTaskTitle: string = "Taak titel";
@@ -131,8 +132,364 @@ class Enm_JsonPatchOperations
     Add: string = "add";
 }
 
+class Logger
+{
+    Log(callerName: string, logTekst: string) {
+        var tekst = (logTekst !== null && typeof logTekst !== "undefined") ? logTekst : "";
+        console.log(callerName + ": " + tekst);
+    }
+}
 
+class ViewHelper {
 
+    dataservice: IExtensionDataService;
+
+    constructor(dataService) {
+        this.dataservice = dataService;
+    }
+
+    SetTeamInAction(teamnaam: string, dService: IExtensionDataService) {
+        dService.setValue("team-in-action", teamnaam).then(async function () {
+            new Logger().Log("SetTeamInAction,","Set team - " + teamnaam);
+            let teamInAction: string = await dService.getValue("team-in-action");
+            new Logger().Log("SetTeamInAction", "team-in-action is now: " + teamInAction);
+        });
+    };
+
+    SetPageTitle(teamname: string) {
+        const constantTitle = "Workitem Manager ";
+        let teamNameToPresent = teamname.charAt(0).toUpperCase() + teamname.slice(1);
+        let pageTitleText = constantTitle + "for team " + teamNameToPresent;
+        document.getElementById("pageTitle").innerHTML = pageTitleText;
+        new Logger().Log("SetPageTitle", "Selected team: " + teamname + " - Presented team: " + teamNameToPresent);
+    }
+
+    LoadTasksOnMainWindow(teamnaam: string) {
+        let parsedTeamnaam: string;
+        if (teamnaam.startsWith("team_")) {
+            var substringVanaf = "team_".length;
+            parsedTeamnaam = teamnaam.substring(substringVanaf);
+        }
+        else { parsedTeamnaam = teamnaam; }
+
+        this.SetTeamInAction(parsedTeamnaam, this.dataservice);
+
+        new Logger().Log("LoadTasksOnMainWindow", "Registered team-naam-in-actie ");
+
+        VSS.register("team-naam-in-actie", parsedTeamnaam);
+
+        this.SetPageTitle(parsedTeamnaam);
+
+        var taskFieldSet = document.getElementById("task-checkbox");
+
+        // first remove all 
+        while (taskFieldSet.firstChild) {
+            taskFieldSet.removeChild(taskFieldSet.firstChild);
+        }
+
+        vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+            this.log("LoadTasksOnMainWindow", docs.length as unknown as string);
+
+            // only team task setting. Not other settings or other tam tasks
+            var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === this.selectedTeam.toLowerCase(); });
+
+            // build up again
+            teamTasks.forEach(
+                function (element) {
+                    var inputNode = document.createElement("input");
+                    inputNode.setAttribute("type", "checkbox");
+                    inputNode.setAttribute("id", element.id);
+                    inputNode.setAttribute("value", element.activityType);
+                    inputNode.setAttribute("checked", "true");
+                    inputNode.setAttribute("name", "taskcheckbox");
+                    inputNode.setAttribute("class", "checkbox");
+
+                    var labelNode = document.createElement("label");
+                    labelNode.setAttribute("for", element.id);
+                    labelNode.setAttribute("class", "labelforcheckbox");
+                    labelNode.innerHTML = element.title;
+
+                    taskFieldSet.appendChild(inputNode);
+                    taskFieldSet.appendChild(labelNode);
+                    taskFieldSet.appendChild(document.createElement("br"));
+                });
+        });
+        VSS.notifyLoadSucceeded();
+    }
+
+    ConfigureTeams(command) {
+        $('.modal_teams').show();
+    }
+
+    ConfigureTasks(teamnaam) {
+        var substringVanaf = "tasks_".length;
+        var parsedTeamnaam = teamnaam.substring(substringVanaf);
+
+        new Logger().Log("ConfigureTasks", parsedTeamnaam);
+
+        this.openTasksModal();
+    }
+
+    DeleteTeamSettings(docs: any[], dservice: IExtensionDataService) {
+        docs.forEach(
+            function(doc) {
+                new Logger().Log("DeleteTeamSettings", doc.id + " " + doc.text);
+
+                if (dservice !== null) {
+                    dservice.deleteDocument(TeamSettingsCollectionName, doc.id).then(function () {
+                        this.log("DeleteTeamSettings", "Doc verwijderd");
+                        VSS.notifyLoadSucceeded();
+                    });
+                }
+
+                dservice.deleteDocument(TeamSettingsCollectionName, doc.id).then(function () {
+                    this.log("DeleteTeamSettings", "Doc verwijderddd");
+                });
+            }
+        )
+    }
+
+    GetTeamSettingsToDelete(dataService: IExtensionDataService) {
+
+        new Logger().Log("SetToDefault", "DeleteAllettings()");
+        var retval: any[];
+
+            dataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+                //console.this.log("There are " + docs.length + " in the collection.");
+                docs.forEach(
+                    function (element) {
+                        retval.push(element);
+                    }
+                );
+            });
+
+        return retval;
+    }
+
+    async SetTeamSettingsNew(dService: IExtensionDataService, teamName: string) {
+
+        new Logger().Log("SetTeamSettingsNew", teamName);
+
+        var newDoc = {
+            type: "team",
+            text: teamName
+        };
+
+        await dService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
+            // Even if no ID was passed to createDocument, one will be generated
+            this.log("SetTeamSettingsNew", doc.text);
+        });
+
+        VSS.notifyLoadSucceeded();
+    }
+
+    CreateTeams(dataService) {
+        new Logger().Log("CreateTeams", "executing");
+        this.SetTeamSettingsNew(dataService,"Xtreme");
+        this.SetTeamSettingsNew(dataService,"Committers");
+        this.SetTeamSettingsNew(dataService,"Test");
+        this.SetTeamSettingsNew(dataService,"NieuweTest");
+        new Logger().Log("CreateTeams", "executed.");
+    }
+
+    SetToDefault() {
+        if (window.confirm("Alle instellingen terugzetten naar standaard instellingen?")) {
+            var teamsettingsToDelete = this.GetTeamSettingsToDelete(this.dataservice);
+            this.DeleteTeamSettings(teamsettingsToDelete, this.dataservice);
+            this.CreateTeams(this.dataservice);
+        }
+    }
+}
+
+class ServiceHelper {
+    async GetDataService() {
+        let logger = new Logger();
+        let retVal;
+        logger.Log("GetDataService", "1->" + vssDataService);
+        retVal = await VSS.getService(VSS.ServiceIds.ExtensionData);
+        logger.Log(".GetDataService", "2->" + vssDataService);
+        return retVal;
+    }
+}
+
+class ModalHelper
+{
+    openTasksModal() { $('.modal_tasks').show(); }
+    closeTasksModal() { $('.modal_tasks').hide(); }
+    openTeamsModal() { $('.modal_teams').show(); }
+    closeTeamsModal() { $('.modal_teams').hide(); }
+}
+
+class PreLoader
+{
+    FindCollection() {
+
+        let logger = new Logger();
+        logger.Log("FindCollection", "3: " + vssDataService);
+
+        vssDataService.getDocuments(TeamSettingsCollectionName)
+            .then(
+                function (docs) {
+                    if (docs.length < 1) {
+                        this.CreateFirstTimeCollection();
+                    }
+                    this.log("FindCollection", "Number of docs found: " + docs.length);
+                }, // on reject
+                function (err) {
+                    this.CreateFirstTimeCollection();
+                    this.log("FindCollection", "Nothing found. Default Created.");
+                }
+            );
+
+        logger.Log("FindCollection", "Found");
+    }
+
+    CreateFirstTimeCollection() {
+        let logger = new Logger();
+        logger.Log("CreateFirstTimeCollection", "4: " + vssDataService);
+        var newDoc = {
+            type: "team",
+            text: "DefaultTeam"
+        };
+
+        vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
+            this.log("CreateFirstTimeCollection", "Default document created: " + doc.text);
+        });
+
+        logger.Log("CreateFirstTimeCollection", "Done");
+    }
+
+    CreateDefaultSettingsWhenEmpty() {
+        try {
+            this.FindCollection();
+        }
+        catch (e) {
+            this.CreateFirstTimeCollection();
+        }
+    }
+
+    registerTasksModelButtonEvents(modalHelper: ModalHelper) {
+        //Show modal box
+        $('#modal_tasks_openModal').click(
+            () => { modalHelper.openTasksModal(); }
+        );
+        //Hide modal box
+        $('#modal_tasks_closeModal').click(
+            () => { modalHelper.closeTasksModal(); }
+        );
+    }
+
+    registerTeamsModelButtonEvents(modalHelper: ModalHelper) {
+        //Show modal box
+        $('#modal_teams_openModal').click(
+            () => { modalHelper.openTeamsModal(); }
+        );
+        //Hide modal box
+        $('#modal_teams_closeModal').click(
+            () => { modalHelper.closeTeamsModal(); }
+        );
+    }
+
+    LoadPreState() {
+        let modalHelper: ModalHelper = new ModalHelper();
+
+        if (document.readyState == "complete") {
+            var name = window.location.pathname.split('/').slice(-1);
+
+            new CheckboxHelper().DisableCheckBoxes();
+            new ButtonHelper().DisableAddButton();
+
+            this.registerTasksModelButtonEvents(modalHelper);
+            this.registerTeamsModelButtonEvents(modalHelper);
+
+            this.LoadRequired();
+
+            new Logger().Log("window.onload", "DocumentReady:" + name);
+        }
+    }
+
+    async LoadPreConditions(window) {
+
+        var name = window.location.pathname.split('/').slice(-1);
+        let modalHelper: ModalHelper = new ModalHelper();
+
+        new CheckboxHelper().DisableCheckBoxes();
+        new ButtonHelper().DisableAddButton();
+
+        this.registerTasksModelButtonEvents(modalHelper);
+        this.registerTeamsModelButtonEvents(modalHelper);
+
+        await this.LoadRequired();
+
+        new Logger().Log("window.onload", "DocumentReady:" + name);
+    }
+
+    async LoadRequired() {
+        let logger: Logger = new Logger();
+        logger.Log("LoadRequired()", "Begin of LoadRequired()");
+        VSS.ready(async function () {
+            await VSS.require(["VSS/Controls", "VSS/Controls/StatusIndicator", "VSS/Service", "TFS/WorkItemTracking/RestClient", "VSS/Controls/Menus"],
+                async function (c, i, s, r, m) {
+                    vssControls = c;
+                    vssStatusindicator = i;
+                    vssService = s;
+                    vssWiTrackingClient = r;
+                    vssMenus = m;
+
+                    logger.Log("LoadRequired", "Required vssControls: " + vssControls);
+                    logger.Log("LoadRequired", "Required vssStatusIndicator: " + vssStatusindicator);
+                    logger.Log("LoadRequired", "Required vssService: " + vssService);
+                    logger.Log("LoadRequired", "Required vssWiTrackingClient: " + vssWiTrackingClient);
+                    logger.Log("LoadRequired", "Required vssMenus: " + vssMenus);
+
+                    let vssDataService = new ServiceHelper().GetDataService();
+                    new MenuBuilderClass(vssDataService).BuildMenu(vssControls, vssMenus);
+                    () => this.CreateTeamSelectElementInitially(vssDataService);
+
+                    VSS.notifyLoadSucceeded();
+                });
+        });
+    }
+}
+
+class CheckboxHelper {
+    DisableCheckBoxes() {
+        var checkBoxes = document.getElementsByClassName("checkbox");
+        if (checkBoxes !== null || (parentWorkItem === undefined || parentWorkItem === null || !parentWorkItem.allowedToAddTasks)) {
+            for (var i = 0; i < checkBoxes.length; i++) {
+                var checkbox = checkBoxes[i] as HTMLInputElement;
+                checkbox.disabled = true;
+            }
+        }
+    }
+
+    EnableCheckBoxes() {
+        var checkBoxes = document.getElementsByClassName("checkbox");
+        if (checkBoxes !== null && (parentWorkItem !== undefined && parentWorkItem !== null && parentWorkItem.allowedToAddTasks)) {
+            for (var i = 0; i < checkBoxes.length; i++) {
+                var checkbox = checkBoxes[i] as HTMLInputElement;
+                checkbox.disabled = false;
+            }
+        }
+    }
+}
+
+class ButtonHelper {
+    DisableAddButton() {
+        var addButton = document.getElementById("addTasksButton") as HTMLInputElement;
+        if (addButton !== null && (parentWorkItem === undefined || parentWorkItem === null || !parentWorkItem.allowedToAddTasks)) {
+            addButton.disabled = true;
+        }
+    }
+
+    EnableAddButton() {
+        var addButton = document.getElementById("addTasksButton") as HTMLInputElement;
+        if (addButton !== null && (parentWorkItem !== undefined && parentWorkItem !== null && parentWorkItem.allowedToAddTasks)) {
+            addButton.disabled = false;
+        }
+    }
+
+}
 
 //class ExternalsLoader {
 //    LoadRequired() {
@@ -158,287 +515,357 @@ class Enm_JsonPatchOperations
 //    }
 //}
 
+class MenuBuilderClass
+{
+    menuSettings: any[];
+    dataservice: IExtensionDataService;
+    constructor(dataService) {
+        this.dataservice = dataService;
+    }
+    
+    GetMenuSettings(controls, menus) {
+        let menusettings = this.menuSettings;
+        this.dataservice.getDocuments(TeamSettingsCollectionName).then(
+            function (docs, ) {
+                menusettings.push(docs, controls, menus);
+            }
+        );
+
+        this.menuSettings = menusettings;
+
+        VSS.notifyLoadSucceeded();
+    }
+
+    MenuBarAction(command)
+    {
+        // all team element ids begin with "team_", so we know user wants to switch teams
+        if (command.startsWith("team_")) {
+            new ViewHelper(this.dataservice).LoadTasksOnMainWindow(command);
+        }
+
+        else if (command === "manage-teams") {
+            new ViewHelper(this.dataservice).ConfigureTeams(command);
+        }
+
+        else if (command === "configure-team-tasks") {
+            new ViewHelper(this.dataservice).ConfigureTasks(command);
+        }
+
+        else if (command === "set-to-default") {
+            new ViewHelper(this.dataservice).SetToDefault();
+        }
+    }
+
+    BuildMenuItems(docs, Controls, Menus) {
+        let logger: Logger = new Logger();
+
+        var container = $(".menu-bar");
+
+        var bar = [];
+
+        logger.Log("BuildMenu", "CreateMenuBar() - getDocuments :" + docs.length);
+
+        bar = docs.filter(function (d) { return d.type === 'team'; });
+
+        var teamMenuItems = [];
+        var teamTasksMenuItems = [];
+
+        bar.forEach(
+            function (element) {
+                teamMenuItems.push(
+                    { id: "team_" + element.text.toLowerCase(), text: element.text }
+                );
+                teamTasksMenuItems.push(
+                    { id: "tasks_" + element.text.toLowerCase(), text: element.text }
+                );
+            }
+        );
+
+        var teamItemsStringified = JSON.stringify(teamMenuItems);
+        var teamTasksItemsStringified = JSON.stringify(teamTasksMenuItems);
+
+        logger.Log("BuildMenu", "teamMenuItemsCreated :" + teamItemsStringified);
+        logger.Log("BuildMenu", "teamTaskMenuITemsreated:" + teamTasksItemsStringified);
+
+        var menuItems =
+            '[' +
+            '{' +
+            '"id":"menu-setting", "text":"Settings", "icon":"icon-settings", "childItems":' +
+            '[' +
+            '{' +
+            '"id": "switch", "text": "Switch team", "childItems":' +
+            teamItemsStringified +
+            '},' +
+            '{' +
+            '"id": "manage-teams", "text": "Manage teams"' +
+            '},' +
+            '{' +
+            '"id": "configure-team-tasks", "text": "Manage team tasks" ' +
+            '},' +
+            '{' +
+            '"id": "set-to-default", "text": "Set to default" ' +
+            '}' +
+            ']' +
+            '},' +
+            '{ "separator": "true" },' +
+            '{ "id": "menu-help", "text": "Help", "icon": "icon-help", "tag": "test" }' +
+            ']';
+
+        var menuItemsParsed = JSON.parse(menuItems);
+
+        // stukje abrakadabra
+        var menubarOptions = {
+            items: menuItemsParsed,
+            executeAction: function (args) {
+                var command = args.get_commandName();
+                this.MenuBarAction(command);
+            }
+        };
+
+        var menubar = Controls.create(Menus.MenuBar, container, menubarOptions);
+        VSS.notifyLoadSucceeded();
+    }
+
+    BuildMenu(controls, menus) {
+        this.GetMenuSettings(controls, menus);
+        this.BuildMenuItems(this.menuSettings, controls, menus);
+    }
+}
+
+class WorkItemHelper {
+
+    WorkItemNietGevonden(e?: Error) {
+        let exceptionMessage: string = "";
+        if (e != null && e.message.length > 0) {
+            exceptionMessage = e.message;
+        }
+
+        document.getElementById("existing-wit-text").innerHTML = "Workitem niet gevonden. " + exceptionMessage;
+        new CheckboxHelper().DisableCheckBoxes();
+        new ButtonHelper().DisableAddButton();
+
+    }
+}
+
 class WitTsClass
 {
     constructor() {}
 
-    async MaakMenu(controls, menus, dataService) {
-        this.log("Maakmenu", "Start creating menu bar (vssControls; vssMenus, vssDataService): " + controls + "+" + menus + "+" + dataService);
-        await this.CreateMenuBar(controls, menus, dataService);
-    }
+    //async MaakMenu(controls, menus, dataService) {
+    //    new Logger().Log("Maakmenu", "Start creating menu bar (vssControls; vssMenus, vssDataService): " + controls + "+" + menus + "+" + dataService);
+    //    await this.CreateMenuBar(controls, menus, dataService);
+    //}
 
-    CreateMenuBar(controls, menus, dataService) {
-        //VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
-        (dataService as IExtensionDataService).getDocuments(TeamSettingsCollectionName).then(
-            function (docs) {
-                this.BuildMenu(docs, controls, menus);
-            }
-        );
-        //});
-        VSS.notifyLoadSucceeded();
-    }
+    //CreateMenuBar(controls, menus, dataService) {
+    //    //VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
+    //    (dataService as IExtensionDataService).getDocuments(TeamSettingsCollectionName).then(
+    //        function (docs) {
+    //            new MenuBuilderClass().BuildMenu(docs, controls, menus);
+    //        }
+    //    );
+    //    //});
+    //    VSS.notifyLoadSucceeded();
+    //}
 
-BuildMenu(docs, Controls, Menus) {
-    var container = $(".menu-bar");
+    //BuildMenu(docs, Controls, Menus) {
+    //    var container = $(".menu-bar");
 
-    var bar = [];
+    //    var bar = [];
 
-    this.log("BuildMenu", "CreateMenuBar() - getDocuments :" + docs.length);
+    //    this.log("BuildMenu", "CreateMenuBar() - getDocuments :" + docs.length);
 
-    bar = docs.filter(function (d) { return d.type === 'team'; });
+    //    bar = docs.filter(function (d) { return d.type === 'team'; });
 
-    var teamMenuItems = [];
-    var teamTasksMenuItems = [];
+    //    var teamMenuItems = [];
+    //    var teamTasksMenuItems = [];
 
-    bar.forEach(
-        function (element) {
-            teamMenuItems.push(
-                { id: "team_" + element.text.toLowerCase(), text: element.text }
-            );
-            teamTasksMenuItems.push(
-                { id: "tasks_" + element.text.toLowerCase(), text: element.text }
-            );
-        }
-    );
+    //    bar.forEach(
+    //        function (element) {
+    //            teamMenuItems.push(
+    //                { id: "team_" + element.text.toLowerCase(), text: element.text }
+    //            );
+    //            teamTasksMenuItems.push(
+    //                { id: "tasks_" + element.text.toLowerCase(), text: element.text }
+    //            );
+    //        }
+    //    );
 
-    var teamItemsStringified = JSON.stringify(teamMenuItems);
-    var teamTasksItemsStringified = JSON.stringify(teamTasksMenuItems);
+    //    var teamItemsStringified = JSON.stringify(teamMenuItems);
+    //    var teamTasksItemsStringified = JSON.stringify(teamTasksMenuItems);
 
-    this.log("BuildMenu", "teamMenuItemsCreated :" + teamItemsStringified);
-    this.log("BuildMenu", "teamTaskMenuITemsreated:" + teamTasksItemsStringified);
+    //    this.log("BuildMenu", "teamMenuItemsCreated :" + teamItemsStringified);
+    //    this.log("BuildMenu", "teamTaskMenuITemsreated:" + teamTasksItemsStringified);
 
-    var menuItems =
-        '[' +
-            '{' +
-            '"id":"menu-setting", "text":"Settings", "icon":"icon-settings", "childItems":' +
-                '[' +
-                    '{' +
-                        '"id": "switch", "text": "Switch team", "childItems":' +
-                        teamItemsStringified +
-                    '},' +
-                    '{' +
-                        '"id": "manage-teams", "text": "Manage teams"' +
-                    '},' +
-                    '{' +
-                        '"id": "configure-team-tasks", "text": "Manage team tasks" ' +
-                    '},' +
-                    '{' +
-                        '"id": "set-to-default", "text": "Set to default" ' +
-                    '}' +
-                ']' +
-            '},' +
-        '{ "separator": "true" },' +
-        '{ "id": "menu-help", "text": "Help", "icon": "icon-help", "tag": "test" }' +
-        ']';
+    //    var menuItems =
+    //        '[' +
+    //        '{' +
+    //        '"id":"menu-setting", "text":"Settings", "icon":"icon-settings", "childItems":' +
+    //        '[' +
+    //        '{' +
+    //        '"id": "switch", "text": "Switch team", "childItems":' +
+    //        teamItemsStringified +
+    //        '},' +
+    //        '{' +
+    //        '"id": "manage-teams", "text": "Manage teams"' +
+    //        '},' +
+    //        '{' +
+    //        '"id": "configure-team-tasks", "text": "Manage team tasks" ' +
+    //        '},' +
+    //        '{' +
+    //        '"id": "set-to-default", "text": "Set to default" ' +
+    //        '}' +
+    //        ']' +
+    //        '},' +
+    //        '{ "separator": "true" },' +
+    //        '{ "id": "menu-help", "text": "Help", "icon": "icon-help", "tag": "test" }' +
+    //        ']';
 
-    var menuItemsParsed = JSON.parse(menuItems);
+    //    var menuItemsParsed = JSON.parse(menuItems);
 
-    // stukje abrakadabra
-    var menubarOptions = {
-        items: menuItemsParsed,
-        executeAction: function (args) {
-            var command = args.get_commandName();
-            this.menuBarAction(command);
-        }
-    };
+    //    // stukje abrakadabra
+    //    var menubarOptions = {
+    //        items: menuItemsParsed,
+    //        executeAction: function (args) {
+    //            var command = args.get_commandName();
+    //            this.menuBarAction(command);
+    //        }
+    //    };
 
-    var menubar = Controls.create(Menus.MenuBar, container, menubarOptions);
-    VSS.notifyLoadSucceeded();
-}
+    //    var menubar = Controls.create(Menus.MenuBar, container, menubarOptions);
+    //    VSS.notifyLoadSucceeded();
+    //}
+
 
 // the center of all actions binded to menu items based on their names
-    menuBarAction(command) {
-
-        // all team element ids begin with "team_", so we know user wants to switch teams
-        if (command.startsWith("team_")) {
-            this.LoadTasksOnMainWindow(command);
-        }
-
-        else if (command === "manage-teams") {
-            this.ConfigureTeams(command);
-        }
-
-        else if (command === "configure-team-tasks") {
-            this.ConfigureTasks(command);
-        }
-
-        else if (command === "set-to-default") {
-            this.SetToDefault();
-        }
-    }
 
 //this.VSS.notifyLoadSucceeded();
-    LoadPreState()
-    {
-        if (document.readyState == "complete") {
-            var name = window.location.pathname.split('/').slice(-1);
+//    LoadPreState()
+//    {
+//        if (document.readyState == "complete") {
+//            var name = window.location.pathname.split('/').slice(-1);
 
-            this.DisableCheckBoxes();
-            this.DisableAddButton();
+//            this.DisableCheckBoxes();
+//            this.DisableAddButton();
 
-            this.registerTasksModelButtonEvents();
-            this.registerTeamsModelButtonEvents();
+//            this.registerTasksModelButtonEvents();
+//            this.registerTeamsModelButtonEvents();
 
-            this.LoadRequired();
+//            this.LoadRequired();
 
-            this.log("window.onload", "DocumentReady:" + name);
-        }
-    }
+//            new Logger().Log("window.onload", "DocumentReady:" + name);
+//        }
+//    }
 
-    async LoadPreConditions(window) {
+//    async LoadPreConditions(window) {
 
-        var name = window.location.pathname.split('/').slice(-1);
+//        var name = window.location.pathname.split('/').slice(-1);
 
-        this.DisableCheckBoxes();
-        this.DisableAddButton();
+//        this.DisableCheckBoxes();
+//        this.DisableAddButton();
 
-        this.registerTasksModelButtonEvents();
-        this.registerTeamsModelButtonEvents();
+//        this.registerTasksModelButtonEvents();
+//        this.registerTeamsModelButtonEvents();
 
-        await this.LoadRequired();
+//        await this.LoadRequired();
 
-        this.log("window.onload", "DocumentReady:" + name);
-    }
+//        new Logger().Log("window.onload", "DocumentReady:" + name);
+//    }
 
-    async LoadRequired() {
-        VSS.ready(async function () {
-            await VSS.require(["VSS/Controls","VSS/Controls/StatusIndicator","VSS/Service","TFS/WorkItemTracking/RestClient","VSS/Controls/Menus"],
-                async function (c, i, s, r, m) {
-                    vssControls = c;
-                    vssStatusindicator = i;
-                    vssService = s;
-                    vssWiTrackingClient = r;
-                    vssMenus = m;
+//    async LoadRequired() {
+//        let logger: Logger = new Logger();
+//        logger.Log("LoadRequired()", "Begin of LoadRequired()");
+//        VSS.ready(async function () {
+//            await VSS.require(["VSS/Controls","VSS/Controls/StatusIndicator","VSS/Service","TFS/WorkItemTracking/RestClient","VSS/Controls/Menus"],
+//                async function (c, i, s, r, m) {
+//                    vssControls = c;
+//                    vssStatusindicator = i;
+//                    vssService = s;
+//                    vssWiTrackingClient = r;
+//                    vssMenus = m;
 
-                    () => this.log("LoadRequired", "Required vssControls: " + vssControls);
-                    () => this.log("LoadRequired", "Required vssStatusIndicator: " + vssStatusindicator);
-                    () => this.log("LoadRequired", "Required vssService: " + vssService);
-                    () => this.log("LoadRequired", "Required vssWiTrackingClient: " + vssWiTrackingClient);
-                    () => this.log("LoadRequired", "Required vssMenus: " + vssMenus);
+//                    logger.Log("LoadRequired", "Required vssControls: " + vssControls);
+//                    logger.Log("LoadRequired", "Required vssStatusIndicator: " + vssStatusindicator);
+//                    logger.Log("LoadRequired", "Required vssService: " + vssService);
+//                    logger.Log("LoadRequired", "Required vssWiTrackingClient: " + vssWiTrackingClient);
+//                    logger.Log("LoadRequired", "Required vssMenus: " + vssMenus);
 
-                    () => this.GetDataService();
-                    () => this.MaakMenu(vssControls, vssMenus, vssDataService);
-                    () => this.CreateTeamSelectElementInitially(vssDataService);
+//                    () => this.GetDataService();
+//                    () => this.MaakMenu(vssControls, vssMenus, vssDataService);
+//                    () => this.CreateTeamSelectElementInitially(vssDataService);
 
-                    VSS.notifyLoadSucceeded();
-                });
-        });
-    }
+//                    VSS.notifyLoadSucceeded();
+//                });
+//        });
+//    }
 
-async GetDataService() {
-    this.log("GetDataService", "1->" + vssDataService);
-    vssDataService = await VSS.getService(VSS.ServiceIds.ExtensionData);
-    this.log(".GetDataService", "2->" + vssDataService);
-}
+//    async GetDataService()
+//    {
+//        let logger = new Logger();
+//        logger.Log("GetDataService", "1->" + vssDataService);
+//        vssDataService = await VSS.getService(VSS.ServiceIds.ExtensionData);
+//        logger.Log(".GetDataService", "2->" + vssDataService);
+//    }
 
-registerTasksModelButtonEvents() {
-    //Show modal box
-    $('#modal_tasks_openModal').click(
-        () => { this.openTasksModal(); }
-    );
-    //Hide modal box
-    $('#modal_tasks_closeModal').click(
-        () => { this.closeTasksModal(); }
-    );
-}
+//    registerTasksModelButtonEvents() {
+//        //Show modal box
+//        $('#modal_tasks_openModal').click(
+//            () => { this.openTasksModal(); }
+//        );
+//        //Hide modal box
+//        $('#modal_tasks_closeModal').click(
+//            () => { this.closeTasksModal(); }
+//        );
+//    }
 
-registerTeamsModelButtonEvents() {
-    //Show modal box
-    $('#modal_teams_openModal').click(
-        () => { this.openTeamsModal(); }
-    );
-    //Hide modal box
-    $('#modal_teams_closeModal').click(
-        () => { this.closeTeamsModal(); }
-    );
-}
+//registerTeamsModelButtonEvents() {
+//    //Show modal box
+//    $('#modal_teams_openModal').click(
+//        () => { this.openTeamsModal(); }
+//    );
+//    //Hide modal box
+//    $('#modal_teams_closeModal').click(
+//        () => { this.closeTeamsModal(); }
+//    );
+//}
 
-openTasksModal() { $('.modal_tasks').show(); }
-closeTasksModal() { $('.modal_tasks').hide(); }
-openTeamsModal() { $('.modal_teams').show(); }
-closeTeamsModal() { $('.modal_teams').hide(); }
+//log(callerName:string, logTekst: string) {
+//    var tekst = (logTekst !== null && typeof logTekst !== "undefined") ? logTekst : "";
+//    console.log(callerName + ": " + tekst);
+//}
 
-log(callerName:string, logTekst: string) {
-    var tekst = (logTekst !== null && typeof logTekst !== "undefined") ? logTekst : "";
-    console.log(callerName + ": " + tekst);
-}
+//DisableCheckBoxes() {
+//    var checkBoxes = document.getElementsByClassName("checkbox");
+//    if (checkBoxes !== null || (parentWorkItem === undefined || parentWorkItem === null || !parentWorkItem.allowedToAddTasks)) {
+//        for (var i = 0; i < checkBoxes.length; i++) {
+//            var checkbox = checkBoxes[i] as HTMLInputElement;
+//            checkbox.disabled = true;
+//        }
+//    }
+//}
 
-CreateDefaultSettingsWhenEmpty() {
-    try {
-        this.FindCollection();
-    }
-    catch (e) {
-        this.CreateFirstTimeCollection();
-    }
-}
+//EnableCheckBoxes() {
+//    var checkBoxes = document.getElementsByClassName("checkbox");
+//    if (checkBoxes !== null && (parentWorkItem !== undefined && parentWorkItem !== null && parentWorkItem.allowedToAddTasks)) {
+//        for (var i = 0; i < checkBoxes.length; i++) {
+//            var checkbox = checkBoxes[i] as HTMLInputElement;
+//            checkbox.disabled = false;
+//        }
+//    }
+//}
 
-FindCollection() {
-    this.log("FindCollection", "3: " + vssDataService);
+//DisableAddButton() {
+//    var addButton = document.getElementById("addTasksButton") as HTMLInputElement;
+//    if (addButton !== null && (parentWorkItem === undefined || parentWorkItem === null || !parentWorkItem.allowedToAddTasks)) {
+//        addButton.disabled = true;
+//    }
+//}
 
-    vssDataService.getDocuments(TeamSettingsCollectionName)
-        .then(
-            function (docs) {
-                if (docs.length < 1) {
-                    this.CreateFirstTimeCollection();
-                }
-                this.log("FindCollection", "Number of docs found: " + docs.length);
-            }, // on reject
-            function (err) {
-                this.CreateFirstTimeCollection();
-                this.log("FindCollection", "Nothing found. Default Created.");
-            }
-        );
-
-    this.log("FindCollection", "Found");
-}
-
-CreateFirstTimeCollection() {
-    this.log("CreateFirstTimeCollection", "4: " + vssDataService);
-    var newDoc = {
-        type: "team",
-        text: "DefaultTeam"
-    };
-
-    vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
-        this.log("CreateFirstTimeCollection", "Default document created: " + doc.text);
-    });
-
-    this.log("CreateFirstTimeCollection", "Done");
-}
-
-DisableCheckBoxes() {
-    var checkBoxes = document.getElementsByClassName("checkbox");
-    if (checkBoxes !== null || (parentWorkItem === undefined || parentWorkItem === null || !parentWorkItem.allowedToAddTasks)) {
-        for (var i = 0; i < checkBoxes.length; i++) {
-            var checkbox = checkBoxes[i] as HTMLInputElement;
-            checkbox.disabled = true;
-        }
-    }
-}
-
-EnableCheckBoxes() {
-    var checkBoxes = document.getElementsByClassName("checkbox");
-    if (checkBoxes !== null && (parentWorkItem !== undefined && parentWorkItem !== null && parentWorkItem.allowedToAddTasks)) {
-        for (var i = 0; i < checkBoxes.length; i++) {
-            var checkbox = checkBoxes[i] as HTMLInputElement;
-            checkbox.disabled = false;
-        }
-    }
-}
-
-DisableAddButton() {
-    var addButton = document.getElementById("addTasksButton") as HTMLInputElement;
-    if (addButton !== null && (parentWorkItem === undefined || parentWorkItem === null || !parentWorkItem.allowedToAddTasks)) {
-        addButton.disabled = true;
-    }
-}
-
-EnableAddButton() {
-    var addButton = document.getElementById("addTasksButton") as HTMLInputElement;
-    if (addButton !== null && (parentWorkItem !== undefined && parentWorkItem !== null && parentWorkItem.allowedToAddTasks)) {
-        addButton.disabled = false;
-    }
-}
+//EnableAddButton() {
+//    var addButton = document.getElementById("addTasksButton") as HTMLInputElement;
+//    if (addButton !== null && (parentWorkItem !== undefined && parentWorkItem !== null && parentWorkItem.allowedToAddTasks)) {
+//        addButton.disabled = false;
+//    }
+//}
 
 // Browserdafe Modal try-outs
 //let modal = document.querySelector(".modal");
@@ -501,25 +928,13 @@ async OpenButtonClicked(obj) {
             });
 
         if (parentWorkItem === undefined || parentWorkItem === null) {
-            this.WorkItemNietGevonden();
+            new WorkItemHelper().WorkItemNietGevonden();
         }
 
     } catch (e) {
         let exc: Error = e;
-        this.WorkItemNietGevonden(e);
+        new WorkItemHelper().WorkItemNietGevonden(e);
     }
-}
-
-WorkItemNietGevonden(e?: Error) {
-    let exceptionMessage: string = "";
-    if (e != null && e.message.length > 0) {
-        exceptionMessage = e.message;
-    }
-
-    document.getElementById("existing-wit-text").innerHTML = "Workitem niet gevonden. " + exceptionMessage;
-    this.DisableCheckBoxes();
-    this.DisableAddButton();
-
 }
     MainPageEnterPressed(event) {
         if (event.key === "Enter") {
@@ -608,15 +1023,17 @@ WorkItemNietGevonden(e?: Error) {
             }
         });
 
-        this.log("teamInpChangeHandler", "Finished");
+        new Logger().Log("teamInpChangeHandler", "Finished");
         this.closeTeamsModal();
     }
 
     AddTeamDocs(teamsCollection, dataService) {
+        let logger = new Logger();
+
         for (var i = 0; i < teamsCollection.length; i++) {
 
             var teamnaam = teamsCollection[i].value;
-            this.log("AddTeamDocs", teamnaam);
+            logger.Log("AddTeamDocs", teamnaam);
 
             var newDoc = {
                 type: "team",
@@ -628,7 +1045,7 @@ WorkItemNietGevonden(e?: Error) {
                 this.log("AddTeamDocs", doc.text);
             });
 
-            this.log("AddTeamDocs", "Team Setting Added: " + teamnaam);
+            logger.Log("AddTeamDocs", "Team Setting Added: " + teamnaam);
             this.reloadHost();
         }
     }
@@ -640,9 +1057,7 @@ WorkItemNietGevonden(e?: Error) {
     //http://krylp:8080/tfs/DefaultCollection/_apis/ExtensionManagement/InstalledExtensions/bandik/WimDevOpExtension/Data/Scopes/Default/Current/Collections/WimCollection/Documents
 
 
-    ConfigureTeams(command) {
-        $('.modal_teams').show();
-    }
+
 
     //function OpenTeamsConfiguratieDialoog(title) {
 
@@ -698,6 +1113,7 @@ WorkItemNietGevonden(e?: Error) {
     SetTeamSettings(teamName) {
         var temp = [];
         var result;
+        let logger: Logger = new Logger();
 
         vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
             this.log("SetTeamSettings", "GetAllTeamSettings :" + docs.length);
@@ -712,7 +1128,7 @@ WorkItemNietGevonden(e?: Error) {
         });
 
         if (typeof result === 'undefined') {
-            this.log("SetTeamSettings", "Setting exists.");
+            logger.Log("SetTeamSettings", "Setting exists.");
         }
         else {
             var newDoc = {
@@ -724,7 +1140,7 @@ WorkItemNietGevonden(e?: Error) {
                 this.log("SetTeamSettings", "SetTeamSetting (CreateTeams) : " + doc.text);
             });
 
-            this.log("SetTeamSettings", "Setting NOT exists.");
+            logger.Log("SetTeamSettings", "Setting NOT exists.");
         }
         VSS.notifyLoadSucceeded();
     }
@@ -744,19 +1160,19 @@ WorkItemNietGevonden(e?: Error) {
             console.log("navigationService.reload()");
             (navigationService as IHostNavigationService).reload();
         });
-    this.log("reloadHost", null);
+        new Logger().Log("reloadHost", null);
     }
 
     //this.VSS.notifyLoadSucceeded();
 
     removeTeamFieldClickHandler(obj) {
         obj.parentNode.remove();
-        this.log("removeTeamFieldClickHandler", "Fields removed.");
+        new Logger().Log("removeTeamFieldClickHandler", "Fields removed.");
     }
 
     removeTaskFieldClickHandler(obj) {
         obj.parentNode.remove();
-        this.log("removeTaskFieldClickHandler", "Fields removed.");
+        new Logger().Log("removeTaskFieldClickHandler", "Fields removed.");
     }
 
     addTeamHandler(name) {
@@ -868,16 +1284,7 @@ WorkItemNietGevonden(e?: Error) {
         if (focusedObject.value === defaultTaskTitle || focusedObject.value === defaultTeamName) {
             focusedObject.value = "";
         }
-        this.log("removeDefaultTextHandler", null);
-    }
-
-    ConfigureTasks(teamnaam) {
-        var substringVanaf = "tasks_".length;
-        var parsedTeamnaam = teamnaam.substring(substringVanaf);
-
-        this.log("ConfigureTasks", parsedTeamnaam);
-
-        this.openTasksModal();
+        new Logger().Log("removeDefaultTextHandler", null);
     }
 
     //function OpenTaskConfiguratieDialoog(teamNaam) {
@@ -897,7 +1304,7 @@ WorkItemNietGevonden(e?: Error) {
 
         this.UpdateTasksDocs(t);
 
-        this.log("taskInpChangeHandler", null);
+        new Logger().Log("taskInpChangeHandler", null);
     }
 
     UpdateTasksDocs(tasks) {
@@ -976,7 +1383,7 @@ WorkItemNietGevonden(e?: Error) {
         this.EnableBtn("voegTaskToe");
         this.EnableBtn("taskDialogConfirmBtn");
 
-        this.log("TeamSelectedHandler", null);
+        new Logger().Log("TeamSelectedHandler", null);
     }
 
     EnableBtn(id) {
@@ -984,7 +1391,9 @@ WorkItemNietGevonden(e?: Error) {
     }
 
     async CreateTeamSelectElementInitially(vssDataService) {
-        this.log("CreateTeamSelectElementInitially", "Received dataservice: " + vssDataService);
+
+        let logger: Logger = new Logger();
+        logger.Log("CreateTeamSelectElementInitially", "Received dataservice: " + vssDataService);
 
         vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
             var x = 0;
@@ -1016,7 +1425,7 @@ WorkItemNietGevonden(e?: Error) {
             VSS.notifyLoadSucceeded();
         });
 
-        this.log("CreateTeamSelectElementInitially", "Done loading teams.")
+        logger.Log("CreateTeamSelectElementInitially", "Done loading teams.")
     }
 
     LoadTeamTasks(selection) {
@@ -1046,67 +1455,6 @@ WorkItemNietGevonden(e?: Error) {
         });
     }
 
-    LoadTasksOnMainWindow(teamnaam: string) {
-        let parsedTeamnaam;
-        if (teamnaam.startsWith("team_")) {
-            var substringVanaf = "team_".length;
-            parsedTeamnaam = teamnaam.substring(substringVanaf);
-        }
-        else { parsedTeamnaam = teamnaam; }
-
-        this.SetTeamInAction(parsedTeamnaam);
-
-        this.log("LoadTasksOnMainWindow", "Registered team-naam-in-actie ");
-
-        VSS.register("team-naam-in-actie", parsedTeamnaam);
-
-        this.SetPageTitle(parsedTeamnaam);
-
-        var taskFieldSet = document.getElementById("task-checkbox");
-
-        // first remove all 
-        while (taskFieldSet.firstChild) {
-            taskFieldSet.removeChild(taskFieldSet.firstChild);
-        }
-
-        vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-            this.log("LoadTasksOnMainWindow", docs.length as unknown as string);
-
-            // only team task setting. Not other settings or other tam tasks
-            var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === this.selectedTeam.toLowerCase(); });
-
-            // build up again
-            teamTasks.forEach(
-                function (element) {
-                    var inputNode = document.createElement("input");
-                    inputNode.setAttribute("type", "checkbox");
-                    inputNode.setAttribute("id", element.id);
-                    inputNode.setAttribute("value", element.activityType);
-                    inputNode.setAttribute("checked", "true");
-                    inputNode.setAttribute("name", "taskcheckbox");
-                    inputNode.setAttribute("class", "checkbox");
-
-                    var labelNode = document.createElement("label");
-                    labelNode.setAttribute("for", element.id);
-                    labelNode.setAttribute("class", "labelforcheckbox");
-                    labelNode.innerHTML = element.title;
-
-                    taskFieldSet.appendChild(inputNode);
-                    taskFieldSet.appendChild(labelNode);
-                    taskFieldSet.appendChild(document.createElement("br"));
-                });
-        });
-        VSS.notifyLoadSucceeded();
-    }
-
-    SetPageTitle(teamname: string) {
-        const constantTitle = "Workitem Manager ";
-        let teamNameToPresent = teamname.charAt(0).toUpperCase() + teamname.slice(1);
-        let pageTitleText = constantTitle + "for team " + teamNameToPresent;
-        document.getElementById("pageTitle").innerHTML = pageTitleText;
-        this.log("SetPageTitle", "Selected team: " + teamname + " - Presented team: " + teamNameToPresent);
-    }
-
     CheckUncheck(obj) {
         var tasks = document.getElementsByName("taskcheckbox");
 
@@ -1124,7 +1472,7 @@ WorkItemNietGevonden(e?: Error) {
                 }
             });
         }
-        this.log("CheckUncheck", null);
+        new Logger().Log("CheckUncheck", null);
     }
 
 
@@ -1141,7 +1489,7 @@ WorkItemNietGevonden(e?: Error) {
         this.PairTasksToWorkitem(jsonPatchDocs, parentWorkItem);
 
         this.LoadTasksOnMainWindow(selectedTeam);
-        this.log("AddTasksButtonClicked", null);
+        new Logger().Log("AddTasksButtonClicked", null);
     }
 
 PairTasksToWorkitem(docs, parent) {
@@ -1185,7 +1533,7 @@ PairTasksToWorkitem(docs, parent) {
             }
         );
 
-    this.log("PairTasksToWorkitem", null);
+    new Logger().Log("PairTasksToWorkitem", null);
     }
 
     CreateJsonPatchDocsForTasks(tasks) {
@@ -1197,7 +1545,7 @@ PairTasksToWorkitem(docs, parent) {
             );
         });
 
-        this.log("CreateJsonPatchDocsForTasks", null);
+        new Logger().Log("CreateJsonPatchDocsForTasks", null);
         return retval;
     }
 
@@ -1263,7 +1611,7 @@ PairTasksToWorkitem(docs, parent) {
         // dSZW.Socrates.TopDeskWijzigingNr: "W1245-5544"
 
         //return workItemTrackingClient.CreateWorkItemAsync(patchDocument, linkedWorkItemProjectName, "Task").Result;
-        this.log("jsonPatchDoc", null);
+        new Logger().Log("jsonPatchDoc", null);
     }
 
     CreateTasksToAdd(selectedCheckboxes) {
@@ -1283,7 +1631,7 @@ PairTasksToWorkitem(docs, parent) {
                 retval.push(task);
             });
 
-        this.log("CreateTasksToAdd", "Created tasks: " + retval.length);
+        new Logger().Log("CreateTasksToAdd", "Created tasks: " + retval.length);
         return retval;
     }
 
@@ -1299,106 +1647,19 @@ PairTasksToWorkitem(docs, parent) {
             }
         );
 
-        this.log("GetSelectedCheckboxes", "Selected checkboxes: " + retval.length);
+        new Logger().Log("GetSelectedCheckboxes", "Selected checkboxes: " + retval.length);
         return retval;
     }
-
-    SetTeamInAction(teamnaam: string) {
-        vssDataService.setValue("team-in-action", teamnaam).then(async function () {
-            console.log("SetTeamInAction(): Set team - " + teamnaam);
-
-            let teamInAction: string = await this.vssDataService.getValue("team-in-action");
-
-            this.log("SetTeamInAction", "team-in-action is now: " + teamInAction);
-            });
-};
 
     async GetTeamInAction() :Promise<string> {
         let retval: string
         let teamInAction = await vssDataService.getValue("team-in-action");
 
-        this.log("GetTeamInAction", "Retrieved team in action value - " + teamInAction);
+        new Logger().Log("GetTeamInAction", "Retrieved team in action value - " + teamInAction);
 
         retval = teamInAction as string;
         return retval;
     }
-
-SetToDefault() {
-    if (window.confirm("Alle instellingen terugzetten naar standaard instellingen?")) {
-        DeleteAllSettings();
-        CreateTeams();
-    }
-
-    function DeleteAllSettings() {
-
-        this.log("SetToDefault", "DeleteAllettings()");
-
-        VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
-            // Get all document under the collection
-            (dataService as IExtensionDataService).getDocuments(TeamSettingsCollectionName).then(function (docs) {
-                //console.this.log("There are " + docs.length + " in the collection.");
-                docs.forEach(
-                    function (element) {
-                        DeleteTeamSettings(dataService, element.id, element.text);
-                    }
-                );
-                VSS.notifyLoadSucceeded();
-            });
-
-            VSS.notifyLoadSucceeded();
-        });
-    }
-
-    function DeleteTeamSettings(dservice, docId, docText) {
-
-        this.log("DeleteTeamSettings", docId + " " + docText);
-
-        if (dservice !== null) {
-            dservice.deleteDocument(TeamSettingsCollectionName, docId).then(function () {
-                this.log("DeleteTeamSettings", "Doc verwijderd");
-                VSS.notifyLoadSucceeded();
-            });
-        }
-
-        VSS.getService(VSS.ServiceIds.ExtensionData).then(function (dataService) {
-            (dataService as IExtensionDataService).deleteDocument(TeamSettingsCollectionName, docId).then(function () {
-                this.log("DeleteTeamSettings", "Doc verwijderddd");
-                VSS.notifyLoadSucceeded();
-            });
-            VSS.notifyLoadSucceeded();
-        });
-    }
-
-    function CreateTeams() {
-        this.log("CreateTeams", "executing");
-        SetTeamSettingsNew("Xtreme");
-        SetTeamSettingsNew("Committers");
-        SetTeamSettingsNew("Test");
-        SetTeamSettingsNew("NieuweTest");
-        this.log("CreateTeams", "executed.");
-    }
-
-    function SetTeamSettingsNew(teamName: string) {
-
-        this.log("SetTeamSettingsNew", teamName);
-
-        VSS.getService(VSS.ServiceIds.ExtensionData).then(
-            function (dataService) {
-
-                var newDoc = {
-                    type: "team",
-                    text: teamName
-                };
-
-                (dataService as IExtensionDataService).createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
-                    // Even if no ID was passed to createDocument, one will be generated
-                    this.log("SetTeamSettingsNew", doc.text);
-                });
-
-                VSS.notifyLoadSucceeded();
-            });
-    }
-}
 
     //function FirstTimeSetupData() {
     //    //// First time setup code
@@ -1478,4 +1739,5 @@ SetToDefault() {
     
 }
 
-window.onload = function () { new WitTsClass().LoadPreConditions(window) };
+console.log("vlak voor het einde");
+window.onload = function () { new PreLoader().LoadPreConditions(window) };
