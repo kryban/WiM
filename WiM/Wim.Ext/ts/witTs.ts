@@ -57,7 +57,7 @@ class WimWorkItem {
             this.workItemIterationPath = workItemQueryResult.fields[workItemFields.IterationPath];
             this.workItemAreaPath = workItemQueryResult.fields[workItemFields.AreaPath];
             this.workItemTaskActivity = workItemFields.TaskActivity;
-            this.allowedToAddTasks = new WitTsClass().CheckAllowedToAddTaskToPbi(this);
+            this.allowedToAddTasks = new WorkItemHelper().CheckAllowedToAddTaskToPbi(this);
         }
     }
 }
@@ -362,6 +362,30 @@ class ViewHelper {
 
         logger.Log("CreateTeamSelectElementInitially", "Done loading teams.")
     }
+
+    ShowSelectedWorkitemOnPage(workItem) {
+        var allowToAdd = new WorkItemHelper().CheckAllowedToAddTaskToPbi(workItem);
+
+        if (!allowToAdd) {
+            document.getElementById("existing-wit-text").className = "existing-wit-text-not";
+            document.getElementById("existing-wit-text").innerHTML =
+                "Aan een " + workItem.workItemType + " mag geen Task toegevoegd worden." +
+                "</br> " +
+                "(" + workItem.id + ")" + workItem.title;
+
+            new CheckboxHelper().DisableCheckBoxes();
+            new ButtonHelper().DisableAddButton();
+        }
+        else {
+            document.getElementById("existing-wit-text").className = "existing-wit-text";
+            document.getElementById("existing-wit-text").innerHTML = workItem.id + "</br> " + workItem.title;
+
+            new CheckboxHelper().EnableCheckBoxes();
+            new ButtonHelper().EnableAddButton();
+        }
+
+        VSS.notifyLoadSucceeded();
+    }
 }
 
 class ServiceHelper {
@@ -404,8 +428,9 @@ class EventHandlers
         try {
             await witClient.getWorkItem(witId)// when only specific fields required , ["System.Title", "System.WorkItemType"])
                 .then(function (workitemResult) {
+                    new Logger().Log("workitemResult", "new");
                     parentWorkItem = new WimWorkItem(workitemResult);
-                    this.ShowSelectedWorkitemOnPage(parentWorkItem);
+                    new ViewHelper(vssDataService).ShowSelectedWorkitemOnPage(parentWorkItem);
                 });
 
             if (parentWorkItem === undefined || parentWorkItem === null) {
@@ -434,8 +459,12 @@ class PreLoader
         new Logger().Log("PreLoader.RegisterEvents", "Registering events");
 
         $("#existing-wit-id").focus(eventHandlers.ExistingWitFieldFocussed);
-        $("#existing-wit-id").keypress(function(e){ eventHandlers.MainPageEnterPressed(e) })
+        $("#existing-wit-id").keypress(function (e) { eventHandlers.MainPageEnterPressed(e) });
+        $("#existing-wit-button").click(function (e) { eventHandlers.OpenButtonClicked(e) });
+
+        new Logger().Log("PreLoader.RegisterEvents", "All events registered");
     }
+
     FindCollection() {
 
         let logger = new Logger();
@@ -747,6 +776,13 @@ class MenuBuilderClass
 
 class WorkItemHelper {
 
+    CheckAllowedToAddTaskToPbi(parentWorkItem) {
+        if (parentWorkItem.workItemType !== "Product Backlog Item" && parentWorkItem.workItemType !== "Bug") {
+            return false;
+        }
+        return true;
+    }
+
     WorkItemNietGevonden(e?: Error) {
         let exceptionMessage: string = "";
         if (e != null && e.message.length > 0) {
@@ -1056,37 +1092,6 @@ class WitTsClass
     //        this.OpenButtonClicked(null);
     //    }
     //}
-
-    CheckAllowedToAddTaskToPbi(parentWorkItem) {
-        if (parentWorkItem.workItemType !== "Product Backlog Item" && parentWorkItem.workItemType !== "Bug") {
-            return false;
-        }
-        return true;
-    }
-
-    ShowSelectedWorkitemOnPage(workItem) {
-        var allowToAdd = this.CheckAllowedToAddTaskToPbi(workItem);
-
-        if (!allowToAdd) {
-            document.getElementById("existing-wit-text").className = "existing-wit-text-not";
-            document.getElementById("existing-wit-text").innerHTML =
-                "Aan een " + workItem.workItemType + " mag geen Task toegevoegd worden." +
-                "</br> " +
-                "(" + workItem.id + ")" + workItem.title;
-
-            new CheckboxHelper().DisableCheckBoxes();
-            new ButtonHelper().DisableAddButton();
-        }
-        else {
-            document.getElementById("existing-wit-text").className = "existing-wit-text";
-            document.getElementById("existing-wit-text").innerHTML = workItem.id + "</br> " + workItem.title;
-
-            new CheckboxHelper().EnableCheckBoxes();
-            new ButtonHelper().EnableAddButton();
-        }
-
-        VSS.notifyLoadSucceeded();
-    }
 
     GetWorkItemTypes(callback) {
         VSS.require(["TFS/WorkItemTracking/RestClient"], function (_restWitClient) {
@@ -1531,7 +1536,7 @@ class WitTsClass
 
     AddTasksButtonClicked(obj) {
 
-        this.CheckAllowedToAddTaskToPbi(parentWorkItem);
+        new WorkItemHelper().CheckAllowedToAddTaskToPbi(parentWorkItem);
         var taskCheckboxes = document.getElementsByName("taskcheckbox");
         var selectedCheckboxes = this.GetSelectedCheckboxes(taskCheckboxes);
 
