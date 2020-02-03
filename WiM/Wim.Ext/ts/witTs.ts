@@ -164,7 +164,7 @@ class ViewHelper {
         new Logger().Log("SetPageTitle", "Selected team: " + teamname + " - Presented team: " + teamNameToPresent);
     }
 
-    LoadTasksOnMainWindow(teamnaam: string) {
+    async LoadTasksOnMainWindow(teamnaam: string) {
         let parsedTeamnaam: string;
         if (teamnaam.startsWith("team_")) {
             var substringVanaf = "team_".length;
@@ -187,11 +187,11 @@ class ViewHelper {
             taskFieldSet.removeChild(taskFieldSet.firstChild);
         }
 
-        vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-            this.log("LoadTasksOnMainWindow", docs.length as unknown as string);
+        await vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+            new Logger().Log("LoadTasksOnMainWindow", docs.length as unknown as string);
 
             // only team task setting. Not other settings or other tam tasks
-            var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === this.selectedTeam.toLowerCase(); });
+            var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === parsedTeamnaam.toLowerCase(); });
 
             // build up again
             teamTasks.forEach(
@@ -585,7 +585,7 @@ class PreLoader
                     logger.Log("LoadRequired", "Required vssWiTrackingClient: " + vssWiTrackingClient);
                     logger.Log("LoadRequired", "Required vssMenus: " + vssMenus);
 
-                    let vssDataService = await new ServiceHelper().GetDataService();
+                    vssDataService = await new ServiceHelper().GetDataService();
                     await new MenuBuilderClass(vssDataService).BuildMenu(vssControls, vssMenus);
                     new ViewHelper(vssDataService).CreateTeamSelectElementInitially();
 
@@ -747,19 +747,19 @@ class MenuBuilderClass
                 //this.MenuBarAction(command);
                 // all team element ids begin with "team_", so we know user wants to switch teams
                 if (command.startsWith("team_")) {
-                    new ViewHelper(this.dataservice).LoadTasksOnMainWindow(command);
+                    new ViewHelper(vssDataService).LoadTasksOnMainWindow(command);
                 }
 
                 else if (command === "manage-teams") {
-                    new ViewHelper(this.dataservice).ConfigureTeams(command);
+                    new ViewHelper(vssDataService).ConfigureTeams(command);
                 }
 
                 else if (command === "configure-team-tasks") {
-                    new ViewHelper(this.dataservice).ConfigureTasks(command);
+                    new ViewHelper(vssDataService).ConfigureTasks(command);
                 }
 
                 else if (command === "set-to-default") {
-                    new ViewHelper(this.dataservice).SetToDefault();
+                    new ViewHelper(vssDataService).SetToDefault();
                 }
             }
         };
@@ -1550,8 +1550,8 @@ class WitTsClass
         new Logger().Log("AddTasksButtonClicked", null);
     }
 
-PairTasksToWorkitem(docs, parent) {
-    let numberOfTasksHandled: number = 0;
+    PairTasksToWorkitem(docs, parent) {
+        let numberOfTasksHandled: number = 0;
 
         var container = $("#tasksContainer");
 
@@ -1564,8 +1564,8 @@ PairTasksToWorkitem(docs, parent) {
             //}
         };
 
-    var waitcontrol = vssControls.create(vssStatusindicator.WaitControl, container, options);
-    var client = vssService.getCollectionClient(vssWiTrackingClient.WorkItemTrackingHttpClient);
+        var waitcontrol = vssControls.create(vssStatusindicator.WaitControl, container, options);
+        var client = vssService.getCollectionClient(vssWiTrackingClient.WorkItemTrackingHttpClient);
         //var client = vssService.getCollectionClient(VssWitClient.WorkItemTrackingHttpClient);
 
         waitcontrol.startWait();
@@ -1591,7 +1591,7 @@ PairTasksToWorkitem(docs, parent) {
             }
         );
 
-    new Logger().Log("PairTasksToWorkitem", null);
+        new Logger().Log("PairTasksToWorkitem", null);
     }
 
     CreateJsonPatchDocsForTasks(tasks) {

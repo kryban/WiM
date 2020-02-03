@@ -142,46 +142,48 @@ class ViewHelper {
         new Logger().Log("SetPageTitle", "Selected team: " + teamname + " - Presented team: " + teamNameToPresent);
     }
     LoadTasksOnMainWindow(teamnaam) {
-        let parsedTeamnaam;
-        if (teamnaam.startsWith("team_")) {
-            var substringVanaf = "team_".length;
-            parsedTeamnaam = teamnaam.substring(substringVanaf);
-        }
-        else {
-            parsedTeamnaam = teamnaam;
-        }
-        this.SetTeamInAction(parsedTeamnaam, this.dataservice);
-        new Logger().Log("LoadTasksOnMainWindow", "Registered team-naam-in-actie ");
-        VSS.register("team-naam-in-actie", parsedTeamnaam);
-        this.SetPageTitle(parsedTeamnaam);
-        var taskFieldSet = document.getElementById("task-checkbox");
-        // first remove all 
-        while (taskFieldSet.firstChild) {
-            taskFieldSet.removeChild(taskFieldSet.firstChild);
-        }
-        vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-            this.log("LoadTasksOnMainWindow", docs.length);
-            // only team task setting. Not other settings or other tam tasks
-            var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === this.selectedTeam.toLowerCase(); });
-            // build up again
-            teamTasks.forEach(function (element) {
-                var inputNode = document.createElement("input");
-                inputNode.setAttribute("type", "checkbox");
-                inputNode.setAttribute("id", element.id);
-                inputNode.setAttribute("value", element.activityType);
-                inputNode.setAttribute("checked", "true");
-                inputNode.setAttribute("name", "taskcheckbox");
-                inputNode.setAttribute("class", "checkbox");
-                var labelNode = document.createElement("label");
-                labelNode.setAttribute("for", element.id);
-                labelNode.setAttribute("class", "labelforcheckbox");
-                labelNode.innerHTML = element.title;
-                taskFieldSet.appendChild(inputNode);
-                taskFieldSet.appendChild(labelNode);
-                taskFieldSet.appendChild(document.createElement("br"));
+        return __awaiter(this, void 0, void 0, function* () {
+            let parsedTeamnaam;
+            if (teamnaam.startsWith("team_")) {
+                var substringVanaf = "team_".length;
+                parsedTeamnaam = teamnaam.substring(substringVanaf);
+            }
+            else {
+                parsedTeamnaam = teamnaam;
+            }
+            this.SetTeamInAction(parsedTeamnaam, this.dataservice);
+            new Logger().Log("LoadTasksOnMainWindow", "Registered team-naam-in-actie ");
+            VSS.register("team-naam-in-actie", parsedTeamnaam);
+            this.SetPageTitle(parsedTeamnaam);
+            var taskFieldSet = document.getElementById("task-checkbox");
+            // first remove all 
+            while (taskFieldSet.firstChild) {
+                taskFieldSet.removeChild(taskFieldSet.firstChild);
+            }
+            yield vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+                new Logger().Log("LoadTasksOnMainWindow", docs.length);
+                // only team task setting. Not other settings or other tam tasks
+                var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === parsedTeamnaam.toLowerCase(); });
+                // build up again
+                teamTasks.forEach(function (element) {
+                    var inputNode = document.createElement("input");
+                    inputNode.setAttribute("type", "checkbox");
+                    inputNode.setAttribute("id", element.id);
+                    inputNode.setAttribute("value", element.activityType);
+                    inputNode.setAttribute("checked", "true");
+                    inputNode.setAttribute("name", "taskcheckbox");
+                    inputNode.setAttribute("class", "checkbox");
+                    var labelNode = document.createElement("label");
+                    labelNode.setAttribute("for", element.id);
+                    labelNode.setAttribute("class", "labelforcheckbox");
+                    labelNode.innerHTML = element.title;
+                    taskFieldSet.appendChild(inputNode);
+                    taskFieldSet.appendChild(labelNode);
+                    taskFieldSet.appendChild(document.createElement("br"));
+                });
             });
+            VSS.notifyLoadSucceeded();
         });
-        VSS.notifyLoadSucceeded();
     }
     ConfigureTeams(command) {
         $('.modal_teams').show();
@@ -469,7 +471,7 @@ class PreLoader {
                             logger.Log("LoadRequired", "Required vssService: " + vssService);
                             logger.Log("LoadRequired", "Required vssWiTrackingClient: " + vssWiTrackingClient);
                             logger.Log("LoadRequired", "Required vssMenus: " + vssMenus);
-                            let vssDataService = yield new ServiceHelper().GetDataService();
+                            vssDataService = yield new ServiceHelper().GetDataService();
                             yield new MenuBuilderClass(vssDataService).BuildMenu(vssControls, vssMenus);
                             new ViewHelper(vssDataService).CreateTeamSelectElementInitially();
                             VSS.notifyLoadSucceeded();
@@ -601,16 +603,16 @@ class MenuBuilderClass {
                 //this.MenuBarAction(command);
                 // all team element ids begin with "team_", so we know user wants to switch teams
                 if (command.startsWith("team_")) {
-                    new ViewHelper(this.dataservice).LoadTasksOnMainWindow(command);
+                    new ViewHelper(vssDataService).LoadTasksOnMainWindow(command);
                 }
                 else if (command === "manage-teams") {
-                    new ViewHelper(this.dataservice).ConfigureTeams(command);
+                    new ViewHelper(vssDataService).ConfigureTeams(command);
                 }
                 else if (command === "configure-team-tasks") {
-                    new ViewHelper(this.dataservice).ConfigureTasks(command);
+                    new ViewHelper(vssDataService).ConfigureTasks(command);
                 }
                 else if (command === "set-to-default") {
-                    new ViewHelper(this.dataservice).SetToDefault();
+                    new ViewHelper(vssDataService).SetToDefault();
                 }
             }
         };
