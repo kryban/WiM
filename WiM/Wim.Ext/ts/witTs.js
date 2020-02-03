@@ -319,12 +319,43 @@ class EventHandlers {
             field.value = "";
         }
     }
+    OpenButtonClicked(obj) {
+        return __awaiter(this, void 0, void 0, function* () {
+            parentWorkItem = null;
+            witClient = vssWiTrackingClient.getClient();
+            var witId = parseInt(document.getElementById("existing-wit-id").value);
+            var checkBoxes = document.getElementsByClassName("checkbox");
+            var addButton = document.getElementById("addTasksButton");
+            try {
+                yield witClient.getWorkItem(witId) // when only specific fields required , ["System.Title", "System.WorkItemType"])
+                    .then(function (workitemResult) {
+                    parentWorkItem = new WimWorkItem(workitemResult);
+                    this.ShowSelectedWorkitemOnPage(parentWorkItem);
+                });
+                if (parentWorkItem === undefined || parentWorkItem === null) {
+                    new WorkItemHelper().WorkItemNietGevonden();
+                }
+            }
+            catch (e) {
+                let exc = e;
+                new WorkItemHelper().WorkItemNietGevonden(e);
+            }
+        });
+    }
+    MainPageEnterPressed(event) {
+        new Logger().Log("EventHandelrs.MainEnterPressed", "Event received" + event);
+        if (event.key === "Enter") {
+            event.preventDefault();
+            this.OpenButtonClicked(null);
+        }
+    }
 }
 class PreLoader {
     RegisterEvents() {
         var eventHandlers = new EventHandlers();
         new Logger().Log("PreLoader.RegisterEvents", "Registering events");
         $("#existing-wit-id").focus(eventHandlers.ExistingWitFieldFocussed);
+        $("#existing-wit-id").keypress(function (e) { eventHandlers.MainPageEnterPressed(e); });
     }
     FindCollection() {
         let logger = new Logger();
@@ -799,35 +830,32 @@ class WitTsClass {
     //        field.value = "";
     //    }
     //}
-    OpenButtonClicked(obj) {
-        return __awaiter(this, void 0, void 0, function* () {
-            parentWorkItem = null;
-            witClient = vssWiTrackingClient.getClient();
-            var witId = parseInt(document.getElementById("existing-wit-id").value);
-            var checkBoxes = document.getElementsByClassName("checkbox");
-            var addButton = document.getElementById("addTasksButton");
-            try {
-                yield witClient.getWorkItem(witId) // when only specific fields required , ["System.Title", "System.WorkItemType"])
-                    .then(function (workitemResult) {
-                    parentWorkItem = new WimWorkItem(workitemResult);
-                    this.ShowSelectedWorkitemOnPage(parentWorkItem);
-                });
-                if (parentWorkItem === undefined || parentWorkItem === null) {
-                    new WorkItemHelper().WorkItemNietGevonden();
-                }
-            }
-            catch (e) {
-                let exc = e;
-                new WorkItemHelper().WorkItemNietGevonden(e);
-            }
-        });
-    }
-    MainPageEnterPressed(event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            this.OpenButtonClicked(null);
-        }
-    }
+    //async OpenButtonClicked(obj) {
+    //    parentWorkItem = null;
+    //    witClient = vssWiTrackingClient.getClient();
+    //    var witId = parseInt((document.getElementById("existing-wit-id") as HTMLInputElement).value);
+    //    var checkBoxes = document.getElementsByClassName("checkbox");
+    //    var addButton = document.getElementById("addTasksButton");
+    //    try {
+    //        await witClient.getWorkItem(witId)// when only specific fields required , ["System.Title", "System.WorkItemType"])
+    //            .then(function (workitemResult) {
+    //                parentWorkItem = new WimWorkItem(workitemResult);
+    //                this.ShowSelectedWorkitemOnPage(parentWorkItem);
+    //            });
+    //        if (parentWorkItem === undefined || parentWorkItem === null) {
+    //            new WorkItemHelper().WorkItemNietGevonden();
+    //        }
+    //    } catch (e) {
+    //        let exc: Error = e;
+    //        new WorkItemHelper().WorkItemNietGevonden(e);
+    //    }
+    //}
+    //MainPageEnterPressed(event) {
+    //    if (event.key === "Enter") {
+    //        event.preventDefault();
+    //        this.OpenButtonClicked(null);
+    //    }
+    //}
     CheckAllowedToAddTaskToPbi(parentWorkItem) {
         if (parentWorkItem.workItemType !== "Product Backlog Item" && parentWorkItem.workItemType !== "Bug") {
             return false;
