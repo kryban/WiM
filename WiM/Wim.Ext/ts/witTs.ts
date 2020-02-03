@@ -20,16 +20,16 @@ var vssMenus;
 var vssDataService: IExtensionDataService;
 
 class WimWorkItem {
-    id: number;
-    rev: number;
-    url: string;
-    title: string;
-    workItemType: string;
-    workItemProjectName: string;
-    workItemIterationPath: string;
-    workItemAreaPath: string;
-    workItemTaskActivity: string;
-    allowedToAddTasks: boolean;
+    public id: number;
+    public rev: number;
+    public url: string;
+    public title: string;
+    public workItemType: string;
+    public workItemProjectName: string;
+    public workItemIterationPath: string;
+    public workItemAreaPath: string;
+    public workItemTaskActivity: string;
+    public allowedToAddTasks: boolean;
 
     constructor(workItemQueryResult: TFSWitContracts.WorkItem) {
 
@@ -85,8 +85,8 @@ class Enm_WorkitemPaths {
     public readonly ReproSteps: string = "/fields/Microsoft.VSTS.TCM.ReproSteps";
     public readonly TaskActivity: string = "/fields/Microsoft.VSTS.Common.Activity";
     public readonly url: string = "/fields/url";
-    public readonly AllRelations: "/relations/-";
-    public readonly SpecficRelations: "/relations/";
+    public readonly AllRelations:string = "/relations/-";
+    public readonly SpecficRelations:string = "/relations/";
 }
 
 class Enm_WorkitemFields {
@@ -186,6 +186,9 @@ class ViewHelper {
         while (taskFieldSet.firstChild) {
             taskFieldSet.removeChild(taskFieldSet.firstChild);
         }
+
+        var foo;
+        await vssDataService.getDocuments(TeamSettingsCollectionName).then(function (dcs) { foo = dcs });
 
         await vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
             new Logger().Log("LoadTasksOnMainWindow", docs.length as unknown as string);
@@ -407,6 +410,82 @@ class ModalHelper
     closeTeamsModal() { $('.modal_teams').hide(); }
 }
 
+class JsonPatchDoc {
+
+    task: WimWorkItem;
+    declare retval;
+
+    constructor(task: WimWorkItem) {
+        this.task = task;
+    }
+
+    Create() {
+        let operations: Enm_JsonPatchOperations = new Enm_JsonPatchOperations();
+        let paths: Enm_WorkitemPaths = new Enm_WorkitemPaths();
+
+        this.retval = [
+            {
+                "op": operations.Add,
+                "path": paths.Title,
+                "value": this.task.title
+            },
+            {
+                "op": operations.Add,
+                "path": paths.IterationPath,
+                "value": this.task.workItemIterationPath
+            },
+            {
+                "op": operations.Add,
+                "path": paths.AreaPath,
+                "value": this.task.workItemAreaPath
+            },
+            {
+                "op": operations.Add,
+                "path": paths.TaskActivity,
+                "value": this.task.workItemTaskActivity
+            },
+            {
+                "op": operations.Add,
+                "path": paths.AllRelations,
+                "value": {
+                    "rel": "System.LinkTypes.Hierarchy-Reverse",
+                    "url": parentWorkItem.url,
+                    "attributes": {
+                        "comment": "todo: comment voor decompositie"
+                    }
+                }
+            }
+        ];
+
+        new Logger().Log("JsonPatchDoc.Create", "Created JsonPatchdoc for task " + this.task.title);
+        return this.retval;
+    }
+}
+    // available WorkITtemFields as a result
+    // Microsoft.VSTS.Common.BacklogPriority: 1000031622
+    // Microsoft.VSTS.Common.Severity: "3 - Medium"
+    // Microsoft.VSTS.TCM.ReproSteps: "Reproductiestappen"
+    // Microsoft.VSTS.TCM.SystemInfo: "sysinfo"
+    // System.AreaPath: "WiM"
+    // System.BoardColumn: "New"
+    // System.BoardColumnDone: false
+    // System.ChangedBy: "kry <KRYLP\kry>"
+    // System.ChangedDate: "2017-12-30T19:55:20.99Z"
+    // System.CommentCount: 0
+    // System.CreatedBy: "kry <KRYLP\kry>"
+    // System.CreatedDate: "2017-12-23T22:39:59.693Z"
+    // System.IterationPath: "WiM"
+    // System.Reason: "New defect reported"
+    // System.State: "New"
+    // System.TeamProject: "WiM"
+    // System.Title: "Voorbeeld van een BUG met heeeeeeel vel tekst en allerlei andere dingetjes die te tekst uiteindelijk te lang maken zodat we het wrappen kunnen testen."
+    // System.WorkItemType: "Bug"
+    // WEF_FA00BAB5AFBB4E299544ED2121CDE143_Kanban.Column: "New"
+    // WEF_FA00BAB5AFBB4E299544ED2121CDE143_Kanban.Column.Done: false
+    // dSZW.Socrates.TopDeskWijzigingNr: "W1245-5544"
+
+    //return workItemTrackingClient.CreateWorkItemAsync(patchDocument, linkedWorkItemProjectName, "Task").Result;
+
 class EventHandlers
 {
     ExistingWitFieldFocussed() {
@@ -450,6 +529,127 @@ class EventHandlers
             this.OpenButtonClicked(null);
         }
     }
+
+    private GetSelectedCheckboxes(allCheckboxes) {
+        var retval = [];
+        allCheckboxes.forEach(
+            function (element) {
+                if (element.checked) {
+                    retval.push(
+                        new CheckBoxInfo(element.labels[0].innerText, element.value)
+                    );
+                }
+            }
+        );
+
+        new Logger().Log("GetSelectedCheckboxes", "Selected checkboxes: " + retval.length);
+        return retval;
+    }
+
+    private CreateTasksToAdd(selectedCheckboxes) {
+        var retval = [];
+
+        selectedCheckboxes.forEach(
+            function (element) {
+                var task = new WimWorkItem(null);
+                task.title = element.title;
+                task.workItemType = "Task";
+                task.workItemProjectName = parentWorkItem.workItemProjectName;
+                task.workItemIterationPath = parentWorkItem.workItemIterationPath;
+                task.workItemAreaPath = parentWorkItem.workItemAreaPath;
+                task.workItemTaskActivity = element.activityType;
+                retval.push(task);
+            });
+
+        new Logger().Log("CreateTasksToAdd", "Created tasks: " + retval.length);
+        return retval;
+    }
+
+    private CreateJsonPatchDocsForTasks(tasks) {
+        var retval = [];
+
+        tasks.forEach(function (element) {
+            retval.push(
+                new JsonPatchDoc(element).Create() // this.jsonPatchDoc(element).returnPatchDoc
+            );
+        });
+
+        new Logger().Log("CreateJsonPatchDocsForTasks", null);
+        return retval;
+    }
+
+    async PairTasksToWorkitem(docs, parent) {
+        new Logger().Log("EventHandlers.PairTasksToWorkitem", "Start pairing");
+
+        let numberOfTasksHandled: number = 0;
+
+        var container = $("#tasksContainer");
+
+        var options = {
+            //target: $("#tasksContainer"),
+            //cancellable: true,
+            //cancelTextFormat: "{0} to cancel",
+            //cancelCallback: function () {
+            //    console.this.log("cancelled");
+            //}
+        };
+
+        var waitcontrol = await vssControls.create(vssStatusindicator.WaitControl, container, options);
+        var client = await vssService.getCollectionClient(vssWiTrackingClient.WorkItemTrackingHttpClient);
+        //var client = vssService.getCollectionClient(VssWitClient.WorkItemTrackingHttpClient);
+
+        waitcontrol.startWait();
+        waitcontrol.setMessage("waiter waits.");
+
+        var workItemPromises = [];
+
+        docs.forEach(
+            function (jsonPatchDoc) {
+                numberOfTasksHandled++;
+                workItemPromises.push(client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task"));
+                new Logger().Log("PairTasksToWorkitem", "Pairing task.");
+            }
+        );
+
+        await Promise.all(workItemPromises).then(
+            function () {
+                var taakTaken = numberOfTasksHandled === 1 ? "taak" : "taken";
+                alert(numberOfTasksHandled + " " + taakTaken + " toegevoegd aan PBI " + parent.id + " (" + parent.title + ").");
+
+                waitcontrol.endWait();
+
+                VSS.notifyLoadSucceeded();
+            }
+        );
+
+        new Logger().Log("PairTasksToWorkitem", "Tasks pared.");
+    }
+
+    async AddTasksButtonClicked(obj) {
+        new WorkItemHelper().CheckAllowedToAddTaskToPbi(parentWorkItem);
+        var taskCheckboxes = document.getElementsByName("taskcheckbox");
+        var selectedCheckboxes = this.GetSelectedCheckboxes(taskCheckboxes);
+        var tasksToPairWithWorkitem = this.CreateTasksToAdd(selectedCheckboxes);
+
+        var jsonPatchDocs = this.CreateJsonPatchDocsForTasks(tasksToPairWithWorkitem);
+
+        this.PairTasksToWorkitem(jsonPatchDocs, parentWorkItem);
+
+        var team;
+        await this.GetTeamInAction().then(function (t) { team = t; });
+
+        await new ViewHelper(vssDataService).LoadTasksOnMainWindow(team);
+        new Logger().Log("AddTasksButtonClicked", null);
+    }
+
+    async GetTeamInAction(): Promise<string> {
+        let retval: string
+        let teamInAction = await vssDataService.getValue("team-in-action");
+        new Logger().Log("GetTeamInAction", "Retrieved team in action value - " + teamInAction);
+
+        retval = teamInAction as string;
+        return retval;
+    }
 }
 
 class PreLoader
@@ -461,6 +661,7 @@ class PreLoader
         $("#existing-wit-id").focus(eventHandlers.ExistingWitFieldFocussed);
         $("#existing-wit-id").keypress(function (e) { eventHandlers.MainPageEnterPressed(e) });
         $("#existing-wit-button").click(function (e) { eventHandlers.OpenButtonClicked(e) });
+        $("#addTasksButton").click(function (e) { eventHandlers.AddTasksButtonClicked(e) });
 
         new Logger().Log("PreLoader.RegisterEvents", "All events registered");
     }
@@ -586,7 +787,7 @@ class PreLoader
                     logger.Log("LoadRequired", "Required vssMenus: " + vssMenus);
 
                     vssDataService = await new ServiceHelper().GetDataService();
-                    await new MenuBuilderClass(vssDataService).BuildMenu(vssControls, vssMenus);
+                    await new MenuBuilder(vssDataService).BuildMenu(vssControls, vssMenus);
                     new ViewHelper(vssDataService).CreateTeamSelectElementInitially();
 
                     VSS.notifyLoadSucceeded();
@@ -658,7 +859,7 @@ class ButtonHelper {
 //    }
 //}
 
-class MenuBuilderClass
+class MenuBuilder
 {
     menuSettings;
     dataservice: IExtensionDataService;
@@ -1471,7 +1672,7 @@ class WitTsClass
     TeamSelectedHandler(obj) {
         selectedTeam = obj.value.toLowerCase(); //$(this).val();
         if (selectedTeam === undefined) {
-            this.GetTeamInAction().then(function (v) { this.selectedTeam = v; });
+            new EventHandlers().GetTeamInAction().then(function (v) { this.selectedTeam = v; });
         }
 
         this.LoadTeamTasks(selectedTeam);
@@ -1492,7 +1693,7 @@ class WitTsClass
             var x = 0;
 
             if (selection === undefined) {
-                selection = this.GetTeamInAction();
+                selection = new EventHandlers().GetTeamInAction();
             }
             // only team task setting. Not other settings
             var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === selection; });
@@ -1531,192 +1732,6 @@ class WitTsClass
             });
         }
         new Logger().Log("CheckUncheck", null);
-    }
-
-
-    AddTasksButtonClicked(obj) {
-
-        new WorkItemHelper().CheckAllowedToAddTaskToPbi(parentWorkItem);
-        var taskCheckboxes = document.getElementsByName("taskcheckbox");
-        var selectedCheckboxes = this.GetSelectedCheckboxes(taskCheckboxes);
-
-        var tasksToPairWithWorkitem = this.CreateTasksToAdd(selectedCheckboxes);
-
-        var jsonPatchDocs = this.CreateJsonPatchDocsForTasks(tasksToPairWithWorkitem);
-
-        this.PairTasksToWorkitem(jsonPatchDocs, parentWorkItem);
-
-        new ViewHelper(vssDataService).LoadTasksOnMainWindow(selectedTeam);
-        new Logger().Log("AddTasksButtonClicked", null);
-    }
-
-    PairTasksToWorkitem(docs, parent) {
-        let numberOfTasksHandled: number = 0;
-
-        var container = $("#tasksContainer");
-
-        var options = {
-            //target: $("#tasksContainer"),
-            //cancellable: true,
-            //cancelTextFormat: "{0} to cancel",
-            //cancelCallback: function () {
-            //    console.this.log("cancelled");
-            //}
-        };
-
-        var waitcontrol = vssControls.create(vssStatusindicator.WaitControl, container, options);
-        var client = vssService.getCollectionClient(vssWiTrackingClient.WorkItemTrackingHttpClient);
-        //var client = vssService.getCollectionClient(VssWitClient.WorkItemTrackingHttpClient);
-
-        waitcontrol.startWait();
-        waitcontrol.setMessage("waiter waits.");
-
-        var workItemPromises = [];
-
-        docs.forEach(
-            function (jsonPatchDoc) {
-                numberOfTasksHandled++;
-                workItemPromises.push(client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task"));
-            }
-        );
-
-        Promise.all(workItemPromises).then(
-            function () {
-                var taakTaken = numberOfTasksHandled === 1 ? "taak" : "taken";
-                alert(numberOfTasksHandled + " " + taakTaken + " toegevoegd aan PBI " + parent.id + " (" + parent.title + ").");
-
-                waitcontrol.endWait();
-
-                VSS.notifyLoadSucceeded();
-            }
-        );
-
-        new Logger().Log("PairTasksToWorkitem", null);
-    }
-
-    CreateJsonPatchDocsForTasks(tasks) {
-        var retval = [];
-
-        tasks.forEach(function (element) {
-            retval.push(
-                new this.jsonPatchDoc(element).returnPatchDoc
-            );
-        });
-
-        new Logger().Log("CreateJsonPatchDocsForTasks", null);
-        return retval;
-    }
-
-    jsonPatchDoc(task) {
-
-        let operations: Enm_JsonPatchOperations = new Enm_JsonPatchOperations();
-        let paths: Enm_WorkitemPaths = new Enm_WorkitemPaths();
-
-        return [
-            {
-                "op": operations.Add,
-                "path": paths.Title,
-                "value": task.title
-            },
-            {
-                "op": operations.Add,
-                "path": paths.IterationPath,
-                "value": task.workItemIterationPath
-            },
-            {
-                "op": operations.Add,
-                "path": paths.AreaPath,
-                "value": task.workItemAreaPath
-            },
-            {
-                "op": operations.Add,
-                "path": paths.TaskActivity,
-                "value": task.workItemTaskActivity
-            },
-            {
-                "op": operations.Add,
-                "path": paths.AllRelations,
-                "value": {
-                    "rel": "System.LinkTypes.Hierarchy-Reverse",
-                    "url": parentWorkItem.url,
-                    "attributes": {
-                        "comment": "todo: comment voor decompositie"
-                    }
-                }
-            }
-        ];
-        // available WorkITtemFields as a result
-        // Microsoft.VSTS.Common.BacklogPriority: 1000031622
-        // Microsoft.VSTS.Common.Severity: "3 - Medium"
-        // Microsoft.VSTS.TCM.ReproSteps: "Reproductiestappen"
-        // Microsoft.VSTS.TCM.SystemInfo: "sysinfo"
-        // System.AreaPath: "WiM"
-        // System.BoardColumn: "New"
-        // System.BoardColumnDone: false
-        // System.ChangedBy: "kry <KRYLP\kry>"
-        // System.ChangedDate: "2017-12-30T19:55:20.99Z"
-        // System.CommentCount: 0
-        // System.CreatedBy: "kry <KRYLP\kry>"
-        // System.CreatedDate: "2017-12-23T22:39:59.693Z"
-        // System.IterationPath: "WiM"
-        // System.Reason: "New defect reported"
-        // System.State: "New"
-        // System.TeamProject: "WiM"
-        // System.Title: "Voorbeeld van een BUG met heeeeeeel vel tekst en allerlei andere dingetjes die te tekst uiteindelijk te lang maken zodat we het wrappen kunnen testen."
-        // System.WorkItemType: "Bug"
-        // WEF_FA00BAB5AFBB4E299544ED2121CDE143_Kanban.Column: "New"
-        // WEF_FA00BAB5AFBB4E299544ED2121CDE143_Kanban.Column.Done: false
-        // dSZW.Socrates.TopDeskWijzigingNr: "W1245-5544"
-
-        //return workItemTrackingClient.CreateWorkItemAsync(patchDocument, linkedWorkItemProjectName, "Task").Result;
-        new Logger().Log("jsonPatchDoc", null);
-    }
-
-    CreateTasksToAdd(selectedCheckboxes) {
-
-        var retval = [];
-
-        selectedCheckboxes.forEach(
-            function (element) {
-                var task = new WimWorkItem(null);
-                task.title = element.Title;
-                task.workItemType = "Task";
-                task.workItemProjectName = parentWorkItem.workItemProjectName;
-                task.workItemIterationPath = parentWorkItem.workItemIterationPath;
-                task.workItemAreaPath = parentWorkItem.workItemAreaPath;
-                task.workItemTaskActivity = element.ActivityType;
-
-                retval.push(task);
-            });
-
-        new Logger().Log("CreateTasksToAdd", "Created tasks: " + retval.length);
-        return retval;
-    }
-
-    GetSelectedCheckboxes(allCheckboxes) {
-        var retval = [];
-        allCheckboxes.forEach(
-            function (element) {
-                if (element.checked) {
-                    retval.push(
-                        new CheckBoxInfo(element.labels[0].innerText, element.value)
-                    );
-                }
-            }
-        );
-
-        new Logger().Log("GetSelectedCheckboxes", "Selected checkboxes: " + retval.length);
-        return retval;
-    }
-
-    async GetTeamInAction() :Promise<string> {
-        let retval: string
-        let teamInAction = await vssDataService.getValue("team-in-action");
-
-        new Logger().Log("GetTeamInAction", "Retrieved team in action value - " + teamInAction);
-
-        retval = teamInAction as string;
-        return retval;
     }
 
     //function FirstTimeSetupData() {
