@@ -312,7 +312,20 @@ class ModalHelper {
     openTeamsModal() { $('.modal_teams').show(); }
     closeTeamsModal() { $('.modal_teams').hide(); }
 }
+class EventHandlers {
+    ExistingWitFieldFocussed() {
+        var field = document.getElementById("existing-wit-id");
+        if (field.value === "workitem ID") {
+            field.value = "";
+        }
+    }
+}
 class PreLoader {
+    RegisterEvents() {
+        var eventHandlers = new EventHandlers();
+        new Logger().Log("PreLoader.RegisterEvents", "Registering events");
+        $("#existing-wit-id").focus(eventHandlers.ExistingWitFieldFocussed);
+    }
     FindCollection() {
         let logger = new Logger();
         logger.Log("FindCollection", "3: " + vssDataService);
@@ -780,12 +793,12 @@ class WitTsClass {
     MapWorkItemFields(witemObject, witem) {
         witemObject.Title = witem.fields["System.Title"];
     }
-    ExistingWitFieldFocussed() {
-        var field = document.getElementById("existing-wit-id");
-        if (field.value === "workitem ID") {
-            field.value = "";
-        }
-    }
+    //ExistingWitFieldFocussed() {
+    //    var field = document.getElementById("existing-wit-id") as HTMLInputElement;
+    //    if (field.value === "workitem ID") {
+    //        field.value = "";
+    //    }
+    //}
     OpenButtonClicked(obj) {
         return __awaiter(this, void 0, void 0, function* () {
             parentWorkItem = null;
@@ -1323,4 +1336,8 @@ class WitTsClass {
     }
 }
 console.log("vlak voor het einde");
-window.onload = function () { new PreLoader().LoadPreConditions(window); };
+window.onload = function () {
+    let preloader = new PreLoader();
+    preloader.LoadPreConditions(window);
+    preloader.RegisterEvents();
+};

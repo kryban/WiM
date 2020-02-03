@@ -383,8 +383,25 @@ class ModalHelper
     closeTeamsModal() { $('.modal_teams').hide(); }
 }
 
+class EventHandlers
+{
+    ExistingWitFieldFocussed() {
+        var field = document.getElementById("existing-wit-id") as HTMLInputElement;
+        if (field.value === "workitem ID") {
+            field.value = "";
+        }
+    }
+}
+
 class PreLoader
 {
+    RegisterEvents() {
+        var eventHandlers: EventHandlers = new EventHandlers();
+        new Logger().Log("PreLoader.RegisterEvents", "Registering events");
+
+        $("#existing-wit-id").focus(eventHandlers.ExistingWitFieldFocussed);
+
+    }
     FindCollection() {
 
         let logger = new Logger();
@@ -966,12 +983,12 @@ class WitTsClass
         witemObject.Title = witem.fields["System.Title"];
     }
 
-    ExistingWitFieldFocussed() {
-        var field = document.getElementById("existing-wit-id") as HTMLInputElement;
-        if (field.value === "workitem ID") {
-            field.value = "";
-        }
-    }
+    //ExistingWitFieldFocussed() {
+    //    var field = document.getElementById("existing-wit-id") as HTMLInputElement;
+    //    if (field.value === "workitem ID") {
+    //        field.value = "";
+    //    }
+    //}
 
     async OpenButtonClicked(obj) {
 
@@ -1742,4 +1759,10 @@ PairTasksToWorkitem(docs, parent) {
 }
 
 console.log("vlak voor het einde");
-window.onload = function () { new PreLoader().LoadPreConditions(window) };
+window.onload = function ()
+{
+    let preloader: PreLoader = new PreLoader();
+    preloader.LoadPreConditions(window);
+    preloader.RegisterEvents();
+    
+};
