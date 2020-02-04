@@ -196,7 +196,7 @@ class ViewHelper {
         var substringVanaf = "tasks_".length;
         var parsedTeamnaam = teamnaam.substring(substringVanaf);
         new Logger().Log("ConfigureTasks", parsedTeamnaam);
-        new ModalHelper().openTasksModal();
+        new ModalHelper().OpenTasksModal();
     }
     DeleteTeamSettings(docs, dservice) {
         docs.forEach(function (doc) {
@@ -252,8 +252,6 @@ class ViewHelper {
             this.CreateTeams(this.dataservice);
         }
     }
-    addTeamHandler(name) {
-    }
     CreateTeamSelectElementInitially() {
         return __awaiter(this, void 0, void 0, function* () {
             let logger = new Logger();
@@ -283,7 +281,7 @@ class ViewHelper {
                     teamNaamInputNode.setAttribute("name", "teamInpNaam");
                     teamNaamInputNode.setAttribute("class", "teamNaamInput");
                     var removeTeamFieldNode = document.createElement("a");
-                    removeTeamFieldNode.setAttribute("onclick", "removeTeamFieldClickHandler(this)");
+                    //removeTeamFieldNode.setAttribute("onclick", "removeTeamFieldClickHandler(this)");
                     removeTeamFieldNode.setAttribute("href", "#");
                     removeTeamFieldNode.setAttribute("style", "margin-left:10px;");
                     removeTeamFieldNode.setAttribute("class", "remove_field");
@@ -332,10 +330,39 @@ class ServiceHelper {
     }
 }
 class ModalHelper {
-    openTasksModal() { $('.modal_tasks').show(); }
-    closeTasksModal() { $('.modal_tasks').hide(); }
-    openTeamsModal() { $('.modal_teams').show(); }
-    closeTeamsModal() { $('.modal_teams').hide(); }
+    OpenTasksModal() { $('.modal_tasks').show(); }
+    CloseTasksModal() { $('.modal_tasks').hide(); }
+    OpenTeamsModal() { $('.modal_teams').show(); }
+    CloseTeamsModal() { $('.modal_teams').hide(); }
+    AddNewTeamInputRow(name) {
+        var teamTitle = (name !== null && typeof name !== "undefined") ? name : defaultTeamName;
+        var teamRowNode = document.createElement("div");
+        var teamNaamInputNode = document.createElement("input");
+        teamNaamInputNode.setAttribute("onfocus", "removeDefaultTextHandler(this)");
+        teamNaamInputNode.setAttribute("type", "text");
+        teamNaamInputNode.setAttribute("value", teamTitle);
+        teamNaamInputNode.setAttribute("name", "teamInpNaam");
+        teamNaamInputNode.setAttribute("class", "teamNaamInput");
+        var removeTeamFieldNode = document.createElement("a");
+        //removeTeamFieldNode.setAttribute("onclick", "removeTeamFieldClickHandler(this)");
+        removeTeamFieldNode.setAttribute("href", "#");
+        removeTeamFieldNode.setAttribute("style", "margin-left:10px;");
+        removeTeamFieldNode.setAttribute("class", "remove_field");
+        removeTeamFieldNode.innerText = "Verwijder teamm";
+        var teamInputContainer = document.getElementsByClassName("input_fields_container_part")[0];
+        teamInputContainer.appendChild(teamRowNode);
+        teamRowNode.appendChild(teamNaamInputNode);
+        teamRowNode.appendChild(removeTeamFieldNode);
+        teamRowNode.appendChild(document.createElement("br"));
+    }
+    RemoveTeamInputRow(obj) {
+        obj.parentNode.remove();
+        new Logger().Log("RemoveTeamInputRow", "Fields removed.");
+    }
+    RemoveTaskInputRow(obj) {
+        obj.parentNode.remove();
+        new Logger().Log("RemoveTaskFieldClickHandler", "Fields removed.");
+    }
 }
 class JsonPatchDoc {
     constructor(task) {
@@ -532,6 +559,46 @@ class EventHandlers {
             return retval;
         });
     }
+    TeamModalOKButtonClicked() {
+        return __awaiter(this, void 0, void 0, function* () {
+            var teamsOnForm = document.getElementsByName("teamInpNaam");
+            vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+                // delete only teams setting. Not other settings
+                var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
+                // always 1 element for at least 1 iteration in Promises.all
+                var teamDeletionPromises;
+                teamDeletionPromises.push(new Promise(function () { }));
+                var added = false;
+                teamDocs.forEach(function (element) {
+                    teamDeletionPromises.push(this.vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
+                });
+                Promise.all(teamDeletionPromises).then(function (service) {
+                    if (!added) {
+                        this.log("teamInpChangeHandler", "Doc verwijderd");
+                        this.AddTeamDocs(teamsOnForm, this.vssDataService);
+                        VSS.notifyLoadSucceeded();
+                    }
+                });
+                // refactor this
+                if (!added) {
+                    this.log("teamInpChangeHandler", "Doc verwijderd");
+                    this.AddTeamDocs(teamsOnForm, this.vssDataService);
+                    VSS.notifyLoadSucceeded();
+                }
+            });
+            new Logger().Log("teamInpChangeHandler", "Finished");
+            new ModalHelper().CloseTeamsModal();
+        });
+    }
+    TeamModalCancelButtonClicked() {
+        new ModalHelper().CloseTeamsModal();
+    }
+    TeamModalAddTeamButtonClicked(name) {
+        new ModalHelper().AddNewTeamInputRow(name);
+    }
+    TeamModalRemoveTeamButtonClicked(clickedObj) {
+        new ModalHelper().RemoveTeamInputRow(clickedObj);
+    }
 }
 class PreLoader {
     RegisterEvents() {
@@ -541,6 +608,10 @@ class PreLoader {
         $("#existing-wit-id").keypress(function (e) { eventHandlers.MainPageEnterPressed(e); });
         $("#existing-wit-button").click(function (e) { eventHandlers.OpenButtonClicked(e); });
         $("#addTasksButton").click(function (e) { eventHandlers.AddTasksButtonClicked(e); });
+        $("#teamDialogCancelBtn").click(eventHandlers.TeamModalCancelButtonClicked);
+        $("#teamDialogConfirmBtn").click(eventHandlers.TeamModalOKButtonClicked);
+        $("#voegTeamToe").click(function (e) { eventHandlers.TeamModalAddTeamButtonClicked(e.value); });
+        $(".remove_field").click(function (e) { eventHandlers.TeamModalRemoveTeamButtonClicked(e); });
         new Logger().Log("PreLoader.RegisterEvents", "All events registered");
     }
     FindCollection() {
@@ -579,26 +650,34 @@ class PreLoader {
             this.CreateFirstTimeCollection();
         }
     }
-    registerTasksModelButtonEvents(modalHelper) {
-        //Show modal box
-        $('#modal_tasks_openModal').click(() => { modalHelper.openTasksModal(); });
-        //Hide modal box
-        $('#modal_tasks_closeModal').click(() => { modalHelper.closeTasksModal(); });
-    }
-    registerTeamsModelButtonEvents(modalHelper) {
-        //Show modal box
-        $('#modal_teams_openModal').click(() => { modalHelper.openTeamsModal(); });
-        //Hide modal box
-        $('#modal_teams_closeModal').click(() => { modalHelper.closeTeamsModal(); });
-    }
+    //registerTasksModelButtonEvents(modalHelper: ModalHelper) {
+    //    //Show modal box
+    //    $('#modal_tasks_openModal').click(
+    //        () => { modalHelper.openTasksModal(); }
+    //    );
+    //    //Hide modal box
+    //    $('#modal_tasks_closeModal').click(
+    //        () => { modalHelper.closeTasksModal(); }
+    //    );
+    //}
+    //registerTeamsModelButtonEvents(modalHelper: ModalHelper) {
+    //    //Show modal box
+    //    $('#modal_teams_openModal').click(
+    //        () => { modalHelper.openTeamsModal(); }
+    //    );
+    //    //Hide modal box
+    //    $('#modal_teams_closeModal').click(
+    //        () => { modalHelper.closeTeamsModal(); }
+    //    );
+    //}
     LoadPreState() {
         let modalHelper = new ModalHelper();
         if (document.readyState == "complete") {
             var name = window.location.pathname.split('/').slice(-1);
             new CheckboxHelper().DisableCheckBoxes();
             new ButtonHelper().DisableAddButton();
-            this.registerTasksModelButtonEvents(modalHelper);
-            this.registerTeamsModelButtonEvents(modalHelper);
+            //this.registerTasksModelButtonEvents(modalHelper);
+            //this.registerTeamsModelButtonEvents(modalHelper);
             this.LoadRequired();
             new Logger().Log("window.onload", "DocumentReady:" + name);
         }
@@ -609,8 +688,8 @@ class PreLoader {
             let modalHelper = new ModalHelper();
             new CheckboxHelper().DisableCheckBoxes();
             new ButtonHelper().DisableAddButton();
-            this.registerTasksModelButtonEvents(modalHelper);
-            this.registerTeamsModelButtonEvents(modalHelper);
+            //this.registerTasksModelButtonEvents(modalHelper);
+            //this.registerTeamsModelButtonEvents(modalHelper);
             yield this.LoadRequired();
             new Logger().Log("window.onload", "DocumentReady:" + name);
         });
@@ -1057,35 +1136,37 @@ class WitTsClass {
             });
         });
     }
-    teamInpChangeHandler() {
-        var teamsOnForm = document.getElementsByName("teamInpNaam");
-        vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-            // delete only teams setting. Not other settings
-            var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
-            // always 1 element for at least 1 iteration in Promises.all
-            var teamDeletionPromises;
-            teamDeletionPromises.push(new Promise(function () { }));
-            var added = false;
-            teamDocs.forEach(function (element) {
-                teamDeletionPromises.push(this.vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
-            });
-            Promise.all(teamDeletionPromises).then(function (service) {
-                if (!added) {
-                    this.log("teamInpChangeHandler", "Doc verwijderd");
-                    this.AddTeamDocs(teamsOnForm, this.vssDataService);
-                    VSS.notifyLoadSucceeded();
-                }
-            });
-            // refactor this
-            if (!added) {
-                this.log("teamInpChangeHandler", "Doc verwijderd");
-                this.AddTeamDocs(teamsOnForm, this.vssDataService);
-                VSS.notifyLoadSucceeded();
-            }
-        });
-        new Logger().Log("teamInpChangeHandler", "Finished");
-        new ModalHelper().closeTeamsModal();
-    }
+    //teamInpChangeHandler() {
+    //    var teamsOnForm = document.getElementsByName("teamInpNaam");
+    //    vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+    //        // delete only teams setting. Not other settings
+    //        var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
+    //        // always 1 element for at least 1 iteration in Promises.all
+    //        var teamDeletionPromises: IPromise<void>[];
+    //        teamDeletionPromises.push(new Promise(function () { /*empty*/ }))
+    //        var added = false;
+    //        teamDocs.forEach(
+    //            function (element) {
+    //                teamDeletionPromises.push(this.vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
+    //            }
+    //        );
+    //        Promise.all(teamDeletionPromises).then(function (service) {
+    //            if (!added) {
+    //                this.log("teamInpChangeHandler", "Doc verwijderd");
+    //                this.AddTeamDocs(teamsOnForm, this.vssDataService);
+    //                VSS.notifyLoadSucceeded();
+    //            }
+    //        });
+    //        // refactor this
+    //        if (!added) {
+    //            this.log("teamInpChangeHandler", "Doc verwijderd");
+    //            this.AddTeamDocs(teamsOnForm, this.vssDataService);
+    //            VSS.notifyLoadSucceeded();
+    //        }
+    //    });
+    //    new Logger().Log("teamInpChangeHandler", "Finished");
+    //    new ModalHelper().closeTeamsModal();
+    //}
     AddTeamDocs(teamsCollection, dataService) {
         let logger = new Logger();
         for (var i = 0; i < teamsCollection.length; i++) {
@@ -1190,14 +1271,14 @@ class WitTsClass {
         new Logger().Log("reloadHost", null);
     }
     //this.VSS.notifyLoadSucceeded();
-    removeTeamFieldClickHandler(obj) {
-        obj.parentNode.remove();
-        new Logger().Log("removeTeamFieldClickHandler", "Fields removed.");
-    }
-    removeTaskFieldClickHandler(obj) {
-        obj.parentNode.remove();
-        new Logger().Log("removeTaskFieldClickHandler", "Fields removed.");
-    }
+    //removeTeamFieldClickHandler(obj) {
+    //    obj.parentNode.remove();
+    //    new Logger().Log("removeTeamFieldClickHandler", "Fields removed.");
+    //}
+    //removeTaskFieldClickHandler(obj) {
+    //    obj.parentNode.remove();
+    //    new Logger().Log("removeTaskFieldClickHandler", "Fields removed.");
+    //}
     addTaskToConfigurationHandler(title, type) {
         var taskTitle = (title !== null && typeof title !== "undefined") ? title : defaultTaskTitle;
         var taskInputRowNode = document.createElement("div");
@@ -1333,7 +1414,7 @@ class WitTsClass {
                     this.log("AddTasksDocs", "created document : " + doc.text);
                 }
             });
-            new ModalHelper().closeTasksModal();
+            new ModalHelper().CloseTasksModal();
             this.reloadHost();
         }
     }

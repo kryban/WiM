@@ -230,7 +230,7 @@ class ViewHelper {
 
         new Logger().Log("ConfigureTasks", parsedTeamnaam);
 
-        new ModalHelper().openTasksModal();
+        new ModalHelper().OpenTasksModal();
     }
 
     DeleteTeamSettings(docs: any[], dservice: IExtensionDataService) {
@@ -303,10 +303,6 @@ class ViewHelper {
         }
     }
 
-    addTeamHandler(name) {
-
-    }
-
     async CreateTeamSelectElementInitially() {
 
         let logger: Logger = new Logger();
@@ -347,7 +343,7 @@ class ViewHelper {
                     teamNaamInputNode.setAttribute("class", "teamNaamInput");
 
                     var removeTeamFieldNode = document.createElement("a");
-                    removeTeamFieldNode.setAttribute("onclick", "removeTeamFieldClickHandler(this)");
+                    //removeTeamFieldNode.setAttribute("onclick", "removeTeamFieldClickHandler(this)");
                     removeTeamFieldNode.setAttribute("href", "#");
                     removeTeamFieldNode.setAttribute("style", "margin-left:10px;");
                     removeTeamFieldNode.setAttribute("class", "remove_field");
@@ -404,10 +400,47 @@ class ServiceHelper {
 
 class ModalHelper
 {
-    openTasksModal() { $('.modal_tasks').show(); }
-    closeTasksModal() { $('.modal_tasks').hide(); }
-    openTeamsModal() { $('.modal_teams').show(); }
-    closeTeamsModal() { $('.modal_teams').hide(); }
+    OpenTasksModal() { $('.modal_tasks').show(); }
+    CloseTasksModal() { $('.modal_tasks').hide(); }
+    OpenTeamsModal() { $('.modal_teams').show(); }
+    CloseTeamsModal() { $('.modal_teams').hide(); }
+
+    AddNewTeamInputRow(name: string)
+    {
+        var teamTitle = (name !== null && typeof name !== "undefined") ? name : defaultTeamName;
+        var teamRowNode = document.createElement("div");
+
+        var teamNaamInputNode = document.createElement("input");
+        teamNaamInputNode.setAttribute("onfocus", "removeDefaultTextHandler(this)");
+        teamNaamInputNode.setAttribute("type", "text");
+        teamNaamInputNode.setAttribute("value", teamTitle);
+        teamNaamInputNode.setAttribute("name", "teamInpNaam");
+        teamNaamInputNode.setAttribute("class", "teamNaamInput");
+
+        var removeTeamFieldNode = document.createElement("a");
+        //removeTeamFieldNode.setAttribute("onclick", "removeTeamFieldClickHandler(this)");
+        removeTeamFieldNode.setAttribute("href", "#");
+        removeTeamFieldNode.setAttribute("style", "margin-left:10px;");
+        removeTeamFieldNode.setAttribute("class", "remove_field");
+        removeTeamFieldNode.innerText = "Verwijder teamm";
+
+        var teamInputContainer = document.getElementsByClassName("input_fields_container_part")[0];
+        teamInputContainer.appendChild(teamRowNode);
+        teamRowNode.appendChild(teamNaamInputNode);
+        teamRowNode.appendChild(removeTeamFieldNode);
+        teamRowNode.appendChild(document.createElement("br"));
+    }
+
+    RemoveTeamInputRow(obj) {
+        obj.parentNode.remove();
+        new Logger().Log("RemoveTeamInputRow", "Fields removed.");
+    }
+
+    RemoveTaskInputRow(obj) {
+        obj.parentNode.remove();
+        new Logger().Log("RemoveTaskFieldClickHandler", "Fields removed.");
+    }
+
 }
 
 class JsonPatchDoc {
@@ -650,6 +683,60 @@ class EventHandlers
         retval = teamInAction as string;
         return retval;
     }
+
+    async TeamModalOKButtonClicked() {
+
+        var teamsOnForm = document.getElementsByName("teamInpNaam");
+
+        vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+
+            // delete only teams setting. Not other settings
+            var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
+
+            // always 1 element for at least 1 iteration in Promises.all
+            var teamDeletionPromises: IPromise<void>[];
+            teamDeletionPromises.push(new Promise(function () { /*empty*/ }))
+            var added = false;
+
+            teamDocs.forEach(
+                function (element) {
+
+                    teamDeletionPromises.push(this.vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
+                }
+            );
+
+            Promise.all(teamDeletionPromises).then(function (service) {
+
+                if (!added) {
+                    this.log("teamInpChangeHandler", "Doc verwijderd");
+                    this.AddTeamDocs(teamsOnForm, this.vssDataService);
+                    VSS.notifyLoadSucceeded();
+                }
+            });
+
+            // refactor this
+            if (!added) {
+                this.log("teamInpChangeHandler", "Doc verwijderd");
+                this.AddTeamDocs(teamsOnForm, this.vssDataService);
+                VSS.notifyLoadSucceeded();
+            }
+        });
+
+        new Logger().Log("teamInpChangeHandler", "Finished");
+        new ModalHelper().CloseTeamsModal();
+    }
+
+    TeamModalCancelButtonClicked() {
+        new ModalHelper().CloseTeamsModal();
+    }
+
+    TeamModalAddTeamButtonClicked(name: string) {
+        new ModalHelper().AddNewTeamInputRow(name);
+    }
+
+    TeamModalRemoveTeamButtonClicked(clickedObj) {
+        new ModalHelper().RemoveTeamInputRow(clickedObj);
+    }
 }
 
 class PreLoader
@@ -662,7 +749,11 @@ class PreLoader
         $("#existing-wit-id").keypress(function (e) { eventHandlers.MainPageEnterPressed(e) });
         $("#existing-wit-button").click(function (e) { eventHandlers.OpenButtonClicked(e) });
         $("#addTasksButton").click(function (e) { eventHandlers.AddTasksButtonClicked(e) });
-
+        $("#teamDialogCancelBtn").click(eventHandlers.TeamModalCancelButtonClicked);
+        $("#teamDialogConfirmBtn").click(eventHandlers.TeamModalOKButtonClicked);
+        $("#voegTeamToe").click(function (e) { eventHandlers.TeamModalAddTeamButtonClicked((e as unknown as HTMLInputElement).value) });
+        $(".remove_field").click(function (e) { eventHandlers.TeamModalRemoveTeamButtonClicked(e) });
+        
         new Logger().Log("PreLoader.RegisterEvents", "All events registered");
     }
 
@@ -712,27 +803,27 @@ class PreLoader
         }
     }
 
-    registerTasksModelButtonEvents(modalHelper: ModalHelper) {
-        //Show modal box
-        $('#modal_tasks_openModal').click(
-            () => { modalHelper.openTasksModal(); }
-        );
-        //Hide modal box
-        $('#modal_tasks_closeModal').click(
-            () => { modalHelper.closeTasksModal(); }
-        );
-    }
+    //registerTasksModelButtonEvents(modalHelper: ModalHelper) {
+    //    //Show modal box
+    //    $('#modal_tasks_openModal').click(
+    //        () => { modalHelper.openTasksModal(); }
+    //    );
+    //    //Hide modal box
+    //    $('#modal_tasks_closeModal').click(
+    //        () => { modalHelper.closeTasksModal(); }
+    //    );
+    //}
 
-    registerTeamsModelButtonEvents(modalHelper: ModalHelper) {
-        //Show modal box
-        $('#modal_teams_openModal').click(
-            () => { modalHelper.openTeamsModal(); }
-        );
-        //Hide modal box
-        $('#modal_teams_closeModal').click(
-            () => { modalHelper.closeTeamsModal(); }
-        );
-    }
+    //registerTeamsModelButtonEvents(modalHelper: ModalHelper) {
+    //    //Show modal box
+    //    $('#modal_teams_openModal').click(
+    //        () => { modalHelper.openTeamsModal(); }
+    //    );
+    //    //Hide modal box
+    //    $('#modal_teams_closeModal').click(
+    //        () => { modalHelper.closeTeamsModal(); }
+    //    );
+    //}
 
     LoadPreState() {
         let modalHelper: ModalHelper = new ModalHelper();
@@ -743,8 +834,8 @@ class PreLoader
             new CheckboxHelper().DisableCheckBoxes();
             new ButtonHelper().DisableAddButton();
 
-            this.registerTasksModelButtonEvents(modalHelper);
-            this.registerTeamsModelButtonEvents(modalHelper);
+            //this.registerTasksModelButtonEvents(modalHelper);
+            //this.registerTeamsModelButtonEvents(modalHelper);
 
             this.LoadRequired();
 
@@ -760,8 +851,8 @@ class PreLoader
         new CheckboxHelper().DisableCheckBoxes();
         new ButtonHelper().DisableAddButton();
 
-        this.registerTasksModelButtonEvents(modalHelper);
-        this.registerTeamsModelButtonEvents(modalHelper);
+        //this.registerTasksModelButtonEvents(modalHelper);
+        //this.registerTeamsModelButtonEvents(modalHelper);
 
         await this.LoadRequired();
 
@@ -1305,47 +1396,47 @@ class WitTsClass
         });
     }
 
-    teamInpChangeHandler() {
+    //teamInpChangeHandler() {
 
-        var teamsOnForm = document.getElementsByName("teamInpNaam");
+    //    var teamsOnForm = document.getElementsByName("teamInpNaam");
 
-        vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+    //    vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
 
-            // delete only teams setting. Not other settings
-            var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
+    //        // delete only teams setting. Not other settings
+    //        var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
 
-            // always 1 element for at least 1 iteration in Promises.all
-            var teamDeletionPromises: IPromise<void>[];
-            teamDeletionPromises.push(new Promise(function () { /*empty*/ }))
-            var added = false;
+    //        // always 1 element for at least 1 iteration in Promises.all
+    //        var teamDeletionPromises: IPromise<void>[];
+    //        teamDeletionPromises.push(new Promise(function () { /*empty*/ }))
+    //        var added = false;
 
-            teamDocs.forEach(
-                function (element) {
+    //        teamDocs.forEach(
+    //            function (element) {
 
-                    teamDeletionPromises.push(this.vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
-                }
-            );
+    //                teamDeletionPromises.push(this.vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
+    //            }
+    //        );
 
-            Promise.all(teamDeletionPromises).then(function (service) {
+    //        Promise.all(teamDeletionPromises).then(function (service) {
 
-                if (!added) {
-                    this.log("teamInpChangeHandler", "Doc verwijderd");
-                    this.AddTeamDocs(teamsOnForm, this.vssDataService);
-                    VSS.notifyLoadSucceeded();
-                }
-            });
+    //            if (!added) {
+    //                this.log("teamInpChangeHandler", "Doc verwijderd");
+    //                this.AddTeamDocs(teamsOnForm, this.vssDataService);
+    //                VSS.notifyLoadSucceeded();
+    //            }
+    //        });
 
-            // refactor this
-            if (!added) {
-                this.log("teamInpChangeHandler", "Doc verwijderd");
-                this.AddTeamDocs(teamsOnForm, this.vssDataService);
-                VSS.notifyLoadSucceeded();
-            }
-        });
+    //        // refactor this
+    //        if (!added) {
+    //            this.log("teamInpChangeHandler", "Doc verwijderd");
+    //            this.AddTeamDocs(teamsOnForm, this.vssDataService);
+    //            VSS.notifyLoadSucceeded();
+    //        }
+    //    });
 
-        new Logger().Log("teamInpChangeHandler", "Finished");
-        new ModalHelper().closeTeamsModal();
-    }
+    //    new Logger().Log("teamInpChangeHandler", "Finished");
+    //    new ModalHelper().closeTeamsModal();
+    //}
 
     AddTeamDocs(teamsCollection, dataService) {
         let logger = new Logger();
@@ -1485,15 +1576,15 @@ class WitTsClass
 
     //this.VSS.notifyLoadSucceeded();
 
-    removeTeamFieldClickHandler(obj) {
-        obj.parentNode.remove();
-        new Logger().Log("removeTeamFieldClickHandler", "Fields removed.");
-    }
+    //removeTeamFieldClickHandler(obj) {
+    //    obj.parentNode.remove();
+    //    new Logger().Log("removeTeamFieldClickHandler", "Fields removed.");
+    //}
 
-    removeTaskFieldClickHandler(obj) {
-        obj.parentNode.remove();
-        new Logger().Log("removeTaskFieldClickHandler", "Fields removed.");
-    }
+    //removeTaskFieldClickHandler(obj) {
+    //    obj.parentNode.remove();
+    //    new Logger().Log("removeTaskFieldClickHandler", "Fields removed.");
+    //}
 
     
 
@@ -1664,7 +1755,7 @@ class WitTsClass
                 }
             });
 
-            new ModalHelper().closeTasksModal();
+            new ModalHelper().CloseTasksModal();
             this.reloadHost();
         }
     }
