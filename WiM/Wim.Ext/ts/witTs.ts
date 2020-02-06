@@ -762,8 +762,8 @@ class PreLoader
         $("#voegTeamToe").click(function (e) { eventHandlers.TeamModalAddTeamButtonClicked((e as unknown as HTMLInputElement).value) });
 
         // event delegation because elements are created dynamically 
-        $(".input_fields_container_part").on("click", ".remove_field", function (e) { new EventHandlers().TeamModalRemoveTeamButtonClicked(e.target) });
-        $(".input_fields_container_part").on("focus", ".teamNaamInput", function (e) { new EventHandlers().RemoveDefaultText(e.target) });
+        $(".input_fields_container_part").on("click", ".remove_field", function (e) { eventHandlers.TeamModalRemoveTeamButtonClicked(e.target) });
+        $(".input_fields_container_part").on("focus", ".teamNaamInput", function (e) { eventHandlers.RemoveDefaultText(e.target) });
 
 
         new Logger().Log("PreLoader.RegisterEvents", "All events registered");
