@@ -275,7 +275,7 @@ class ViewHelper {
                     var teamTitle = (element.text !== null && typeof element.text !== "undefined") ? element.text : defaultTeamName;
                     var teamRowNode = document.createElement("div");
                     var teamNaamInputNode = document.createElement("input");
-                    teamNaamInputNode.setAttribute("onfocus", "removeDefaultTextHandler(this)");
+                    //teamNaamInputNode.setAttribute("onfocus", "new EventHandlers().RemoveDefaultText(this)");
                     teamNaamInputNode.setAttribute("type", "text");
                     teamNaamInputNode.setAttribute("value", teamTitle);
                     teamNaamInputNode.setAttribute("name", "teamInpNaam");
@@ -338,7 +338,7 @@ class ModalHelper {
         var teamTitle = (name !== null && typeof name !== "undefined") ? name : defaultTeamName;
         var teamRowNode = document.createElement("div");
         var teamNaamInputNode = document.createElement("input");
-        teamNaamInputNode.setAttribute("onfocus", "removeDefaultTextHandler(this)");
+        //teamNaamInputNode.setAttribute("onfocus", "new EventHandlers().RemoveDefaultText(this)");
         teamNaamInputNode.setAttribute("type", "text");
         teamNaamInputNode.setAttribute("value", teamTitle);
         teamNaamInputNode.setAttribute("name", "teamInpNaam");
@@ -599,6 +599,13 @@ class EventHandlers {
     TeamModalRemoveTeamButtonClicked(clickedObj) {
         new ModalHelper().RemoveTeamInputRow(clickedObj);
     }
+    RemoveDefaultText(focusedObject) {
+        let obj = focusedObject;
+        if (obj.value === defaultTaskTitle || obj.value === defaultTeamName) {
+            obj.value = "";
+        }
+        new Logger().Log("RemoveDefaultText", null);
+    }
 }
 class PreLoader {
     RegisterEvents() {
@@ -611,7 +618,9 @@ class PreLoader {
         $("#teamDialogCancelBtn").click(eventHandlers.TeamModalCancelButtonClicked);
         $("#teamDialogConfirmBtn").click(eventHandlers.TeamModalOKButtonClicked);
         $("#voegTeamToe").click(function (e) { eventHandlers.TeamModalAddTeamButtonClicked(e.value); });
-        $(".remove_field").click(function (e) { eventHandlers.TeamModalRemoveTeamButtonClicked(e); });
+        //$(".remove_field").click(function (e) { eventHandlers.TeamModalRemoveTeamButtonClicked(e) });
+        $(".input_fields_container_part").on("click", ".remove_field", function (e) { new EventHandlers().TeamModalRemoveTeamButtonClicked(e.target); });
+        $(".input_fields_container_part").on("focus", ".teamNaamInput", function (e) { new EventHandlers().RemoveDefaultText(e.target); });
         new Logger().Log("PreLoader.RegisterEvents", "All events registered");
     }
     FindCollection() {
@@ -1284,7 +1293,7 @@ class WitTsClass {
         var taskInputRowNode = document.createElement("div");
         taskInputRowNode.setAttribute("class", "taskInputRow");
         var taskNaamInputNode = document.createElement("input");
-        taskNaamInputNode.setAttribute("onfocus", "removeDefaultTextHandler(this)");
+        //taskNaamInputNode.setAttribute("onfocus", "RemoveDefaultText(this)");
         taskNaamInputNode.setAttribute("type", "text");
         taskNaamInputNode.setAttribute("value", taskTitle);
         taskNaamInputNode.setAttribute("name", "taskInpNaam");
@@ -1345,12 +1354,6 @@ class WitTsClass {
         taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode6);
         taskInputRowNode.appendChild(removeTaskFieldNode);
         taskInputRowNode.appendChild(document.createElement("br"));
-    }
-    removeDefaultTextHandler(focusedObject) {
-        if (focusedObject.value === defaultTaskTitle || focusedObject.value === defaultTeamName) {
-            focusedObject.value = "";
-        }
-        new Logger().Log("removeDefaultTextHandler", null);
     }
     //function OpenTaskConfiguratieDialoog(teamNaam) {
     //    if (typeof tasksDialog.showModal === "function") {
