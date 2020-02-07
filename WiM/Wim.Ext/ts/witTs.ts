@@ -164,64 +164,8 @@ class ViewHelper {
         new Logger().Log("SetPageTitle", "Selected team: " + teamname + " - Presented team: " + teamNameToPresent);
     }
 
-    async LoadTasksOnMainWindow(teamnaam: string) {
-        let parsedTeamnaam: string;
-        if (teamnaam.startsWith("team_")) {
-            var substringVanaf = "team_".length;
-            parsedTeamnaam = teamnaam.substring(substringVanaf);
-        }
-        else { parsedTeamnaam = teamnaam; }
-
-        this.SetTeamInAction(parsedTeamnaam, this.dataservice);
-
-        new Logger().Log("LoadTasksOnMainWindow", "Registered team-naam-in-actie ");
-
-        VSS.register("team-naam-in-actie", parsedTeamnaam);
-
-        this.SetPageTitle(parsedTeamnaam);
-
-        var taskFieldSet = document.getElementById("task-checkbox");
-
-        // first remove all 
-        while (taskFieldSet.firstChild) {
-            taskFieldSet.removeChild(taskFieldSet.firstChild);
-        }
-
-        var foo;
-        await vssDataService.getDocuments(TeamSettingsCollectionName).then(function (dcs) { foo = dcs });
-
-        await vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-            new Logger().Log("LoadTasksOnMainWindow", docs.length as unknown as string);
-
-            // only team task setting. Not other settings or other tam tasks
-            var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === parsedTeamnaam.toLowerCase(); });
-
-            // build up again
-            teamTasks.forEach(
-                function (element) {
-                    var inputNode = document.createElement("input");
-                    inputNode.setAttribute("type", "checkbox");
-                    inputNode.setAttribute("id", element.id);
-                    inputNode.setAttribute("value", element.activityType);
-                    inputNode.setAttribute("checked", "true");
-                    inputNode.setAttribute("name", "taskcheckbox");
-                    inputNode.setAttribute("class", "checkbox");
-
-                    var labelNode = document.createElement("label");
-                    labelNode.setAttribute("for", element.id);
-                    labelNode.setAttribute("class", "labelforcheckbox");
-                    labelNode.innerHTML = element.title;
-
-                    taskFieldSet.appendChild(inputNode);
-                    taskFieldSet.appendChild(labelNode);
-                    taskFieldSet.appendChild(document.createElement("br"));
-                });
-        });
-        VSS.notifyLoadSucceeded();
-    }
-
     ConfigureTeams(command) {
-        $('.modal_teams').show();
+        new ModalHelper().OpenTeamsModal();
     }
 
     ConfigureTasks(teamnaam) {
@@ -327,7 +271,7 @@ class ViewHelper {
                     teamSelecectOption.setAttribute("class", "teamSelectOption");
                     teamSelecectOption.setAttribute("id", inputId);
                     teamSelecectOption.setAttribute("value", element.text);
-                    teamSelecectOption.setAttribute("onchange", "TeamSelectedHandler(this)");
+                    //teamSelecectOption.setAttribute("onchange", "new EventHandlers().TeamSelectedHandler(this)");
                     teamSelecectOption.innerText = element.text;
 
                     teamSelectNode.appendChild(teamSelecectOption);
@@ -385,6 +329,97 @@ class ViewHelper {
 
         VSS.notifyLoadSucceeded();
     }
+
+    EnableBtn(id) {
+        document.getElementById(id).removeAttribute("disabled");
+    }
+
+    async LoadTasksOnMainWindow(teamnaam: string) {
+        let parsedTeamnaam: string;
+        if (teamnaam.startsWith("team_")) {
+            var substringVanaf = "team_".length;
+            parsedTeamnaam = teamnaam.substring(substringVanaf);
+        }
+        else { parsedTeamnaam = teamnaam; }
+
+        this.SetTeamInAction(parsedTeamnaam, this.dataservice);
+
+        new Logger().Log("LoadTasksOnMainWindow", "Registered team-naam-in-actie ");
+
+        VSS.register("team-naam-in-actie", parsedTeamnaam);
+
+        this.SetPageTitle(parsedTeamnaam);
+
+        var taskFieldSet = document.getElementById("task-checkbox");
+
+        // first remove all 
+        while (taskFieldSet.firstChild) {
+            taskFieldSet.removeChild(taskFieldSet.firstChild);
+        }
+
+        var foo;
+        await vssDataService.getDocuments(TeamSettingsCollectionName).then(function (dcs) { foo = dcs });
+
+        await vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+            new Logger().Log("LoadTasksOnMainWindow", docs.length as unknown as string);
+
+            // only team task setting. Not other settings or other tam tasks
+            var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === parsedTeamnaam.toLowerCase(); });
+
+            // build up again
+            teamTasks.forEach(
+                function (element) {
+                    var inputNode = document.createElement("input");
+                    inputNode.setAttribute("type", "checkbox");
+                    inputNode.setAttribute("id", element.id);
+                    inputNode.setAttribute("value", element.activityType);
+                    inputNode.setAttribute("checked", "true");
+                    inputNode.setAttribute("name", "taskcheckbox");
+                    inputNode.setAttribute("class", "checkbox");
+
+                    var labelNode = document.createElement("label");
+                    labelNode.setAttribute("for", element.id);
+                    labelNode.setAttribute("class", "labelforcheckbox");
+                    labelNode.innerHTML = element.title;
+
+                    taskFieldSet.appendChild(inputNode);
+                    taskFieldSet.appendChild(labelNode);
+                    taskFieldSet.appendChild(document.createElement("br"));
+                });
+        });
+        VSS.notifyLoadSucceeded();
+    }
+
+    LoadTeamTasks(selection) {
+        vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+            let logger = new Logger();
+
+            logger.Log("LoadTeamTasks", (docs.length as unknown) as string);
+            var x = 0;
+
+            if (selection === undefined) {
+                selection = new EventHandlers().GetTeamInAction();
+            }
+            // only team task setting. Not other settings
+            var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === selection; });
+
+            logger.Log("LoadTeamTasks", "Initial load task settings : " + teamTasks.length + " out of " + teamTasks.length + " settings.");
+
+            var taskInputRowDivs = $('div.taskInputRow');
+            taskInputRowDivs.remove();
+
+            logger.Log("LoadTeamTasks", 'Build new list with ' + teamTasks.length + ' items.');
+
+            var modalHelper = new ModalHelper();
+
+            teamTasks.forEach(
+                function (element) {
+                    modalHelper.AddNewTaskInputRow(element.title, element.activityType);
+                }
+            );
+            VSS.notifyLoadSucceeded();
+        });
+    }
 }
 
 class ServiceHelper {
@@ -436,9 +471,89 @@ class ModalHelper
         new Logger().Log("RemoveTeamInputRow", "Fields removed.");
     }
 
+    AddNewTaskInputRow(title, type) {
+
+        var taskTitle = (title !== null && typeof title !== "undefined") ? title : defaultTaskTitle;
+
+        var taskInputRowNode = document.createElement("div");
+        taskInputRowNode.setAttribute("class", "taskInputRow");
+
+        var taskNaamInputNode = document.createElement("input");
+        //taskNaamInputNode.setAttribute("onfocus", "RemoveDefaultText(this)");
+        taskNaamInputNode.setAttribute("type", "text");
+        taskNaamInputNode.setAttribute("value", taskTitle);
+        taskNaamInputNode.setAttribute("name", "taskInpNaam");
+        taskNaamInputNode.setAttribute("class", "taskNaamInput");
+
+        var taskActivityTypeSelectNode = document.createElement("select");
+        taskActivityTypeSelectNode.setAttribute("class", "taskActivityTypeSelect");
+
+        var taskActivityTypeOptionNode1 = document.createElement("option");
+        taskActivityTypeOptionNode1.setAttribute("class", "taskActivityTypeOption");
+        var taskActivityTypeOptionNode2 = document.createElement("option");
+        taskActivityTypeOptionNode2.setAttribute("class", "taskActivityTypeOption");
+        var taskActivityTypeOptionNode3 = document.createElement("option");
+        taskActivityTypeOptionNode3.setAttribute("class", "taskActivityTypeOption");
+        var taskActivityTypeOptionNode4 = document.createElement("option");
+        taskActivityTypeOptionNode4.setAttribute("class", "taskActivityTypeOption");
+        var taskActivityTypeOptionNode5 = document.createElement("option");
+        taskActivityTypeOptionNode5.setAttribute("class", "taskActivityTypeOption");
+        var taskActivityTypeOptionNode6 = document.createElement("option");
+        taskActivityTypeOptionNode6.setAttribute("class", "taskActivityTypeOption");
+
+        taskActivityTypeOptionNode1.innerText = "Deployment";
+        if (type === taskActivityTypeOptionNode1.innerText) {
+            taskActivityTypeOptionNode1.setAttribute("selected", "selected");
+        }
+        taskActivityTypeOptionNode2.innerText = "Design";
+        if (type === taskActivityTypeOptionNode2.innerText) {
+            taskActivityTypeOptionNode2.setAttribute("selected", "selected");
+        }
+        taskActivityTypeOptionNode3.innerText = "Development";
+        if (type === taskActivityTypeOptionNode3.innerText) {
+            taskActivityTypeOptionNode3.setAttribute("selected", "selected");
+        }
+        taskActivityTypeOptionNode4.innerText = "Documentation";
+        if (type === taskActivityTypeOptionNode4.innerText) {
+            taskActivityTypeOptionNode4.setAttribute("selected", "selected");
+        }
+        taskActivityTypeOptionNode5.innerText = "Requirement";
+        if (type === taskActivityTypeOptionNode5.innerText) {
+            taskActivityTypeOptionNode5.setAttribute("selected", "selected");
+        }
+        taskActivityTypeOptionNode6.innerText = "Testing";
+        if (type === taskActivityTypeOptionNode6.innerText) {
+            taskActivityTypeOptionNode6.setAttribute("selected", "selected");
+        }
+
+        var removeTaskFieldNode = document.createElement("a");
+        removeTaskFieldNode.setAttribute("onclick", "removeTaskFieldClickHandler(this)");
+        removeTaskFieldNode.setAttribute("href", "#");
+        removeTaskFieldNode.setAttribute("style", "margin-left:10px;");
+        removeTaskFieldNode.setAttribute("class", "remove_task_field");
+        removeTaskFieldNode.innerText = "Verwijder taak";
+
+        var taskInputContainer = document.getElementsByClassName("tasks_input_fields_container_part")[0];
+
+        taskInputContainer.appendChild(taskInputRowNode);
+
+        taskInputRowNode.appendChild(taskNaamInputNode);
+        taskInputRowNode.appendChild(taskActivityTypeSelectNode);
+
+        taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode1);
+        taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode2);
+        taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode3);
+        taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode4);
+        taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode5);
+        taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode6);
+
+        taskInputRowNode.appendChild(removeTaskFieldNode);
+        taskInputRowNode.appendChild(document.createElement("br"));
+    }
+
     RemoveTaskInputRow(obj) {
         obj.parentNode.remove();
-        new Logger().Log("RemoveTaskFieldClickHandler", "Fields removed.");
+        new Logger().Log("RemoveTeamInputRow", "Fields removed.");
     }
 
 }
@@ -659,7 +774,7 @@ class EventHandlers
     }
 
     async AddTasksButtonClicked(obj) {
-        new WorkItemHelper().CheckAllowedToAddTaskToPbi(parentWorkItem);
+        var allowedToAdd = new WorkItemHelper().CheckAllowedToAddTaskToPbi(parentWorkItem);
         var taskCheckboxes = document.getElementsByName("taskcheckbox");
         var selectedCheckboxes = this.GetSelectedCheckboxes(taskCheckboxes);
         var tasksToPairWithWorkitem = this.CreateTasksToAdd(selectedCheckboxes);
@@ -745,6 +860,33 @@ class EventHandlers
         }
         new Logger().Log("RemoveDefaultText", null);
     }
+
+    TaskModalCancelButtonClicked() {
+        new ModalHelper().CloseTasksModal();
+    }
+
+    TaskModalAddTaskButtonClicked() {
+        new ModalHelper().AddNewTaskInputRow(null, null);
+    }
+
+    TaskModalRemoveTaskButtonClicked(clickedObj) {
+        new ModalHelper().RemoveTaskInputRow(clickedObj);
+    }
+
+    TeamSelectedHandler(obj) {
+        selectedTeam = obj.value.toLowerCase(); //$(this).val();
+        if (selectedTeam === undefined) {
+            this.GetTeamInAction().then(function (v) { this.selectedTeam = v; });
+        }
+
+        let viewHelper = new ViewHelper(vssDataService);
+
+        viewHelper.LoadTeamTasks(selectedTeam);
+        viewHelper.EnableBtn("voegTaskToe");
+        viewHelper.EnableBtn("taskDialogConfirmBtn");
+
+        new Logger().Log("TeamSelectedHandler", null);
+    }
 }
 
 class PreLoader
@@ -757,14 +899,24 @@ class PreLoader
         $("#existing-wit-id").keypress(function (e) { eventHandlers.MainPageEnterPressed(e) });
         $("#existing-wit-button").click(function (e) { eventHandlers.OpenButtonClicked(e) });
         $("#addTasksButton").click(function (e) { eventHandlers.AddTasksButtonClicked(e) });
+
         $("#teamDialogCancelBtn").click(eventHandlers.TeamModalCancelButtonClicked);
         $("#teamDialogConfirmBtn").click(eventHandlers.TeamModalOKButtonClicked);
         $("#voegTeamToe").click(function (e) { eventHandlers.TeamModalAddTeamButtonClicked((e as unknown as HTMLInputElement).value) });
 
+        $("#taskDialogCancelBtn").click(eventHandlers.TaskModalCancelButtonClicked);
+        //$("#taskDialogConfirmBtn").click(eventHandlers.TaskModalOKButtonClicked);
+        //$("#voegTaskToe").click(function (e) { eventHandlers.TaskModalAddTeamButtonClicked((e as unknown as HTMLInputElement).value) });
+
         // event delegation because elements are created dynamically 
         $(".input_fields_container_part").on("click", ".remove_field", function (e) { eventHandlers.TeamModalRemoveTeamButtonClicked(e.target) });
         $(".input_fields_container_part").on("focus", ".teamNaamInput", function (e) { eventHandlers.RemoveDefaultText(e.target) });
+        $(".tasks_input_fields_container_part").on("click", ".remove_task_field", function (e) { eventHandlers.TaskModalRemoveTaskButtonClicked(e.target) });
+        $(".tasks_input_fields_container_part").on("focus", ".taskNaamInput", function (e) { eventHandlers.RemoveDefaultText(e.target) });
 
+        //$(".teamSelect").on("change", ".teamSelectOption", function (e) { eventHandlers.TeamSelectedHandler(e.target) });
+        //modal_tasks_content
+        $(".teamSelect").change(function (e) { eventHandlers.TeamSelectedHandler(e.target) });
 
         new Logger().Log("PreLoader.RegisterEvents", "All events registered");
     }
@@ -1081,7 +1233,10 @@ class MenuBuilder
 class WorkItemHelper {
 
     CheckAllowedToAddTaskToPbi(parentWorkItem) {
-        if (parentWorkItem.workItemType !== "Product Backlog Item" && parentWorkItem.workItemType !== "Bug") {
+        if (parentWorkItem.workItemType === 'undefined' || parentWorkItem.workItemType === null ||
+            (parentWorkItem.workItemType !== "Product Backlog Item" && parentWorkItem.workItemType !== "Bug")
+        )
+        {
             return false;
         }
         return true;
@@ -1600,85 +1755,85 @@ class WitTsClass
 
     
 
-    addTaskToConfigurationHandler(title, type) {
+    //addTaskToConfigurationHandler(title, type) {
 
-        var taskTitle = (title !== null && typeof title !== "undefined") ? title : defaultTaskTitle;
+    //    var taskTitle = (title !== null && typeof title !== "undefined") ? title : defaultTaskTitle;
 
-        var taskInputRowNode = document.createElement("div");
-        taskInputRowNode.setAttribute("class", "taskInputRow");
+    //    var taskInputRowNode = document.createElement("div");
+    //    taskInputRowNode.setAttribute("class", "taskInputRow");
 
-        var taskNaamInputNode = document.createElement("input");
-        //taskNaamInputNode.setAttribute("onfocus", "RemoveDefaultText(this)");
-        taskNaamInputNode.setAttribute("type", "text");
-        taskNaamInputNode.setAttribute("value", taskTitle);
-        taskNaamInputNode.setAttribute("name", "taskInpNaam");
-        taskNaamInputNode.setAttribute("class", "taskNaamInput");
+    //    var taskNaamInputNode = document.createElement("input");
+    //    //taskNaamInputNode.setAttribute("onfocus", "RemoveDefaultText(this)");
+    //    taskNaamInputNode.setAttribute("type", "text");
+    //    taskNaamInputNode.setAttribute("value", taskTitle);
+    //    taskNaamInputNode.setAttribute("name", "taskInpNaam");
+    //    taskNaamInputNode.setAttribute("class", "taskNaamInput");
 
-        var taskActivityTypeSelectNode = document.createElement("select");
-        taskActivityTypeSelectNode.setAttribute("class", "taskActivityTypeSelect");
+    //    var taskActivityTypeSelectNode = document.createElement("select");
+    //    taskActivityTypeSelectNode.setAttribute("class", "taskActivityTypeSelect");
 
-        var taskActivityTypeOptionNode1 = document.createElement("option");
-        taskActivityTypeOptionNode1.setAttribute("class", "taskActivityTypeOption");
-        var taskActivityTypeOptionNode2 = document.createElement("option");
-        taskActivityTypeOptionNode2.setAttribute("class", "taskActivityTypeOption");
-        var taskActivityTypeOptionNode3 = document.createElement("option");
-        taskActivityTypeOptionNode3.setAttribute("class", "taskActivityTypeOption");
-        var taskActivityTypeOptionNode4 = document.createElement("option");
-        taskActivityTypeOptionNode4.setAttribute("class", "taskActivityTypeOption");
-        var taskActivityTypeOptionNode5 = document.createElement("option");
-        taskActivityTypeOptionNode5.setAttribute("class", "taskActivityTypeOption");
-        var taskActivityTypeOptionNode6 = document.createElement("option");
-        taskActivityTypeOptionNode6.setAttribute("class", "taskActivityTypeOption");
+    //    var taskActivityTypeOptionNode1 = document.createElement("option");
+    //    taskActivityTypeOptionNode1.setAttribute("class", "taskActivityTypeOption");
+    //    var taskActivityTypeOptionNode2 = document.createElement("option");
+    //    taskActivityTypeOptionNode2.setAttribute("class", "taskActivityTypeOption");
+    //    var taskActivityTypeOptionNode3 = document.createElement("option");
+    //    taskActivityTypeOptionNode3.setAttribute("class", "taskActivityTypeOption");
+    //    var taskActivityTypeOptionNode4 = document.createElement("option");
+    //    taskActivityTypeOptionNode4.setAttribute("class", "taskActivityTypeOption");
+    //    var taskActivityTypeOptionNode5 = document.createElement("option");
+    //    taskActivityTypeOptionNode5.setAttribute("class", "taskActivityTypeOption");
+    //    var taskActivityTypeOptionNode6 = document.createElement("option");
+    //    taskActivityTypeOptionNode6.setAttribute("class", "taskActivityTypeOption");
 
-        taskActivityTypeOptionNode1.innerText = "Deployment";
-        if (type === taskActivityTypeOptionNode1.innerText) {
-            taskActivityTypeOptionNode1.setAttribute("selected", "selected");
-        }
-        taskActivityTypeOptionNode2.innerText = "Design";
-        if (type === taskActivityTypeOptionNode2.innerText) {
-            taskActivityTypeOptionNode2.setAttribute("selected", "selected");
-        }
-        taskActivityTypeOptionNode3.innerText = "Development";
-        if (type === taskActivityTypeOptionNode3.innerText) {
-            taskActivityTypeOptionNode3.setAttribute("selected", "selected");
-        }
-        taskActivityTypeOptionNode4.innerText = "Documentation";
-        if (type === taskActivityTypeOptionNode4.innerText) {
-            taskActivityTypeOptionNode4.setAttribute("selected", "selected");
-        }
-        taskActivityTypeOptionNode5.innerText = "Requirement";
-        if (type === taskActivityTypeOptionNode5.innerText) {
-            taskActivityTypeOptionNode5.setAttribute("selected", "selected");
-        }
-        taskActivityTypeOptionNode6.innerText = "Testing";
-        if (type === taskActivityTypeOptionNode6.innerText) {
-            taskActivityTypeOptionNode6.setAttribute("selected", "selected");
-        }
+    //    taskActivityTypeOptionNode1.innerText = "Deployment";
+    //    if (type === taskActivityTypeOptionNode1.innerText) {
+    //        taskActivityTypeOptionNode1.setAttribute("selected", "selected");
+    //    }
+    //    taskActivityTypeOptionNode2.innerText = "Design";
+    //    if (type === taskActivityTypeOptionNode2.innerText) {
+    //        taskActivityTypeOptionNode2.setAttribute("selected", "selected");
+    //    }
+    //    taskActivityTypeOptionNode3.innerText = "Development";
+    //    if (type === taskActivityTypeOptionNode3.innerText) {
+    //        taskActivityTypeOptionNode3.setAttribute("selected", "selected");
+    //    }
+    //    taskActivityTypeOptionNode4.innerText = "Documentation";
+    //    if (type === taskActivityTypeOptionNode4.innerText) {
+    //        taskActivityTypeOptionNode4.setAttribute("selected", "selected");
+    //    }
+    //    taskActivityTypeOptionNode5.innerText = "Requirement";
+    //    if (type === taskActivityTypeOptionNode5.innerText) {
+    //        taskActivityTypeOptionNode5.setAttribute("selected", "selected");
+    //    }
+    //    taskActivityTypeOptionNode6.innerText = "Testing";
+    //    if (type === taskActivityTypeOptionNode6.innerText) {
+    //        taskActivityTypeOptionNode6.setAttribute("selected", "selected");
+    //    }
 
-        var removeTaskFieldNode = document.createElement("a");
-        removeTaskFieldNode.setAttribute("onclick", "removeTaskFieldClickHandler(this)");
-        removeTaskFieldNode.setAttribute("href", "#");
-        removeTaskFieldNode.setAttribute("style", "margin-left:10px;");
-        removeTaskFieldNode.setAttribute("class", "remove_task_field");
-        removeTaskFieldNode.innerText = "Verwijder taak";
+    //    var removeTaskFieldNode = document.createElement("a");
+    //    removeTaskFieldNode.setAttribute("onclick", "removeTaskFieldClickHandler(this)");
+    //    removeTaskFieldNode.setAttribute("href", "#");
+    //    removeTaskFieldNode.setAttribute("style", "margin-left:10px;");
+    //    removeTaskFieldNode.setAttribute("class", "remove_task_field");
+    //    removeTaskFieldNode.innerText = "Verwijder taak";
 
-        var taskInputContainer = document.getElementsByClassName("tasks_input_fields_container_part")[0];
+    //    var taskInputContainer = document.getElementsByClassName("tasks_input_fields_container_part")[0];
 
-        taskInputContainer.appendChild(taskInputRowNode);
+    //    taskInputContainer.appendChild(taskInputRowNode);
 
-        taskInputRowNode.appendChild(taskNaamInputNode);
-        taskInputRowNode.appendChild(taskActivityTypeSelectNode);
+    //    taskInputRowNode.appendChild(taskNaamInputNode);
+    //    taskInputRowNode.appendChild(taskActivityTypeSelectNode);
 
-        taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode1);
-        taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode2);
-        taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode3);
-        taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode4);
-        taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode5);
-        taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode6);
+    //    taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode1);
+    //    taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode2);
+    //    taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode3);
+    //    taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode4);
+    //    taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode5);
+    //    taskActivityTypeSelectNode.appendChild(taskActivityTypeOptionNode6);
 
-        taskInputRowNode.appendChild(removeTaskFieldNode);
-        taskInputRowNode.appendChild(document.createElement("br"));
-    }
+    //    taskInputRowNode.appendChild(removeTaskFieldNode);
+    //    taskInputRowNode.appendChild(document.createElement("br"));
+    //}
 
     //function OpenTaskConfiguratieDialoog(teamNaam) {
     //    if (typeof tasksDialog.showModal === "function") {
@@ -1765,50 +1920,54 @@ class WitTsClass
         }
     }
 
-    TeamSelectedHandler(obj) {
-        selectedTeam = obj.value.toLowerCase(); //$(this).val();
-        if (selectedTeam === undefined) {
-            new EventHandlers().GetTeamInAction().then(function (v) { this.selectedTeam = v; });
-        }
+    //TeamSelectedHandler(obj) {
+    //    selectedTeam = obj.value.toLowerCase(); //$(this).val();
+    //    if (selectedTeam === undefined) {
+    //        new EventHandlers().GetTeamInAction().then(function (v) { this.selectedTeam = v; });
+    //    }
 
-        this.LoadTeamTasks(selectedTeam);
+    //    this.LoadTeamTasks(selectedTeam);
 
-        this.EnableBtn("voegTaskToe");
-        this.EnableBtn("taskDialogConfirmBtn");
+    //    this.EnableBtn("voegTaskToe");
+    //    this.EnableBtn("taskDialogConfirmBtn");
 
-        new Logger().Log("TeamSelectedHandler", null);
-    }
+    //    new Logger().Log("TeamSelectedHandler", null);
+    //}
 
-    EnableBtn(id) {
-        document.getElementById(id).removeAttribute("disabled");
-    }
+    //EnableBtn(id) {
+    //    document.getElementById(id).removeAttribute("disabled");
+    //}
 
-    LoadTeamTasks(selection) {
-        vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-            this.log("LoadTeamTasks", (docs.length as unknown) as string);
-            var x = 0;
+    //LoadTeamTasks(selection) {
+    //    vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+    //        let logger = new Logger();
 
-            if (selection === undefined) {
-                selection = new EventHandlers().GetTeamInAction();
-            }
-            // only team task setting. Not other settings
-            var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === selection; });
+    //        logger.Log("LoadTeamTasks", (docs.length as unknown) as string);
+    //        var x = 0;
 
-            this.log("LoadTeamTasks", "Initial load task settings : " + teamTasks.length + " out of " + teamTasks.length + " settings.");
+    //        if (selection === undefined) {
+    //            selection = new EventHandlers().GetTeamInAction();
+    //        }
+    //        // only team task setting. Not other settings
+    //        var teamTasks = docs.filter(function (d) { return d.type === 'task' && d.owner === selection; });
 
-            var taskInputRowDivs = $('div.taskInputRow');
-            taskInputRowDivs.remove();
+    //        logger.Log("LoadTeamTasks", "Initial load task settings : " + teamTasks.length + " out of " + teamTasks.length + " settings.");
 
-            this.log("LoadTeamTasks", 'Build new list with ' + teamTasks.length + ' items.');
+    //        var taskInputRowDivs = $('div.taskInputRow');
+    //        taskInputRowDivs.remove();
 
-            teamTasks.forEach(
-                function (element) {
-                    this.addTaskToConfigurationHandler(element.title, element.activityType);
-                }
-            );
-            VSS.notifyLoadSucceeded();
-        });
-    }
+    //        logger.Log("LoadTeamTasks", 'Build new list with ' + teamTasks.length + ' items.');
+
+    //        var modalHelper = new ModalHelper();
+
+    //        teamTasks.forEach(
+    //            function (element) {
+    //                modalHelper.AddNewTaskInputRow(element.title, element.activityType);
+    //            }
+    //        );
+    //        VSS.notifyLoadSucceeded();
+    //    });
+    //}
 
     CheckUncheck(obj) {
         var tasks = document.getElementsByName("taskcheckbox");

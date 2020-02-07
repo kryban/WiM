@@ -30,3 +30,8 @@
   
 
   nieuw
+
+  7 CreateTeamSelectElementInitially misschien hernoemen ? IEts duidelijke maken wat het doet ? 
+
+  8. viewhelper in eventhandlers class refactoren
+
