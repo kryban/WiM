@@ -1359,50 +1359,49 @@ class WitTsClass
         }
     }
 
-    SetTeamSettings(teamName) {
-        var temp = [];
-        var result;
-        let logger: Logger = new Logger();
+    //SetTeamSettings(teamName) {
+    //    var temp = [];
+    //    var result;
+    //    let logger: Logger = new Logger();
 
-        vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-            this.log("SetTeamSettings", "GetAllTeamSettings :" + docs.length);
+    //    vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+    //        this.log("SetTeamSettings", "GetAllTeamSettings :" + docs.length);
 
-            result = docs.find(function (obj) { return obj.text === teamName; });
-            docs.forEach(
-                function (element) {
-                    temp.push(element);
-                });
+    //        result = docs.find(function (obj) { return obj.text === teamName; });
+    //        docs.forEach(
+    //            function (element) {
+    //                temp.push(element);
+    //            });
 
-            VSS.notifyLoadSucceeded();
-        });
+    //    });
 
-        if (typeof result === 'undefined') {
-            logger.Log("SetTeamSettings", "Setting exists.");
-        }
-        else {
-            var newDoc = {
-                type: "team",
-                text: teamName
-            };
+    //    if (typeof result === 'undefined') {
+    //        logger.Log("SetTeamSettings", "Setting exists.");
+    //    }
+    //    else {
+    //        var newDoc = {
+    //            type: "team",
+    //            text: teamName
+    //        };
 
-            vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
-                this.log("SetTeamSettings", "SetTeamSetting (CreateTeams) : " + doc.text);
-            });
+    //        vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
+    //            this.log("SetTeamSettings", "SetTeamSetting (CreateTeams) : " + doc.text);
+    //        });
 
-            logger.Log("SetTeamSettings", "Setting NOT exists.");
-        }
-        VSS.notifyLoadSucceeded();
-    }
+    //        logger.Log("SetTeamSettings", "Setting NOT exists.");
+    //    }
+    //    VSS.notifyLoadSucceeded();
+    //}
 
-    GetAllTeamSettings() {
-        vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-            this.log("GetAllTeamSettings", "GetAllTeamSettings :" + docs.length);
+    //GetAllTeamSettings() {
+    //    vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+    //        this.log("GetAllTeamSettings", "GetAllTeamSettings :" + docs.length);
 
-            VSS.notifyLoadSucceeded();
-            return docs;
-        });
-        VSS.notifyLoadSucceeded();
-    }
+    //        VSS.notifyLoadSucceeded();
+    //        return docs;
+    //    });
+    //    VSS.notifyLoadSucceeded();
+    //}
 
     ReloadHost() {
         VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService) {
