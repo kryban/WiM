@@ -652,37 +652,43 @@ class EventHandlers {
     }
     TeamModalOKButtonClicked() {
         return __awaiter(this, void 0, void 0, function* () {
+            let logger = new Logger();
             var teamsOnForm = document.getElementsByName("teamInpNaam");
-            vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-                // delete only teams setting. Not other settings
-                var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
-                // always 1 element for at least 1 iteration in Promises.all
-                var teamDeletionPromises;
-                teamDeletionPromises.push(new Promise(function () { }));
-                var added = false;
-                teamDocs.forEach(function (element) {
-                    teamDeletionPromises.push(this.vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
-                });
-                Promise.all(teamDeletionPromises).then(function (service) {
+            yield vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    // delete only teams setting. Not other settings
+                    var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
+                    // always 1 element for at least 1 iteration in Promises.all
+                    var teamDeletionPromises = [];
+                    //teamDeletionPromises.push(new Promise(function () { /*empty*/ }))
+                    var added = false;
+                    teamDocs.forEach(function (element) {
+                        teamDeletionPromises.push(vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
+                    });
+                    let witTs = new WitTsClass();
+                    Promise.all(teamDeletionPromises).then(function (service) {
+                        return __awaiter(this, void 0, void 0, function* () {
+                            if (!added) {
+                                logger.Log("teamInpChangeHandler", "Doc verwijderd");
+                                yield witTs.AddTeamDocs(teamsOnForm, vssDataService);
+                            }
+                        });
+                    });
+                    // refactor this
                     if (!added) {
-                        this.log("teamInpChangeHandler", "Doc verwijderd");
-                        this.AddTeamDocs(teamsOnForm, this.vssDataService);
-                        VSS.notifyLoadSucceeded();
+                        logger.Log("teamInpChangeHandler", "Doc verwijderd");
+                        yield witTs.AddTeamDocs(teamsOnForm, this.vssDataService);
                     }
                 });
-                // refactor this
-                if (!added) {
-                    this.log("teamInpChangeHandler", "Doc verwijderd");
-                    this.AddTeamDocs(teamsOnForm, this.vssDataService);
-                    VSS.notifyLoadSucceeded();
-                }
             });
-            new Logger().Log("teamInpChangeHandler", "Finished");
+            logger.Log("teamInpChangeHandler", "Finished");
             new ModalHelper().CloseTeamsModal();
+            VSS.notifyLoadSucceeded();
         });
     }
     TeamModalCancelButtonClicked() {
         new ModalHelper().CloseTeamsModal();
+        new WitTsClass().ReloadHost();
     }
     TeamModalAddTeamButtonClicked(name) {
         new ModalHelper().AddNewTeamInputRow(name);
@@ -1074,9 +1080,69 @@ class WitTsClass {
                     new Logger().Log("AddTasksDocs", "created document : " + doc.text);
                 });
                 new ModalHelper().CloseTasksModal();
-                this.reloadHost();
+                this.ReloadHost();
             }
         });
+    }
+    //////////////////////////////////////////////////////////////////////
+    AddTeamDocs(teamsCollection, dataService) {
+        let logger = new Logger();
+        for (var i = 0; i < teamsCollection.length; i++) {
+            var teamnaam = teamsCollection[i].value;
+            logger.Log("AddTeamDocs", teamnaam);
+            var newDoc = {
+                type: "team",
+                text: teamnaam
+            };
+            dataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
+                // Even if no ID was passed to createDocument, one will be generated
+                this.log("AddTeamDocs", doc.text);
+            });
+            logger.Log("AddTeamDocs", "Team Setting Added: " + teamnaam);
+            this.ReloadHost();
+        }
+    }
+    SetTeamSettings(teamName) {
+        var temp = [];
+        var result;
+        let logger = new Logger();
+        vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+            this.log("SetTeamSettings", "GetAllTeamSettings :" + docs.length);
+            result = docs.find(function (obj) { return obj.text === teamName; });
+            docs.forEach(function (element) {
+                temp.push(element);
+            });
+            VSS.notifyLoadSucceeded();
+        });
+        if (typeof result === 'undefined') {
+            logger.Log("SetTeamSettings", "Setting exists.");
+        }
+        else {
+            var newDoc = {
+                type: "team",
+                text: teamName
+            };
+            vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
+                this.log("SetTeamSettings", "SetTeamSetting (CreateTeams) : " + doc.text);
+            });
+            logger.Log("SetTeamSettings", "Setting NOT exists.");
+        }
+        VSS.notifyLoadSucceeded();
+    }
+    GetAllTeamSettings() {
+        vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+            this.log("GetAllTeamSettings", "GetAllTeamSettings :" + docs.length);
+            VSS.notifyLoadSucceeded();
+            return docs;
+        });
+        VSS.notifyLoadSucceeded();
+    }
+    ReloadHost() {
+        VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService) {
+            console.log("navigationService.reload()");
+            navigationService.reload();
+        });
+        new Logger().Log("reloadHost", null);
     }
     //async MaakMenu(controls, menus, dataService) {
     //    new Logger().Log("Maakmenu", "Start creating menu bar (vssControls; vssMenus, vssDataService): " + controls + "+" + menus + "+" + dataService);
@@ -1284,9 +1350,9 @@ class WitTsClass {
     //        this.allowedToAddTasks = CheckAllowedToAddTaskToPbi(this);
     //    }
     //};
-    MapWorkItemFields(witemObject, witem) {
-        witemObject.Title = witem.fields["System.Title"];
-    }
+    //MapWorkItemFields(witemObject, witem) {
+    //    witemObject.Title = witem.fields["System.Title"];
+    //}
     //ExistingWitFieldFocussed() {
     //    var field = document.getElementById("existing-wit-id") as HTMLInputElement;
     //    if (field.value === "workitem ID") {
@@ -1359,23 +1425,6 @@ class WitTsClass {
     //    new Logger().Log("teamInpChangeHandler", "Finished");
     //    new ModalHelper().closeTeamsModal();
     //}
-    AddTeamDocs(teamsCollection, dataService) {
-        let logger = new Logger();
-        for (var i = 0; i < teamsCollection.length; i++) {
-            var teamnaam = teamsCollection[i].value;
-            logger.Log("AddTeamDocs", teamnaam);
-            var newDoc = {
-                type: "team",
-                text: teamnaam
-            };
-            dataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
-                // Even if no ID was passed to createDocument, one will be generated
-                this.log("AddTeamDocs", doc.text);
-            });
-            logger.Log("AddTeamDocs", "Team Setting Added: " + teamnaam);
-            this.reloadHost();
-        }
-    }
     //////////////settings////////////////////////////////////////////////////////////////////
     //https://docs.microsoft.com/en-us/azure/devops/extend/develop/data-storage?view=azure-devops&viewFallbackFrom=vsts
     //see all settings
@@ -1420,48 +1469,6 @@ class WitTsClass {
     //    });
     //    this.log("SettingNEw NOT exists.");
     //}
-    SetTeamSettings(teamName) {
-        var temp = [];
-        var result;
-        let logger = new Logger();
-        vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-            this.log("SetTeamSettings", "GetAllTeamSettings :" + docs.length);
-            result = docs.find(function (obj) { return obj.text === teamName; });
-            docs.forEach(function (element) {
-                temp.push(element);
-            });
-            VSS.notifyLoadSucceeded();
-        });
-        if (typeof result === 'undefined') {
-            logger.Log("SetTeamSettings", "Setting exists.");
-        }
-        else {
-            var newDoc = {
-                type: "team",
-                text: teamName
-            };
-            vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
-                this.log("SetTeamSettings", "SetTeamSetting (CreateTeams) : " + doc.text);
-            });
-            logger.Log("SetTeamSettings", "Setting NOT exists.");
-        }
-        VSS.notifyLoadSucceeded();
-    }
-    GetAllTeamSettings() {
-        vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-            this.log("GetAllTeamSettings", "GetAllTeamSettings :" + docs.length);
-            VSS.notifyLoadSucceeded();
-            return docs;
-        });
-        VSS.notifyLoadSucceeded();
-    }
-    reloadHost() {
-        VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService) {
-            console.log("navigationService.reload()");
-            navigationService.reload();
-        });
-        new Logger().Log("reloadHost", null);
-    }
     //this.VSS.notifyLoadSucceeded();
     //removeTeamFieldClickHandler(obj) {
     //    obj.parentNode.remove();
