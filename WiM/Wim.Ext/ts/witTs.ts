@@ -873,6 +873,12 @@ class EventHandlers
         new ModalHelper().RemoveTaskInputRow(clickedObj);
     }
 
+    TaskModalOKButtonClicked() {
+        var t = document.getElementsByClassName('taskInputRow');
+        new WitTsClass().UpdateTasksDocs(t);
+        new Logger().Log("TaskModalOKButtonClicked", null);
+    }
+
     TeamSelectedHandler(obj) {
         selectedTeam = obj.value.toLowerCase(); //$(this).val();
         if (selectedTeam === undefined) {
@@ -905,8 +911,8 @@ class PreLoader
         $("#voegTeamToe").click(function (e) { eventHandlers.TeamModalAddTeamButtonClicked((e as unknown as HTMLInputElement).value) });
 
         $("#taskDialogCancelBtn").click(eventHandlers.TaskModalCancelButtonClicked);
-        //$("#taskDialogConfirmBtn").click(eventHandlers.TaskModalOKButtonClicked);
-        //$("#voegTaskToe").click(function (e) { eventHandlers.TaskModalAddTeamButtonClicked((e as unknown as HTMLInputElement).value) });
+        $("#taskDialogConfirmBtn").click(eventHandlers.TaskModalOKButtonClicked);
+        $("#voegTaskToe").click(eventHandlers.TaskModalAddTaskButtonClicked);
 
         // event delegation because elements are created dynamically 
         $(".input_fields_container_part").on("click", ".remove_field", function (e) { eventHandlers.TeamModalRemoveTeamButtonClicked(e.target) });
@@ -914,8 +920,6 @@ class PreLoader
         $(".tasks_input_fields_container_part").on("click", ".remove_task_field", function (e) { eventHandlers.TaskModalRemoveTaskButtonClicked(e.target) });
         $(".tasks_input_fields_container_part").on("focus", ".taskNaamInput", function (e) { eventHandlers.RemoveDefaultText(e.target) });
 
-        //$(".teamSelect").on("change", ".teamSelectOption", function (e) { eventHandlers.TeamSelectedHandler(e.target) });
-        //modal_tasks_content
         $(".teamSelect").change(function (e) { eventHandlers.TeamSelectedHandler(e.target) });
 
         new Logger().Log("PreLoader.RegisterEvents", "All events registered");
@@ -1257,7 +1261,75 @@ class WorkItemHelper {
 
 class WitTsClass
 {
-    constructor() {}
+    //constructor() {}
+
+    async UpdateTasksDocs(tasks) {
+
+        vssDataService.getDocuments(TeamSettingsCollectionName).then(async function (docs) {
+            // delete only tasks setting. Not other settings
+            var taskDocs = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
+            let logger = new Logger();
+            logger.Log("UpdateTasksDocs", "Emptying task settings." + taskDocs.length + " settings will be removed.");
+
+            var added = false;
+            var deletionPromises: IPromise<void>[] = [];
+            //deletionPromises.push(new Promise(function () { /*empty*/ }));
+
+            taskDocs.forEach(
+                function (element) {
+                    deletionPromises.push(vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
+                    logger.Log("UpdateTasksDocs","Created promise for deletion");
+                }
+            );
+
+            let curr: WitTsClass = this
+            await Promise.all(deletionPromises).then(async function (s) {
+
+                if (!added) {
+                    new WitTsClass().AddTasksDocs(tasks, selectedTeam);
+                    added = true;
+                }
+                logger.Log("UpdateTasksDocs", "Tasks updated")
+            });
+
+            // todo: refactor dit is nodig, zodat als er niets te verwijderen valt (1e opgevoerde regel bij nieuwe team)
+            // dan toch nog toevoegingen uitgevoerd worden
+
+            if (!added) {
+                await curr.AddTasksDocs(tasks, selectedTeam);
+                added = true;
+            }
+
+            logger.Log("UpdateTasksDocs", "adding new doc ");// + newDoc.taskId);
+        });
+        VSS.notifyLoadSucceeded();
+    }
+
+    async AddTasksDocs(tasks, teamName) {
+        for (var i = 0; i < tasks.length; i++) {
+            var taskRij = tasks[i];
+
+            var taskTitle = taskRij.childNodes[0].value;
+            var taskActivityType = taskRij.childNodes[1].value;
+            var taskOwner = teamName;
+            var taskId = taskOwner.toLowerCase() + taskTitle.toLowerCase().replace(/\s+/g, '');
+
+            var newDoc = {
+                type: "task",
+                owner: taskOwner,
+                title: taskTitle,
+                taskid: taskId,
+                activityType: taskActivityType
+            };
+
+            await vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
+                new Logger().Log("AddTasksDocs","created document : " + doc.text);
+            });
+
+            new ModalHelper().CloseTasksModal();
+            this.reloadHost();
+        }
+    }
 
     //async MaakMenu(controls, menus, dataService) {
     //    new Logger().Log("Maakmenu", "Start creating menu bar (vssControls; vssMenus, vssDataService): " + controls + "+" + menus + "+" + dataService);
@@ -1847,78 +1919,78 @@ class WitTsClass
     //    });
     //}
 
-    taskInpChangeHandler() {
-        var t = document.getElementsByClassName('taskInputRow');
+    //taskInpChangeHandler() {
+    //    var t = document.getElementsByClassName('taskInputRow');
 
-        this.UpdateTasksDocs(t);
+    //    this.UpdateTasksDocs(t);
 
-        new Logger().Log("taskInpChangeHandler", null);
-    }
+    //    new Logger().Log("taskInpChangeHandler", null);
+    //}
 
-    UpdateTasksDocs(tasks) {
-        vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-            // delete only tasks setting. Not other settings
-            var taskDocs = docs.filter(function (d) { return d.type === 'task' && d.owner === this.selectedTeam; });
+    //UpdateTasksDocs(tasks) {
+    //    vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
+    //        // delete only tasks setting. Not other settings
+    //        var taskDocs = docs.filter(function (d) { return d.type === 'task' && d.owner === this.selectedTeam; });
 
-            this.log("UpdateTasksDocs", "Emptying task settings." + taskDocs.length + " settings will be removed.");
+    //        this.log("UpdateTasksDocs", "Emptying task settings." + taskDocs.length + " settings will be removed.");
 
-            var added = false;
-            var deletionPromises: IPromise<void>[];
-            deletionPromises.push(new Promise(function () { /*empty*/ }));
+    //        var added = false;
+    //        var deletionPromises: IPromise<void>[];
+    //        deletionPromises.push(new Promise(function () { /*empty*/ }));
 
-            taskDocs.forEach(
-                function (element) {
-                    deletionPromises.push(this.vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
-                }
-            );
+    //        taskDocs.forEach(
+    //            function (element) {
+    //                deletionPromises.push(this.vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
+    //            }
+    //        );
 
-            Promise.all(deletionPromises).then(function (service) {
-                if (!added) {
-                    this.AddTasksDocs(tasks, this.selectedTeam);
-                    added = true;
-                }
-                this.log("UpdateTasksDocs", "Tasks updated")
-            });
+    //        Promise.all(deletionPromises).then(function (service) {
+    //            if (!added) {
+    //                this.AddTasksDocs(tasks, this.selectedTeam);
+    //                added = true;
+    //            }
+    //            this.log("UpdateTasksDocs", "Tasks updated")
+    //        });
 
-            // todo: refactor dit is nodig, zodat als er niets te verwijderen valt (1e opgevoerde regel bij nieuwe team)
-            // dan toch nog toevoegingen uitgevoerd worden.
-            if (!added) {
-                this.AddTasksDocs(tasks, this.selectedTeam);
-                added = true;
-            }
+    //        // todo: refactor dit is nodig, zodat als er niets te verwijderen valt (1e opgevoerde regel bij nieuwe team)
+    //        // dan toch nog toevoegingen uitgevoerd worden.
+    //        if (!added) {
+    //            this.AddTasksDocs(tasks, this.selectedTeam);
+    //            added = true;
+    //        }
 
-            this.log("UpdateTasksDocs", "adding new doc ");// + newDoc.taskId);
-        });
-        VSS.notifyLoadSucceeded();
-    }
+    //        this.log("UpdateTasksDocs", "adding new doc ");// + newDoc.taskId);
+    //    });
+    //    VSS.notifyLoadSucceeded();
+    //}
 
-    AddTasksDocs(tasks, teamName) {
-        for (var i = 0; i < tasks.length; i++) {
-            var taskRij = tasks[i];
+    //AddTasksDocs(tasks, teamName) {
+    //    for (var i = 0; i < tasks.length; i++) {
+    //        var taskRij = tasks[i];
 
-            var taskTitle = taskRij.childNodes[0].value;
-            var taskActivityType = taskRij.childNodes[1].value;
-            var taskOwner = teamName;
-            var taskId = taskOwner.toLowerCase() + taskTitle.toLowerCase().replace(/\s+/g, '');
+    //        var taskTitle = taskRij.childNodes[0].value;
+    //        var taskActivityType = taskRij.childNodes[1].value;
+    //        var taskOwner = teamName;
+    //        var taskId = taskOwner.toLowerCase() + taskTitle.toLowerCase().replace(/\s+/g, '');
 
-            var newDoc = {
-                type: "task",
-                owner: taskOwner,
-                title: taskTitle,
-                taskid: taskId,
-                activityType: taskActivityType
-            };
+    //        var newDoc = {
+    //            type: "task",
+    //            owner: taskOwner,
+    //            title: taskTitle,
+    //            taskid: taskId,
+    //            activityType: taskActivityType
+    //        };
 
-            vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
-                function AddTasksDocs(tasks, teamName) {
-                    this.log("AddTasksDocs", "created document : " + doc.text);
-                }
-            });
+    //        vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
+    //            function AddTasksDocs(tasks, teamName) {
+    //                this.log("AddTasksDocs", "created document : " + doc.text);
+    //            }
+    //        });
 
-            new ModalHelper().CloseTasksModal();
-            this.reloadHost();
-        }
-    }
+    //        new ModalHelper().CloseTasksModal();
+    //        this.reloadHost();
+    //    }
+    //}
 
     //TeamSelectedHandler(obj) {
     //    selectedTeam = obj.value.toLowerCase(); //$(this).val();

@@ -35,3 +35,12 @@
 
   8. viewhelper in eventhandlers class refactoren
 
+  9. buttonhelper is ook al ergens direct geimplementeerd. refactor het weg
+
+
+  10. in  UpdateTasksDocs(tasks) wordt in WitTsClass een instantie van WitTsClass aangemaakt. Niet de bedoeling
+  
+  11. Hernoem UpdateTasksDocs
+
+  12 recursieve aanroep van addtasksdocs in addtasksdocs in waarschijnlijk per abuis.
+
