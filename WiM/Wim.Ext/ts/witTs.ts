@@ -867,6 +867,10 @@ class EventHandlers
 
         new Logger().Log("TeamSelectedHandler", null);
     }
+
+    CheckUncheckAllClicked(obj) {
+        new CheckboxHelper().CheckUncheck(obj);
+    }
 }
 
 class PreLoader
@@ -879,6 +883,9 @@ class PreLoader
         $("#existing-wit-id").keypress(function (e) { eventHandlers.MainPageEnterPressed(e) });
         $("#existing-wit-button").click(function (e) { eventHandlers.OpenButtonClicked(e) });
         $("#addTasksButton").click(function (e) { eventHandlers.AddTasksButtonClicked(e) });
+
+        $("#tasks-check-all-checkbox").click(function (e) { eventHandlers.CheckUncheckAllClicked(e.target) });
+        //
 
         $("#teamDialogCancelBtn").click(eventHandlers.TeamModalCancelButtonClicked);
         $("#teamDialogConfirmBtn").click(eventHandlers.TeamModalOKButtonClicked);
@@ -897,6 +904,8 @@ class PreLoader
         $(".teamSelect").change(function (e) { eventHandlers.TeamSelectedHandler(e.target) });
 
         new Logger().Log("PreLoader.RegisterEvents", "All events registered");
+
+
     }
 
     FindCollection() {
@@ -1027,6 +1036,26 @@ class CheckboxHelper {
             }
         }
     }
+
+    CheckUncheck(obj) {
+        var tasks = document.getElementsByName("taskcheckbox");
+
+        if (obj.checked) {
+            tasks.forEach(function (element) {
+                if (!(element as HTMLInputElement).checked) {
+                    element.toggleAttribute("checked");
+                }
+            });
+        }
+        else {
+            tasks.forEach(function (element) {
+                if ((element as HTMLInputElement).checked) {
+                    element.toggleAttribute("checked");
+                }
+            });
+        }
+        new Logger().Log("CheckUncheck", null);
+    }   
 }
 
 class ButtonHelper {
@@ -1302,30 +1331,9 @@ class WitTsClass
     //////////////settings////////////////////////////////////////////////////////////////////
     //https://docs.microsoft.com/en-us/azure/devops/extend/develop/data-storage?view=azure-devops&viewFallbackFrom=vsts
     //see all settings
-    //http://krylp:8080/tfs/DefaultCollection/_apis/ExtensionManagement/InstalledExtensions/bandik/WimDevOpExtension/Data/Scopes/Default/Current/Collections/WimCollection/Documents
-
-    CheckUncheck(obj) {
-        var tasks = document.getElementsByName("taskcheckbox");
-
-        if (obj.checked) {
-            tasks.forEach(function (element) {
-                if (!(element as HTMLInputElement).checked) {
-                    element.toggleAttribute("checked");
-                }
-            });
-        }
-        else {
-            tasks.forEach(function (element) {
-                if ((element as HTMLInputElement).checked) {
-                    element.toggleAttribute("checked");
-                }
-            });
-        }
-        new Logger().Log("CheckUncheck", null);
-    }    
+    //http://krylp:8080/tfs/DefaultCollection/_apis/ExtensionManagement/InstalledExtensions/bandik/WimDevOpExtension/Data/Scopes/Default/Current/Collections/WimCollection/Documents 
 }
 
-console.log("vlak voor het einde");
 window.onload = function ()
 {
     let preloader: PreLoader = new PreLoader();
