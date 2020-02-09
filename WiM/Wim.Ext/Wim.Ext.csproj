@@ -92,17 +92,7 @@
     <Content Include="scripts\VSS.SDK.js" />
     <Content Include="scripts\wit.js" />
     <Content Include="styles\wimstyles.css" />
-    <Content Include="ts\ButtonHelper.js" />
-    <Content Include="ts\CheckBoxHelper.js" />
-    <Content Include="ts\Enm_JsonPatchOperations.js" />
-    <Content Include="ts\enm_workitemfields.js" />
-    <Content Include="ts\Enm_WorkitemPaths.js" />
-    <Content Include="ts\logger.js" />
-    <Content Include="ts\ModalHelper.js" />
-    <Content Include="ts\ServiceHelper.js" />
-    <Content Include="ts\WimWorkItem.js" />
     <Content Include="ts\witTs.js" />
-    <Content Include="ts\WorkItemHelper.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -184,6 +174,7 @@
     <TypeScriptCompile Include="node_modules\vss-web-extension-sdk\typings\VSS.SDK.d.ts" />
     <TypeScriptCompile Include="ts\ButtonHelper.ts" />
     <TypeScriptCompile Include="ts\CheckBoxHelper.ts" />
+    <TypeScriptCompile Include="ts\CheckBoxInfo.ts" />
     <TypeScriptCompile Include="ts\Enm_JsonPatchOperations.ts" />
     <TypeScriptCompile Include="ts\Enm_WorkitemFields.ts" />
     <TypeScriptCompile Include="ts\Enm_WorkitemPaths.ts" />
