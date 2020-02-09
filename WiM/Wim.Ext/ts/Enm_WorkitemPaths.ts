@@ -1,4 +1,5 @@
-﻿export default class Enm_WorkitemPaths {
+﻿
+export class Enm_WorkitemPaths {
     public readonly AreaPath: string = "/fields/System.AreaPath";
     public readonly TeamProject: string = "/fields/System.TeamProject";
     public readonly IterationPath: string = "/fields/System.IterationPath";

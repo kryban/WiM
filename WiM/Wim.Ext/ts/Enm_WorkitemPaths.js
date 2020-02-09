@@ -1,4 +1,4 @@
-export default class Enm_WorkitemPaths {
+export class Enm_WorkitemPaths {
     constructor() {
         this.AreaPath = "/fields/System.AreaPath";
         this.TeamProject = "/fields/System.TeamProject";

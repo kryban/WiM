@@ -10,10 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { Enm_JsonPatchOperations } from "./Enm_JsonPatchOperations.js";
-import { Enm_WorkitemFields } from "./Enm_WorkitemFields.js";
 import { Logger } from "./Logger.js";
 import { ModalHelper } from "./ModalHelper.js";
+import { ServiceHelper } from "./ServiceHelper.js";
+import { JsonPatchDoc } from "./JsonPatchDoc.js";
+import { WimWorkItem } from "./WimWorkItem.js";
 const TeamSettingsCollectionName = "WimCollection";
 const defaultTaskTitle = "Taak titel";
 const defaultTeamName = "Team naam";
@@ -26,35 +27,6 @@ var vssService;
 var vssWiTrackingClient;
 var vssMenus;
 var vssDataService;
-class WimWorkItem {
-    constructor(workItemQueryResult) {
-        let workItemFields = new Enm_WorkitemFields();
-        if (workItemQueryResult == null || workItemQueryResult === undefined) {
-            this.id = 0;
-            this.rev = 0;
-            this.url = "na";
-            this.title = "na";
-            this.workItemType = "na";
-            this.workItemProjectName = "na";
-            this.workItemIterationPath = "na";
-            this.workItemAreaPath = "na";
-            this.workItemTaskActivity = "na";
-            this.allowedToAddTasks = false;
-        }
-        else {
-            this.id = workItemQueryResult.id;
-            this.rev = workItemQueryResult.rev;
-            this.url = workItemQueryResult.url;
-            this.title = workItemQueryResult.fields[workItemFields.Title];
-            this.workItemType = workItemQueryResult.fields[workItemFields.WorkItemType];
-            this.workItemProjectName = workItemQueryResult.fields[workItemFields.TeamProject];
-            this.workItemIterationPath = workItemQueryResult.fields[workItemFields.IterationPath];
-            this.workItemAreaPath = workItemQueryResult.fields[workItemFields.AreaPath];
-            this.workItemTaskActivity = workItemFields.TaskActivity;
-            this.allowedToAddTasks = new WorkItemHelper().CheckAllowedToAddTaskToPbi(this);
-        }
-    }
-}
 class Enm_WorkitemPaths {
     constructor() {
         this.AreaPath = "/fields/System.AreaPath";
@@ -308,62 +280,6 @@ class ViewHelper {
         });
     }
 }
-class ServiceHelper {
-    GetDataService() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let logger = new Logger();
-            let retVal;
-            logger.Log("GetDataService", "1->" + retVal);
-            retVal = yield VSS.getService(VSS.ServiceIds.ExtensionData);
-            logger.Log(".GetDataService", "2->" + retVal);
-            return retVal;
-        });
-    }
-}
-class JsonPatchDoc {
-    constructor(task) {
-        this.task = task;
-    }
-    Create() {
-        let operations = new Enm_JsonPatchOperations();
-        let paths = new Enm_WorkitemPaths();
-        this.retval = [
-            {
-                "op": operations.Add,
-                "path": paths.Title,
-                "value": this.task.title
-            },
-            {
-                "op": operations.Add,
-                "path": paths.IterationPath,
-                "value": this.task.workItemIterationPath
-            },
-            {
-                "op": operations.Add,
-                "path": paths.AreaPath,
-                "value": this.task.workItemAreaPath
-            },
-            {
-                "op": operations.Add,
-                "path": paths.TaskActivity,
-                "value": this.task.workItemTaskActivity
-            },
-            {
-                "op": operations.Add,
-                "path": paths.AllRelations,
-                "value": {
-                    "rel": "System.LinkTypes.Hierarchy-Reverse",
-                    "url": parentWorkItem.url,
-                    "attributes": {
-                        "comment": "todo: comment voor decompositie"
-                    }
-                }
-            }
-        ];
-        new Logger().Log("JsonPatchDoc.Create", "Created JsonPatchdoc for task " + this.task.title);
-        return this.retval;
-    }
-}
 class EventHandlers {
     ExistingWitFieldFocussed() {
         var field = document.getElementById("existing-wit-id");
@@ -380,7 +296,7 @@ class EventHandlers {
                 yield witClient.getWorkItem(witId) // when only specific fields required , ["System.Title", "System.WorkItemType"])
                     .then(function (workitemResult) {
                     new Logger().Log("workitemResult", "new");
-                    parentWorkItem = new WimWorkItem(workitemResult);
+                    parentWorkItem = new WimWorkItem(workitemResult, null);
                     new ViewHelper(vssDataService).ShowSelectedWorkitemOnPage(parentWorkItem);
                 });
                 if (parentWorkItem === undefined || parentWorkItem === null) {
@@ -413,7 +329,7 @@ class EventHandlers {
     CreateTasksToAdd(selectedCheckboxes) {
         var retval = [];
         selectedCheckboxes.forEach(function (element) {
-            var task = new WimWorkItem(null);
+            var task = new WimWorkItem(null, parentWorkItem);
             task.title = element.title;
             task.workItemType = "Task";
             task.workItemProjectName = parentWorkItem.workItemProjectName;
@@ -428,7 +344,7 @@ class EventHandlers {
     CreateJsonPatchDocsForTasks(tasks) {
         var retval = [];
         tasks.forEach(function (element) {
-            retval.push(new JsonPatchDoc(element).Create() // this.jsonPatchDoc(element).returnPatchDoc
+            retval.push(new JsonPatchDoc(element, parentWorkItem).Create() // this.jsonPatchDoc(element).returnPatchDoc
             );
         });
         new Logger().Log("CreateJsonPatchDocsForTasks", null);

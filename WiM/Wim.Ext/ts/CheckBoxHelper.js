@@ -1,6 +1,5 @@
-/// <reference path="logger.ts" />
-import { Logger } from "./Logger";
-export default class CheckboxHelper {
+import { Logger } from "./Logger.js";
+export class CheckboxHelper {
     constructor(parentWi) {
         this.parentWorkItem = parentWi;
     }

@@ -1,21 +1,21 @@
-﻿//import WimWorkItem from "./wimworkitem";
+﻿import { WimWorkItem } from "./wimworkitem.js";
 
-//export default class ButtonHelper {
-//    parentWorkItem: WimWorkItem;
-//    constructor(parentWi: WimWorkItem) { this.parentWorkItem = parentWi }
+export class ButtonHelper {
+    parentWorkItem: WimWorkItem;
+    constructor(parentWorkItem: WimWorkItem) { this.parentWorkItem = parentWorkItem }
 
-//    DisableAddButton() {
-//        var addButton = document.getElementById("addTasksButton") as HTMLInputElement;
-//        if (addButton !== null && (this.parentWorkItem === undefined || this.parentWorkItem === null || !this.parentWorkItem.allowedToAddTasks)) {
-//            addButton.disabled = true;
-//        }
-//    }
+    DisableAddButton() {
+        var addButton = document.getElementById("addTasksButton") as HTMLInputElement;
+        if (addButton !== null && (this.parentWorkItem === undefined || this.parentWorkItem === null || !this.parentWorkItem.allowedToAddTasks)) {
+            addButton.disabled = true;
+        }
+    }
 
-//    EnableAddButton() {
-//        var addButton = document.getElementById("addTasksButton") as HTMLInputElement;
-//        if (addButton !== null && (this.parentWorkItem !== undefined && this.parentWorkItem !== null && this.parentWorkItem.allowedToAddTasks)) {
-//            addButton.disabled = false;
-//        }
-//    }
+    EnableAddButton() {
+        var addButton = document.getElementById("addTasksButton") as HTMLInputElement;
+        if (addButton !== null && (this.parentWorkItem !== undefined && this.parentWorkItem !== null && this.parentWorkItem.allowedToAddTasks)) {
+            addButton.disabled = false;
+        }
+    }
 
-//}
+}

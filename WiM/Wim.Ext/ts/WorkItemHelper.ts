@@ -1,31 +1,32 @@
-﻿///// <reference path="checkboxhelper.ts" />
-//import CheckboxHelper from "./CheckBoxHelper"
-//import WimWorkItem from "./wimworkitem";
-//import ButtonHelper from "./ButtonHelper";
+﻿
+import { CheckboxHelper } from "./CheckBoxHelper.js"
+import { WimWorkItem } from "./wimworkitem.js";
+import { ButtonHelper } from "./ButtonHelper.js";
 
-//export default class WorkItemHelper {
+export class WorkItemHelper {
 
-//    parentWorkItem: WimWorkItem;
-//    constructor(parentWi: WimWorkItem) { this.parentWorkItem = parentWi }
+    parentWorkItem: WimWorkItem;
+    constructor(parentWi: WimWorkItem) { this.parentWorkItem = parentWi }
 
-//    CheckAllowedToAddTaskToPbi() {
-//        if (this.parentWorkItem.workItemType === 'undefined' || this.parentWorkItem.workItemType === null ||
-//            (this.parentWorkItem.workItemType !== "Product Backlog Item" && this.parentWorkItem.workItemType !== "Bug")
-//        ) {
-//            return false;
-//        }
-//        return true;
-//    }
+    CheckAllowedToAddTaskToPbi() {
 
-//    WorkItemNietGevonden(e?: Error) {
-//        let exceptionMessage: string = "";
-//        if (e != null && e.message.length > 0) {
-//            exceptionMessage = e.message;
-//        }
+        if (this.parentWorkItem !== null &&
+            (this.parentWorkItem.workItemType !== "Product Backlog Item" && this.parentWorkItem.workItemType !== "Bug"))
+        {
+            return false;
+        }
+        return true;
+    }
 
-//        document.getElementById("existing-wit-text").innerHTML = "Workitem niet gevonden. " + exceptionMessage;
-//        new CheckboxHelper(this.parentWorkItem).DisableCheckBoxes();
-//        new ButtonHelper(this.parentWorkItem).DisableAddButton();
+    WorkItemNietGevonden(e?: Error) {
+        let exceptionMessage: string = "";
+        if (e != null && e.message.length > 0) {
+            exceptionMessage = e.message;
+        }
 
-//    }
-//}
+        document.getElementById("existing-wit-text").innerHTML = "Workitem niet gevonden. " + exceptionMessage;
+        new CheckboxHelper(this.parentWorkItem).DisableCheckBoxes();
+        new ButtonHelper(this.parentWorkItem).DisableAddButton();
+
+    }
+}
