@@ -16,6 +16,7 @@ import { ServiceHelper } from "./ServiceHelper.js";
 import { JsonPatchDoc } from "./JsonPatchDoc.js";
 import { WimWorkItem } from "./WimWorkItem.js";
 import { CheckBoxInfo } from "./CheckBoxInfo.js";
+import { CheckBoxHelper } from "./CheckBoxHelper.js";
 const TeamSettingsCollectionName = "WimCollection";
 const defaultTaskTitle = "Taak titel";
 const defaultTeamName = "Team naam";
@@ -165,13 +166,13 @@ class ViewHelper {
                 "Aan een " + workItem.workItemType + " mag geen Task toegevoegd worden." +
                     "</br> " +
                     "(" + workItem.id + ")" + workItem.title;
-            new CheckboxHelper().DisableCheckBoxes();
+            new CheckBoxHelper(parentWorkItem).DisableCheckBoxes();
             new ButtonHelper().DisableAddButton();
         }
         else {
             document.getElementById("existing-wit-text").className = "existing-wit-text";
             document.getElementById("existing-wit-text").innerHTML = workItem.id + "</br> " + workItem.title;
-            new CheckboxHelper().EnableCheckBoxes();
+            new CheckBoxHelper(parentWorkItem).EnableCheckBoxes();
             new ButtonHelper().EnableAddButton();
         }
         VSS.notifyLoadSucceeded();
@@ -453,7 +454,7 @@ class EventHandlers {
         new Logger().Log("TeamSelectedHandler", null);
     }
     CheckUncheckAllClicked(obj) {
-        new CheckboxHelper().CheckUncheck(obj);
+        new CheckBoxHelper(parentWorkItem).CheckUncheck(obj);
     }
 }
 class PreLoader {
@@ -520,7 +521,7 @@ class PreLoader {
         let modalHelper = new ModalHelper();
         if (document.readyState == "complete") {
             var name = window.location.pathname.split('/').slice(-1);
-            new CheckboxHelper().DisableCheckBoxes();
+            new CheckBoxHelper(parentWorkItem).DisableCheckBoxes();
             new ButtonHelper().DisableAddButton();
             //this.registerTasksModelButtonEvents(modalHelper);
             //this.registerTeamsModelButtonEvents(modalHelper);
@@ -532,7 +533,7 @@ class PreLoader {
         return __awaiter(this, void 0, void 0, function* () {
             var name = window.location.pathname.split('/').slice(-1);
             let modalHelper = new ModalHelper();
-            new CheckboxHelper().DisableCheckBoxes();
+            new CheckBoxHelper(parentWorkItem).DisableCheckBoxes();
             new ButtonHelper().DisableAddButton();
             //this.registerTasksModelButtonEvents(modalHelper);
             //this.registerTeamsModelButtonEvents(modalHelper);
@@ -567,44 +568,6 @@ class PreLoader {
                 });
             });
         });
-    }
-}
-class CheckboxHelper {
-    DisableCheckBoxes() {
-        var checkBoxes = document.getElementsByClassName("checkbox");
-        if (checkBoxes !== null || (parentWorkItem === undefined || parentWorkItem === null || !parentWorkItem.allowedToAddTasks)) {
-            for (var i = 0; i < checkBoxes.length; i++) {
-                var checkbox = checkBoxes[i];
-                checkbox.disabled = true;
-            }
-        }
-    }
-    EnableCheckBoxes() {
-        var checkBoxes = document.getElementsByClassName("checkbox");
-        if (checkBoxes !== null && (parentWorkItem !== undefined && parentWorkItem !== null && parentWorkItem.allowedToAddTasks)) {
-            for (var i = 0; i < checkBoxes.length; i++) {
-                var checkbox = checkBoxes[i];
-                checkbox.disabled = false;
-            }
-        }
-    }
-    CheckUncheck(obj) {
-        var tasks = document.getElementsByName("taskcheckbox");
-        if (obj.checked) {
-            tasks.forEach(function (element) {
-                if (!element.checked) {
-                    element.toggleAttribute("checked");
-                }
-            });
-        }
-        else {
-            tasks.forEach(function (element) {
-                if (element.checked) {
-                    element.toggleAttribute("checked");
-                }
-            });
-        }
-        new Logger().Log("CheckUncheck", null);
     }
 }
 class ButtonHelper {
@@ -724,7 +687,7 @@ class WorkItemHelper {
             exceptionMessage = e.message;
         }
         document.getElementById("existing-wit-text").innerHTML = "Workitem niet gevonden. " + exceptionMessage;
-        new CheckboxHelper().DisableCheckBoxes();
+        new CheckBoxHelper(parentWorkItem).DisableCheckBoxes();
         new ButtonHelper().DisableAddButton();
     }
 }

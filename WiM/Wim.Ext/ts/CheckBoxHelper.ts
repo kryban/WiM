@@ -1,7 +1,7 @@
 ﻿
 import { Logger } from "./Logger.js"
 
-export class CheckboxHelper {
+export class CheckBoxHelper {
     parentWorkItem;
 
 constructor(parentWi){

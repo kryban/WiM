@@ -1,5 +1,5 @@
 ﻿
-import { CheckboxHelper } from "./CheckBoxHelper.js"
+import { CheckBoxHelper } from "./CheckBoxHelper.js"
 import { WimWorkItem } from "./wimworkitem.js";
 import { ButtonHelper } from "./ButtonHelper.js";
 
@@ -25,7 +25,7 @@ export class WorkItemHelper {
         }
 
         document.getElementById("existing-wit-text").innerHTML = "Workitem niet gevonden. " + exceptionMessage;
-        new CheckboxHelper(this.parentWorkItem).DisableCheckBoxes();
+        new CheckBoxHelper(this.parentWorkItem).DisableCheckBoxes();
         new ButtonHelper(this.parentWorkItem).DisableAddButton();
 
     }

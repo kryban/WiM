@@ -16,6 +16,7 @@ import { ServiceHelper } from "./ServiceHelper.js"
 import { JsonPatchDoc } from "./JsonPatchDoc.js"
 import { WimWorkItem } from "./WimWorkItem.js"
 import { CheckBoxInfo } from "./CheckBoxInfo.js"
+import { CheckBoxHelper } from "./CheckBoxHelper.js"
 
 const TeamSettingsCollectionName: string = "WimCollection";
 const defaultTaskTitle: string = "Taak titel";
@@ -206,14 +207,14 @@ class ViewHelper {
                 "</br> " +
                 "(" + workItem.id + ")" + workItem.title;
 
-            new CheckboxHelper().DisableCheckBoxes();
+            new CheckBoxHelper(parentWorkItem).DisableCheckBoxes();
             new ButtonHelper().DisableAddButton();
         }
         else {
             document.getElementById("existing-wit-text").className = "existing-wit-text";
             document.getElementById("existing-wit-text").innerHTML = workItem.id + "</br> " + workItem.title;
 
-            new CheckboxHelper().EnableCheckBoxes();
+            new CheckBoxHelper(parentWorkItem).EnableCheckBoxes();
             new ButtonHelper().EnableAddButton();
         }
 
@@ -574,7 +575,7 @@ class EventHandlers
     }
 
     CheckUncheckAllClicked(obj) {
-        new CheckboxHelper().CheckUncheck(obj);
+        new CheckBoxHelper(parentWorkItem).CheckUncheck(obj);
     }
 }
 
@@ -665,7 +666,7 @@ class PreLoader
         if (document.readyState == "complete") {
             var name = window.location.pathname.split('/').slice(-1);
 
-            new CheckboxHelper().DisableCheckBoxes();
+            new CheckBoxHelper(parentWorkItem).DisableCheckBoxes();
             new ButtonHelper().DisableAddButton();
 
             //this.registerTasksModelButtonEvents(modalHelper);
@@ -682,7 +683,7 @@ class PreLoader
         var name = window.location.pathname.split('/').slice(-1);
         let modalHelper: ModalHelper = new ModalHelper();
 
-        new CheckboxHelper().DisableCheckBoxes();
+        new CheckBoxHelper(parentWorkItem).DisableCheckBoxes();
         new ButtonHelper().DisableAddButton();
 
         //this.registerTasksModelButtonEvents(modalHelper);
@@ -719,48 +720,6 @@ class PreLoader
                 });
         });
     }
-}
-
-class CheckboxHelper {
-    DisableCheckBoxes() {
-        var checkBoxes = document.getElementsByClassName("checkbox");
-        if (checkBoxes !== null || (parentWorkItem === undefined || parentWorkItem === null || !parentWorkItem.allowedToAddTasks)) {
-            for (var i = 0; i < checkBoxes.length; i++) {
-                var checkbox = checkBoxes[i] as HTMLInputElement;
-                checkbox.disabled = true;
-            }
-        }
-    }
-
-    EnableCheckBoxes() {
-        var checkBoxes = document.getElementsByClassName("checkbox");
-        if (checkBoxes !== null && (parentWorkItem !== undefined && parentWorkItem !== null && parentWorkItem.allowedToAddTasks)) {
-            for (var i = 0; i < checkBoxes.length; i++) {
-                var checkbox = checkBoxes[i] as HTMLInputElement;
-                checkbox.disabled = false;
-            }
-        }
-    }
-
-    CheckUncheck(obj) {
-        var tasks = document.getElementsByName("taskcheckbox");
-
-        if (obj.checked) {
-            tasks.forEach(function (element) {
-                if (!(element as HTMLInputElement).checked) {
-                    element.toggleAttribute("checked");
-                }
-            });
-        }
-        else {
-            tasks.forEach(function (element) {
-                if ((element as HTMLInputElement).checked) {
-                    element.toggleAttribute("checked");
-                }
-            });
-        }
-        new Logger().Log("CheckUncheck", null);
-    }   
 }
 
 class ButtonHelper {
@@ -915,7 +874,7 @@ class WorkItemHelper {
         }
 
         document.getElementById("existing-wit-text").innerHTML = "Workitem niet gevonden. " + exceptionMessage;
-        new CheckboxHelper().DisableCheckBoxes();
+        new CheckBoxHelper(parentWorkItem).DisableCheckBoxes();
         new ButtonHelper().DisableAddButton();
 
     }
