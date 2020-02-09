@@ -277,7 +277,8 @@ export class ViewHelper {
     }
 
     async LoadTeamTasks(selection) {
-        let teamInAction:string = await this.GetTeamInAction(this.dataservice);
+        let teamInAction: string = await this.GetTeamInAction(this.dataservice);
+        let defaultTaskTitle = this.defaultTaskTitle;
 
         this.dataservice.getDocuments(this.TeamSettingsCollectionName).then(function (docs) {
             let logger = new Logger();
@@ -302,7 +303,7 @@ export class ViewHelper {
 
             teamTasks.forEach(
                 function (element) {
-                    modalHelper.AddNewTaskInputRow(element.title, element.activityType, this.defaultTaskTitle);
+                    modalHelper.AddNewTaskInputRow(element.title, element.activityType, defaultTaskTitle);
                 }
             );
             VSS.notifyLoadSucceeded();

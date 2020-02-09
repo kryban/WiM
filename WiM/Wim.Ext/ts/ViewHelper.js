@@ -226,6 +226,7 @@ export class ViewHelper {
     LoadTeamTasks(selection) {
         return __awaiter(this, void 0, void 0, function* () {
             let teamInAction = yield this.GetTeamInAction(this.dataservice);
+            let defaultTaskTitle = this.defaultTaskTitle;
             this.dataservice.getDocuments(this.TeamSettingsCollectionName).then(function (docs) {
                 let logger = new Logger();
                 logger.Log("LoadTeamTasks", docs.length);
@@ -241,7 +242,7 @@ export class ViewHelper {
                 logger.Log("LoadTeamTasks", 'Build new list with ' + teamTasks.length + ' items.');
                 var modalHelper = new ModalHelper();
                 teamTasks.forEach(function (element) {
-                    modalHelper.AddNewTaskInputRow(element.title, element.activityType, this.defaultTaskTitle);
+                    modalHelper.AddNewTaskInputRow(element.title, element.activityType, defaultTaskTitle);
                 });
                 VSS.notifyLoadSucceeded();
             });

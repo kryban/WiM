@@ -180,6 +180,7 @@
     <TypeScriptCompile Include="ts\Enm_WorkitemPaths.ts" />
     <TypeScriptCompile Include="ts\JsonPatchDoc.ts" />
     <TypeScriptCompile Include="ts\Logger.ts" />
+    <TypeScriptCompile Include="ts\MenuBuilder.ts" />
     <TypeScriptCompile Include="ts\ModalHelper.ts" />
     <TypeScriptCompile Include="ts\ServiceHelper.ts" />
     <TypeScriptCompile Include="ts\ViewHelper.ts" />

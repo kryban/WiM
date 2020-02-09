@@ -3,7 +3,6 @@
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/vss.d.ts" />
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/vss.sdk.d.ts" />
 
-
 import * as TFSWitContracts from "TFS/WorkItemTracking/Contracts";
 import { WorkItemTrackingHttpClient4_1 } from "TFS/WorkItemTracking/RestClient";
 import { ExtensionDataService } from "VSS/SDK/Services/ExtensionData";
@@ -20,6 +19,7 @@ import { CheckBoxHelper } from "./CheckBoxHelper.js"
 import { ButtonHelper } from "./ButtonHelper.js"
 import { WorkItemHelper } from "./workitemhelper.js";
 import { ViewHelper } from "./ViewHelper.js";
+import { MenuBuilder } from "./MenuBuilder.js";
 
 const TeamSettingsCollectionName: string = "WimCollection";
 const defaultTaskTitle: string = "Taak titel";
@@ -434,7 +434,7 @@ class PreLoader
                     logger.Log("LoadRequired", "Required vssMenus: " + vssMenus);
 
                     vssDataService = await new ServiceHelper().GetDataService();
-                    await new MenuBuilder(vssDataService).BuildMenu(vssControls, vssMenus);
+                    await new MenuBuilder(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).BuildMenu(vssControls, vssMenus);
                     new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).CreateTeamSelectElementInitially();
 
                     VSS.notifyLoadSucceeded();
@@ -442,147 +442,6 @@ class PreLoader
         });
     }
 }
-
-class MenuBuilder
-{
-    menuSettings;
-    dataservice: IExtensionDataService;
-
-    constructor(dataService) {
-        this.dataservice = dataService;
-    }
-    
-    async GetMenuSettings():Promise<any[]> {
-        let menusettings = [];
-        await this.dataservice.getDocuments(TeamSettingsCollectionName).then(
-            async function (docs) {
-                await docs.forEach(
-                    async function (element ) {
-                        await menusettings.push(element)
-                    }
-                )
-            }
-        );
-
-        return menusettings;
-    }
-
-    BuildMenuItems(docs, Controls, Menus) {
-        let logger: Logger = new Logger();
-
-        var container = $(".menu-bar");
-
-        var bar = [];
-
-        logger.Log("BuildMenu", "CreateMenuBar() - getDocuments :" + docs.length);
-
-        bar = docs.filter(function (d) { return d.type === 'team'; });
-
-        var teamMenuItems = [];
-        var teamTasksMenuItems = [];
-
-        bar.forEach(
-            function (element) {
-                teamMenuItems.push(
-                    { id: "team_" + element.text.toLowerCase(), text: element.text }
-                );
-                teamTasksMenuItems.push(
-                    { id: "tasks_" + element.text.toLowerCase(), text: element.text }
-                );
-            }
-        );
-
-        var teamItemsStringified = JSON.stringify(teamMenuItems);
-        var teamTasksItemsStringified = JSON.stringify(teamTasksMenuItems);
-
-        logger.Log("BuildMenu", "teamMenuItemsCreated :" + teamItemsStringified);
-        logger.Log("BuildMenu", "teamTaskMenuITemsreated:" + teamTasksItemsStringified);
-
-        var menuItems =
-            '[' +
-            '{' +
-            '"id":"menu-setting", "text":"Settings", "icon":"icon-settings", "childItems":' +
-            '[' +
-            '{' +
-            '"id": "switch", "text": "Switch team", "childItems":' +
-            teamItemsStringified +
-            '},' +
-            '{' +
-            '"id": "manage-teams", "text": "Manage teams"' +
-            '},' +
-            '{' +
-            '"id": "configure-team-tasks", "text": "Manage team tasks" ' +
-            '},' +
-            '{' +
-            '"id": "set-to-default", "text": "Set to default" ' +
-            '}' +
-            ']' +
-            '},' +
-            '{ "separator": "true" },' +
-            '{ "id": "menu-help", "text": "Help", "icon": "icon-help", "tag": "test" }' +
-            ']';
-
-        var menuItemsParsed = JSON.parse(menuItems);
-
-        // stukje abrakadabra
-        var menubarOptions = {
-            items: menuItemsParsed,
-            executeAction: function (args) {
-                var command = args.get_commandName();
-                //this.MenuBarAction(command);
-                // all team element ids begin with "team_", so we know user wants to switch teams
-                if (command.startsWith("team_")) {
-                    new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).LoadTasksOnMainWindow(command);
-                }
-
-                else if (command === "manage-teams") {
-                    new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).ConfigureTeams(command);
-                }
-
-                else if (command === "configure-team-tasks") {
-                    new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).ConfigureTasks(command);
-                }
-
-                else if (command === "set-to-default") {
-                    new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).SetToDefault();
-                }
-            }
-        };
-
-        var menubar = Controls.create(Menus.MenuBar, container, menubarOptions);
-        VSS.notifyLoadSucceeded();
-    }
-
-    async BuildMenu(controls, menus) {
-        this.menuSettings = await this.GetMenuSettings().then(function (s) { return s; });
-        this.BuildMenuItems(this.menuSettings, controls, menus);
-    }
-}
-
-//class WorkItemHelper {
-
-//    CheckAllowedToAddTaskToPbi(parentWorkItem) {
-//        if (parentWorkItem.workItemType === 'undefined' || parentWorkItem.workItemType === null ||
-//            (parentWorkItem.workItemType !== "Product Backlog Item" && parentWorkItem.workItemType !== "Bug")
-//        )
-//        {
-//            return false;
-//        }
-//        return true;
-//    }
-
-//    WorkItemNietGevonden(e?: Error) {
-//        let exceptionMessage: string = "";
-//        if (e != null && e.message.length > 0) {
-//            exceptionMessage = e.message;
-//        }
-
-//        document.getElementById("existing-wit-text").innerHTML = "Workitem niet gevonden. " + exceptionMessage;
-//        new CheckBoxHelper(parentWorkItem).DisableCheckBoxes();
-//        new ButtonHelper(parentWorkItem).DisableAddButton();
-
-//    }
-//}
 
 class WitTsClass
 {
@@ -707,5 +566,4 @@ window.onload = function ()
     let preloader: PreLoader = new PreLoader();
     preloader.LoadPreConditions(window);
     preloader.RegisterEvents();
-    
 };
