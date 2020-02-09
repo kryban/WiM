@@ -2,9 +2,15 @@
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/tfs.d.ts" />
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/vss.d.ts" />
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/vss.sdk.d.ts" />
+
+
 import * as TFSWitContracts from "TFS/WorkItemTracking/Contracts";
 import { WorkItemTrackingHttpClient4_1 } from "TFS/WorkItemTracking/RestClient";
 import { ExtensionDataService } from "VSS/SDK/Services/ExtensionData";
+
+import { Enm_JsonPatchOperations } from "./Enm_JsonPatchOperations.js";
+import { Enm_WorkitemFields } from "./Enm_WorkitemFields.js"
+
 const TeamSettingsCollectionName: string = "WimCollection";
 const defaultTaskTitle: string = "Taak titel";
 const defaultTeamName: string = "Team naam";
@@ -86,38 +92,6 @@ class Enm_WorkitemPaths {
     public readonly url: string = "/fields/url";
     public readonly AllRelations:string = "/relations/-";
     public readonly SpecficRelations:string = "/relations/";
-}
-
-class Enm_WorkitemFields {
-    public readonly AreaPath: string = "System.AreaPath";
-    public readonly TeamProject: string = "System.TeamProject";
-    public readonly IterationPath: string = "System.IterationPath";
-    public readonly WorkItemType: string = "System.WorkItemType";
-    public readonly State: string = "System.State";
-    public readonly Reason: string = "System.Reason";
-    public readonly CreatedDate: string = "System.CreatedDate";
-    public readonly CreatedBy: string = "System.CreatedBy";
-    public readonly ChangedDate: string = "System.ChangedDate";
-    public readonly ChangedBy: string = "System.ChangedBy";
-    public readonly Title: string = "System.Title";
-    public readonly BoardColumn: string = "System.BoardColumn";
-    public readonly BoardColumnDone: string = "System.BoardColumnDone";
-    public readonly BacklogPriority: string = "Microsoft.VSTS.Common.BacklogPriority";
-    public readonly Severity: string = "Microsoft.VSTS.Common.Severity";
-    public readonly KanBanColumn: string = "WEF_FA00BAB5AFBB4E299544ED2121CDE143_Kanban.Column";
-    public readonly KanBanColumnDone: string = "WEF_FA00BAB5AFBB4E299544ED2121CDE143_Kanban.Column.Done";
-    public readonly TopDeskWijzigingNr: string = "dSZW.Socrates.TopDeskWijzigingNr";
-    public readonly SystemInfo: string = "Microsoft.VSTS.TCM.SystemInfo";
-    public readonly ReproSteps: string = "Microsoft.VSTS.TCM.ReproSteps";
-    public readonly TaskActivity: string = "Microsoft.VSTS.Common.Activity";
-    public readonly url: string = "url";
-    public readonly AllRelations: string = "/relations/-";
-    public readonly SpecficRelations: string = "/relations/";
-}
-
-class Enm_JsonPatchOperations
-{
-    Add: string = "add";
 }
 
 class CheckBoxInfo {

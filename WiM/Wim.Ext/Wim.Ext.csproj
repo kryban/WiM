@@ -92,6 +92,8 @@
     <Content Include="scripts\VSS.SDK.js" />
     <Content Include="scripts\wit.js" />
     <Content Include="styles\wimstyles.css" />
+    <Content Include="ts\Enm_JsonPatchOperations.js" />
+    <Content Include="ts\enm_workitemfields.js" />
     <Content Include="ts\witTs.js" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -172,6 +174,8 @@
     <TypeScriptCompile Include="node_modules\vss-web-extension-sdk\typings\tfs.d.ts" />
     <TypeScriptCompile Include="node_modules\vss-web-extension-sdk\typings\vss.d.ts" />
     <TypeScriptCompile Include="node_modules\vss-web-extension-sdk\typings\VSS.SDK.d.ts" />
+    <TypeScriptCompile Include="ts\Enm_JsonPatchOperations.ts" />
+    <TypeScriptCompile Include="ts\Enm_WorkitemFields.ts" />
     <TypeScriptCompile Include="ts\witTs.ts" />
   </ItemGroup>
   <PropertyGroup>
