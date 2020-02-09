@@ -94,6 +94,8 @@
     <Content Include="styles\wimstyles.css" />
     <Content Include="ts\Enm_JsonPatchOperations.js" />
     <Content Include="ts\enm_workitemfields.js" />
+    <Content Include="ts\logger.js" />
+    <Content Include="ts\ModalHelper.js" />
     <Content Include="ts\witTs.js" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -176,6 +178,8 @@
     <TypeScriptCompile Include="node_modules\vss-web-extension-sdk\typings\VSS.SDK.d.ts" />
     <TypeScriptCompile Include="ts\Enm_JsonPatchOperations.ts" />
     <TypeScriptCompile Include="ts\Enm_WorkitemFields.ts" />
+    <TypeScriptCompile Include="ts\Logger.ts" />
+    <TypeScriptCompile Include="ts\ModalHelper.ts" />
     <TypeScriptCompile Include="ts\witTs.ts" />
   </ItemGroup>
   <PropertyGroup>

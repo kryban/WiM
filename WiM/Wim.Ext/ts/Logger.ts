@@ -1,4 +1,4 @@
-﻿export default class Logger {
+﻿export class Logger {
     Log(callerName: string, logTekst: string) {
         var tekst = (logTekst !== null && typeof logTekst !== "undefined") ? logTekst : "";
         console.log(callerName + ": " + tekst);
