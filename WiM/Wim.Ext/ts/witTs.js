@@ -13,14 +13,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { Logger } from "./Logger.js";
 import { ModalHelper } from "./ModalHelper.js";
 import { ServiceHelper } from "./ServiceHelper.js";
-import { JsonPatchDoc } from "./JsonPatchDoc.js";
-import { WimWorkItem } from "./WimWorkItem.js";
-import { CheckBoxInfo } from "./CheckBoxInfo.js";
 import { CheckBoxHelper } from "./CheckBoxHelper.js";
 import { ButtonHelper } from "./ButtonHelper.js";
-import { WorkItemHelper } from "./workitemhelper.js";
 import { ViewHelper } from "./ViewHelper.js";
 import { MenuBuilder } from "./MenuBuilder.js";
+import { EventHandlers } from "./EventHandlers.js";
+//import { VssService } from "VSS/Service.js";
 const TeamSettingsCollectionName = "WimCollection";
 const defaultTaskTitle = "Taak titel";
 const defaultTeamName = "Team naam";
@@ -33,218 +31,228 @@ var vssService;
 var vssWiTrackingClient;
 var vssMenus;
 var vssDataService;
-class EventHandlers {
-    ExistingWitFieldFocussed() {
-        var field = document.getElementById("existing-wit-id");
-        if (field.value === "workitem ID") {
-            field.value = "";
-        }
-    }
-    OpenButtonClicked(obj) {
-        return __awaiter(this, void 0, void 0, function* () {
-            parentWorkItem = null;
-            witClient = vssWiTrackingClient.getClient();
-            var witId = parseInt(document.getElementById("existing-wit-id").value);
-            try {
-                yield witClient.getWorkItem(witId) // when only specific fields required , ["System.Title", "System.WorkItemType"])
-                    .then(function (workitemResult) {
-                    new Logger().Log("workitemResult", "new");
-                    parentWorkItem = new WimWorkItem(workitemResult, null);
-                    new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).ShowSelectedWorkitemOnPage(parentWorkItem);
-                });
-                if (parentWorkItem === undefined || parentWorkItem === null) {
-                    new WorkItemHelper(parentWorkItem).WorkItemNietGevonden();
-                }
-            }
-            catch (e) {
-                let exc = e;
-                new WorkItemHelper(parentWorkItem).WorkItemNietGevonden(e);
-            }
-        });
-    }
-    MainPageEnterPressed(event) {
-        new Logger().Log("EventHandelrs.MainEnterPressed", "Event received" + event);
-        if (event.key === "Enter") {
-            event.preventDefault();
-            this.OpenButtonClicked(null);
-        }
-    }
-    GetSelectedCheckboxes(allCheckboxes) {
-        var retval = [];
-        allCheckboxes.forEach(function (element) {
-            if (element.checked) {
-                retval.push(new CheckBoxInfo(element.labels[0].innerText, element.value));
-            }
-        });
-        new Logger().Log("GetSelectedCheckboxes", "Selected checkboxes: " + retval.length);
-        return retval;
-    }
-    CreateTasksToAdd(selectedCheckboxes) {
-        var retval = [];
-        selectedCheckboxes.forEach(function (element) {
-            var task = new WimWorkItem(null, parentWorkItem);
-            task.title = element.title;
-            task.workItemType = "Task";
-            task.workItemProjectName = parentWorkItem.workItemProjectName;
-            task.workItemIterationPath = parentWorkItem.workItemIterationPath;
-            task.workItemAreaPath = parentWorkItem.workItemAreaPath;
-            task.workItemTaskActivity = element.activityType;
-            retval.push(task);
-        });
-        new Logger().Log("CreateTasksToAdd", "Created tasks: " + retval.length);
-        return retval;
-    }
-    CreateJsonPatchDocsForTasks(tasks) {
-        var retval = [];
-        tasks.forEach(function (element) {
-            retval.push(new JsonPatchDoc(element, parentWorkItem).Create() // this.jsonPatchDoc(element).returnPatchDoc
-            );
-        });
-        new Logger().Log("CreateJsonPatchDocsForTasks", null);
-        return retval;
-    }
-    PairTasksToWorkitem(docs, parent) {
-        return __awaiter(this, void 0, void 0, function* () {
-            new Logger().Log("EventHandlers.PairTasksToWorkitem", "Start pairing");
-            let numberOfTasksHandled = 0;
-            var container = $("#tasksContainer");
-            var options = {
-            //target: $("#tasksContainer"),
-            //cancellable: true,
-            //cancelTextFormat: "{0} to cancel",
-            //cancelCallback: function () {
-            //    console.this.log("cancelled");
-            //}
-            };
-            var waitcontrol = yield vssControls.create(vssStatusindicator.WaitControl, container, options);
-            var client = yield vssService.getCollectionClient(vssWiTrackingClient.WorkItemTrackingHttpClient);
-            //var client = vssService.getCollectionClient(VssWitClient.WorkItemTrackingHttpClient);
-            waitcontrol.startWait();
-            waitcontrol.setMessage("waiter waits.");
-            var workItemPromises = [];
-            docs.forEach(function (jsonPatchDoc) {
-                numberOfTasksHandled++;
-                workItemPromises.push(client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task"));
-                new Logger().Log("PairTasksToWorkitem", "Pairing task.");
-            });
-            yield Promise.all(workItemPromises).then(function () {
-                var taakTaken = numberOfTasksHandled === 1 ? "taak" : "taken";
-                alert(numberOfTasksHandled + " " + taakTaken + " toegevoegd aan PBI " + parent.id + " (" + parent.title + ").");
-                waitcontrol.endWait();
-                VSS.notifyLoadSucceeded();
-            });
-            new Logger().Log("PairTasksToWorkitem", "Tasks pared.");
-        });
-    }
-    AddTasksButtonClicked(obj) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var allowedToAdd = new WorkItemHelper(parentWorkItem).CheckAllowedToAddTaskToPbi();
-            var taskCheckboxes = document.getElementsByName("taskcheckbox");
-            var selectedCheckboxes = this.GetSelectedCheckboxes(taskCheckboxes);
-            var tasksToPairWithWorkitem = this.CreateTasksToAdd(selectedCheckboxes);
-            var jsonPatchDocs = this.CreateJsonPatchDocsForTasks(tasksToPairWithWorkitem);
-            this.PairTasksToWorkitem(jsonPatchDocs, parentWorkItem);
-            var team;
-            yield this.GetTeamInAction().then(function (t) { team = t; });
-            yield new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).LoadTasksOnMainWindow(team);
-            new Logger().Log("AddTasksButtonClicked", null);
-        });
-    }
-    GetTeamInAction() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let retval;
-            let teamInAction = yield vssDataService.getValue("team-in-action");
-            new Logger().Log("GetTeamInAction", "Retrieved team in action value - " + teamInAction);
-            retval = teamInAction;
-            return retval;
-        });
-    }
-    TeamModalOKButtonClicked() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let logger = new Logger();
-            var teamsOnForm = document.getElementsByName("teamInpNaam");
-            yield vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    // delete only teams setting. Not other settings
-                    var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
-                    // always 1 element for at least 1 iteration in Promises.all
-                    var teamDeletionPromises = [];
-                    //teamDeletionPromises.push(new Promise(function () { /*empty*/ }))
-                    var added = false;
-                    teamDocs.forEach(function (element) {
-                        teamDeletionPromises.push(vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
-                    });
-                    let witTs = new WitTsClass();
-                    Promise.all(teamDeletionPromises).then(function (service) {
-                        return __awaiter(this, void 0, void 0, function* () {
-                            if (!added) {
-                                logger.Log("teamInpChangeHandler", "Doc verwijderd");
-                                yield witTs.AddTeamDocs(teamsOnForm, vssDataService);
-                            }
-                        });
-                    });
-                    // refactor this
-                    if (!added) {
-                        logger.Log("teamInpChangeHandler", "Doc verwijderd");
-                        yield witTs.AddTeamDocs(teamsOnForm, this.vssDataService);
-                    }
-                });
-            });
-            logger.Log("teamInpChangeHandler", "Finished");
-            new ModalHelper().CloseTeamsModal();
-            VSS.notifyLoadSucceeded();
-        });
-    }
-    TeamModalCancelButtonClicked() {
-        new ModalHelper().CloseTeamsModal();
-        new WitTsClass().ReloadHost();
-    }
-    TeamModalAddTeamButtonClicked(name) {
-        new ModalHelper().AddNewTeamInputRow(name, defaultTeamName);
-    }
-    TeamModalRemoveTeamButtonClicked(clickedObj) {
-        new ModalHelper().RemoveTeamInputRow(clickedObj);
-    }
-    RemoveDefaultText(focusedObject) {
-        let obj = focusedObject;
-        if (obj.value === defaultTaskTitle || obj.value === defaultTeamName) {
-            obj.value = "";
-        }
-        new Logger().Log("RemoveDefaultText", null);
-    }
-    TaskModalCancelButtonClicked() {
-        new ModalHelper().CloseTasksModal();
-        new WitTsClass().ReloadHost();
-    }
-    TaskModalAddTaskButtonClicked() {
-        new ModalHelper().AddNewTaskInputRow(null, null, defaultTaskTitle);
-    }
-    TaskModalRemoveTaskButtonClicked(clickedObj) {
-        new ModalHelper().RemoveTaskInputRow(clickedObj);
-    }
-    TaskModalOKButtonClicked() {
-        var t = document.getElementsByClassName('taskInputRow');
-        new WitTsClass().UpdateTasksDocs(t);
-        new Logger().Log("TaskModalOKButtonClicked", null);
-    }
-    TeamSelectedHandler(obj) {
-        selectedTeam = obj.value.toLowerCase(); //$(this).val();
-        if (selectedTeam === undefined) {
-            this.GetTeamInAction().then(function (v) { this.selectedTeam = v; });
-        }
-        let viewHelper = new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle);
-        viewHelper.LoadTeamTasks(selectedTeam);
-        viewHelper.EnableBtn("voegTaskToe");
-        viewHelper.EnableBtn("taskDialogConfirmBtn");
-        new Logger().Log("TeamSelectedHandler", null);
-    }
-    CheckUncheckAllClicked(obj) {
-        new CheckBoxHelper(parentWorkItem).CheckUncheck(obj);
-    }
-}
+var eventHandlers;
+//class EventHandlers
+//{
+//    ExistingWitFieldFocussed() {
+//        var field = document.getElementById("existing-wit-id") as HTMLInputElement;
+//        if (field.value === "workitem ID") {
+//            field.value = "";
+//        }
+//    }
+//    async OpenButtonClicked(obj) {
+//        parentWorkItem = null;
+//        witClient = vssWiTrackingClient.getClient();
+//        var witId = parseInt((document.getElementById("existing-wit-id") as HTMLInputElement).value);
+//        try {
+//            await witClient.getWorkItem(witId)// when only specific fields required , ["System.Title", "System.WorkItemType"])
+//                .then(function (workitemResult) {
+//                    new Logger().Log("workitemResult", "new");
+//                    parentWorkItem = new WimWorkItem(workitemResult, null);
+//                    new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).ShowSelectedWorkitemOnPage(parentWorkItem);
+//                });
+//            if (parentWorkItem === undefined || parentWorkItem === null) {
+//                new WorkItemHelper(parentWorkItem).WorkItemNietGevonden();
+//            }
+//        } catch (e) {
+//            let exc: Error = e;
+//            new WorkItemHelper(parentWorkItem).WorkItemNietGevonden(e);
+//        }
+//    }
+//    MainPageEnterPressed(event) {
+//        new Logger().Log("EventHandelrs.MainEnterPressed", "Event received" + event);
+//        if (event.key === "Enter") {
+//            event.preventDefault();
+//            this.OpenButtonClicked(null);
+//        }
+//    }
+//    private GetSelectedCheckboxes(allCheckboxes) {
+//        var retval = [];
+//        allCheckboxes.forEach(
+//            function (element) {
+//                if (element.checked) {
+//                    retval.push(
+//                        new CheckBoxInfo(element.labels[0].innerText, element.value)
+//                    );
+//                }
+//            }
+//        );
+//        new Logger().Log("GetSelectedCheckboxes", "Selected checkboxes: " + retval.length);
+//        return retval;
+//    }
+//    private CreateTasksToAdd(selectedCheckboxes) {
+//        var retval = [];
+//        selectedCheckboxes.forEach(
+//            function (element) {
+//                var task = new WimWorkItem(null, parentWorkItem);
+//                task.title = element.title;
+//                task.workItemType = "Task";
+//                task.workItemProjectName = parentWorkItem.workItemProjectName;
+//                task.workItemIterationPath = parentWorkItem.workItemIterationPath;
+//                task.workItemAreaPath = parentWorkItem.workItemAreaPath;
+//                task.workItemTaskActivity = element.activityType;
+//                retval.push(task);
+//            });
+//        new Logger().Log("CreateTasksToAdd", "Created tasks: " + retval.length);
+//        return retval;
+//    }
+//    private CreateJsonPatchDocsForTasks(tasks) {
+//        var retval = [];
+//        tasks.forEach(function (element) {
+//            retval.push(
+//                new JsonPatchDoc(element, parentWorkItem).Create() // this.jsonPatchDoc(element).returnPatchDoc
+//            );
+//        });
+//        new Logger().Log("CreateJsonPatchDocsForTasks", null);
+//        return retval;
+//    }
+//    async PairTasksToWorkitem(docs, parent) {
+//        new Logger().Log("EventHandlers.PairTasksToWorkitem", "Start pairing");
+//        let numberOfTasksHandled: number = 0;
+//        var container = $("#tasksContainer");
+//        var options = {
+//            //target: $("#tasksContainer"),
+//            //cancellable: true,
+//            //cancelTextFormat: "{0} to cancel",
+//            //cancelCallback: function () {
+//            //    console.this.log("cancelled");
+//            //}
+//        };
+//        var waitcontrol = await vssControls.create(vssStatusindicator.WaitControl, container, options);
+//        var client = await vssService.getCollectionClient(vssWiTrackingClient.WorkItemTrackingHttpClient);
+//        //var client = vssService.getCollectionClient(VssWitClient.WorkItemTrackingHttpClient);
+//        waitcontrol.startWait();
+//        waitcontrol.setMessage("waiter waits.");
+//        var workItemPromises = [];
+//        docs.forEach(
+//            function (jsonPatchDoc) {
+//                numberOfTasksHandled++;
+//                workItemPromises.push(client.createWorkItem(jsonPatchDoc, parent.workItemProjectName, "Task"));
+//                new Logger().Log("PairTasksToWorkitem", "Pairing task.");
+//            }
+//        );
+//        await Promise.all(workItemPromises).then(
+//            function () {
+//                var taakTaken = numberOfTasksHandled === 1 ? "taak" : "taken";
+//                alert(numberOfTasksHandled + " " + taakTaken + " toegevoegd aan PBI " + parent.id + " (" + parent.title + ").");
+//                waitcontrol.endWait();
+//                VSS.notifyLoadSucceeded();
+//            }
+//        );
+//        new Logger().Log("PairTasksToWorkitem", "Tasks pared.");
+//    }
+//    async AddTasksButtonClicked(obj) {
+//        var allowedToAdd = new WorkItemHelper(parentWorkItem).CheckAllowedToAddTaskToPbi();
+//        var taskCheckboxes = document.getElementsByName("taskcheckbox");
+//        var selectedCheckboxes = this.GetSelectedCheckboxes(taskCheckboxes);
+//        var tasksToPairWithWorkitem = this.CreateTasksToAdd(selectedCheckboxes);
+//        var jsonPatchDocs = this.CreateJsonPatchDocsForTasks(tasksToPairWithWorkitem);
+//        this.PairTasksToWorkitem(jsonPatchDocs, parentWorkItem);
+//        var team;
+//        await this.GetTeamInAction().then(function (t) { team = t; });
+//        await new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).LoadTasksOnMainWindow(team);
+//        new Logger().Log("AddTasksButtonClicked", null);
+//    }
+//    async GetTeamInAction(): Promise<string> {
+//        let retval: string
+//        let teamInAction = await vssDataService.getValue("team-in-action");
+//        new Logger().Log("GetTeamInAction", "Retrieved team in action value - " + teamInAction);
+//        retval = teamInAction as string;
+//        return retval;
+//    }
+//    async TeamModalOKButtonClicked() {
+//        let logger = new Logger();
+//        var teamsOnForm = document.getElementsByName("teamInpNaam");
+//        await vssDataService.getDocuments(TeamSettingsCollectionName).then(async function (docs) {
+//            // delete only teams setting. Not other settings
+//            var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
+//            // always 1 element for at least 1 iteration in Promises.all
+//            var teamDeletionPromises: IPromise<void>[] = [];
+//            //teamDeletionPromises.push(new Promise(function () { /*empty*/ }))
+//            var added = false;
+//            teamDocs.forEach(
+//                function (element) {
+//                    teamDeletionPromises.push(vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
+//                }
+//            );
+//            let witTs = new WitTsClass();
+//            Promise.all(teamDeletionPromises).then(async function (service) {
+//                if (!added) {
+//                    logger.Log("teamInpChangeHandler", "Doc verwijderd");
+//                    await witTs.AddTeamDocs(teamsOnForm, vssDataService);
+//                }
+//            });
+//            // refactor this
+//            if (!added) {
+//                logger.Log("teamInpChangeHandler", "Doc verwijderd");
+//                await witTs.AddTeamDocs(teamsOnForm, this.vssDataService);
+//            }
+//        });
+//        logger.Log("teamInpChangeHandler", "Finished");
+//        new ModalHelper().CloseTeamsModal();
+//        VSS.notifyLoadSucceeded();
+//    }
+//    TeamModalCancelButtonClicked() {
+//        new ModalHelper().CloseTeamsModal();
+//        new WitTsClass().ReloadHost();
+//    }
+//    TeamModalAddTeamButtonClicked(name: string) {
+//        new ModalHelper().AddNewTeamInputRow(name, defaultTeamName);
+//    }
+//    TeamModalRemoveTeamButtonClicked(clickedObj) {
+//        new ModalHelper().RemoveTeamInputRow(clickedObj);
+//    }
+//    RemoveDefaultText(focusedObject) {
+//        let obj = <HTMLInputElement>focusedObject
+//        if (obj.value === defaultTaskTitle || obj.value === defaultTeamName) {
+//            obj.value = "";
+//        }
+//        new Logger().Log("RemoveDefaultText", null);
+//    }
+//    TaskModalCancelButtonClicked() {
+//        new ModalHelper().CloseTasksModal();
+//        new WitTsClass().ReloadHost();
+//    }
+//    TaskModalAddTaskButtonClicked() {
+//        new ModalHelper().AddNewTaskInputRow(null, null, defaultTaskTitle);
+//    }
+//    TaskModalRemoveTaskButtonClicked(clickedObj) {
+//        new ModalHelper().RemoveTaskInputRow(clickedObj);
+//    }
+//    TaskModalOKButtonClicked() {
+//        var t = document.getElementsByClassName('taskInputRow');
+//        new WitTsClass().UpdateTasksDocs(t);
+//        new Logger().Log("TaskModalOKButtonClicked", null);
+//    }
+//    TeamSelectedHandler(obj) {
+//        selectedTeam = obj.value.toLowerCase(); //$(this).val();
+//        if (selectedTeam === undefined) {
+//            this.GetTeamInAction().then(function (v) { this.selectedTeam = v; });
+//        }
+//        let viewHelper = new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle);
+//        viewHelper.LoadTeamTasks(selectedTeam);
+//        viewHelper.EnableBtn("voegTaskToe");
+//        viewHelper.EnableBtn("taskDialogConfirmBtn");
+//        new Logger().Log("TeamSelectedHandler", null);
+//    }
+//    CheckUncheckAllClicked(obj) {
+//        new CheckBoxHelper(parentWorkItem).CheckUncheck(obj);
+//    }
+//}
 class PreLoader {
+    constructor(parentWorkItem, vssWiTrackingClient, vssDataService, TeamSettingsCollectionName, defaultTeamName, defaultTaskTitle, vssControls, vssStatusindicator, vssService) {
+        this.parentWorkItem = parentWorkItem;
+        this.vssWiTrackingClient = vssWiTrackingClient;
+        this.vssDataService = vssDataService;
+        this.TeamSettingsCollectionName = TeamSettingsCollectionName;
+        this.defaultTeamName = defaultTeamName;
+        this.defaultTaskTitle = defaultTaskTitle;
+        this.vssControls = vssControls;
+        this.vssStatusindicator = vssStatusindicator;
+        this.vssService = vssService;
+    }
     RegisterEvents() {
-        var eventHandlers = new EventHandlers();
+        var eventHandlers = new EventHandlers(this.parentWorkItem, this.vssWiTrackingClient, this.vssDataService, this.TeamSettingsCollectionName, this.defaultTeamName, this.defaultTaskTitle, this.vssControls, this.vssStatusindicator, this.vssService);
         new Logger().Log("PreLoader.RegisterEvents", "Registering events");
         $("#existing-wit-id").focus(eventHandlers.ExistingWitFieldFocussed);
         $("#existing-wit-id").keypress(function (e) { eventHandlers.MainPageEnterPressed(e); });
@@ -253,7 +261,7 @@ class PreLoader {
         $("#tasks-check-all-checkbox").click(function (e) { eventHandlers.CheckUncheckAllClicked(e.target); });
         //
         $("#teamDialogCancelBtn").click(eventHandlers.TeamModalCancelButtonClicked);
-        $("#teamDialogConfirmBtn").click(eventHandlers.TeamModalOKButtonClicked);
+        $("#teamDialogConfirmBtn").click(function (e) { eventHandlers.TeamModalOKButtonClicked(e, vssDataService, TeamSettingsCollectionName); });
         $("#voegTeamToe").click(function (e) { eventHandlers.TeamModalAddTeamButtonClicked(e.value); });
         $("#taskDialogCancelBtn").click(eventHandlers.TaskModalCancelButtonClicked);
         $("#taskDialogConfirmBtn").click(eventHandlers.TaskModalOKButtonClicked);
@@ -330,32 +338,31 @@ class PreLoader {
         return __awaiter(this, void 0, void 0, function* () {
             let logger = new Logger();
             logger.Log("LoadRequired()", "Begin of LoadRequired()");
-            VSS.ready(function () {
+            //VSS.ready(async function (){
+            yield VSS.require(["VSS/Controls", "VSS/Controls/StatusIndicator", "VSS/Service", "TFS/WorkItemTracking/RestClient", "VSS/Controls/Menus"], function (c, i, s, r, m) {
                 return __awaiter(this, void 0, void 0, function* () {
-                    yield VSS.require(["VSS/Controls", "VSS/Controls/StatusIndicator", "VSS/Service", "TFS/WorkItemTracking/RestClient", "VSS/Controls/Menus"], function (c, i, s, r, m) {
-                        return __awaiter(this, void 0, void 0, function* () {
-                            vssControls = c;
-                            vssStatusindicator = i;
-                            vssService = s;
-                            vssWiTrackingClient = r;
-                            vssMenus = m;
-                            logger.Log("LoadRequired", "Required vssControls: " + vssControls);
-                            logger.Log("LoadRequired", "Required vssStatusIndicator: " + vssStatusindicator);
-                            logger.Log("LoadRequired", "Required vssService: " + vssService);
-                            logger.Log("LoadRequired", "Required vssWiTrackingClient: " + vssWiTrackingClient);
-                            logger.Log("LoadRequired", "Required vssMenus: " + vssMenus);
-                            vssDataService = yield new ServiceHelper().GetDataService();
-                            yield new MenuBuilder(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).BuildMenu(vssControls, vssMenus);
-                            new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).CreateTeamSelectElementInitially();
-                            VSS.notifyLoadSucceeded();
-                        });
-                    });
+                    vssControls = c;
+                    vssStatusindicator = i;
+                    vssService = s;
+                    vssWiTrackingClient = r;
+                    vssMenus = m;
+                    logger.Log("LoadRequired", "Required vssControls: " + vssControls);
+                    logger.Log("LoadRequired", "Required vssStatusIndicator: " + vssStatusindicator);
+                    logger.Log("LoadRequired", "Required vssService: " + vssService);
+                    logger.Log("LoadRequired", "Required vssWiTrackingClient: " + vssWiTrackingClient);
+                    logger.Log("LoadRequired", "Required vssMenus: " + vssMenus);
+                    vssDataService = yield new ServiceHelper().GetDataService();
+                    yield new MenuBuilder(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).BuildMenu(vssControls, vssMenus);
+                    new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).CreateTeamSelectElementInitially();
+                    eventHandlers = new EventHandlers(parentWorkItem, vssWiTrackingClient, vssDataService, TeamSettingsCollectionName, defaultTeamName, defaultTaskTitle, vssControls, vssStatusindicator, vssService);
+                    VSS.notifyLoadSucceeded();
                 });
             });
+            //});
         });
     }
 }
-class WitTsClass {
+export class WitTsClass {
     UpdateTasksDocs(tasks) {
         return __awaiter(this, void 0, void 0, function* () {
             vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
@@ -451,7 +458,9 @@ class WitTsClass {
     }
 }
 window.onload = function () {
-    let preloader = new PreLoader();
-    preloader.LoadPreConditions(window);
-    preloader.RegisterEvents();
+    return __awaiter(this, void 0, void 0, function* () {
+        let preloader = new PreLoader(parentWorkItem, vssWiTrackingClient, vssDataService, TeamSettingsCollectionName, defaultTeamName, defaultTaskTitle, vssControls, vssStatusindicator, vssService);
+        yield preloader.LoadPreConditions(window);
+        yield preloader.RegisterEvents();
+    });
 };

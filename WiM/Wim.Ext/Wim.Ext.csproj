@@ -178,6 +178,7 @@
     <TypeScriptCompile Include="ts\Enm_JsonPatchOperations.ts" />
     <TypeScriptCompile Include="ts\Enm_WorkitemFields.ts" />
     <TypeScriptCompile Include="ts\Enm_WorkitemPaths.ts" />
+    <TypeScriptCompile Include="ts\EventHandlers.ts" />
     <TypeScriptCompile Include="ts\JsonPatchDoc.ts" />
     <TypeScriptCompile Include="ts\Logger.ts" />
     <TypeScriptCompile Include="ts\MenuBuilder.ts" />
