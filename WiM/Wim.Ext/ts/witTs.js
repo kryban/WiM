@@ -24,6 +24,7 @@ import { MenuBuilder } from "./MenuBuilder.js";
 const TeamSettingsCollectionName = "WimCollection";
 const defaultTaskTitle = "Taak titel";
 const defaultTeamName = "Team naam";
+// to be replaced by VssWorkers
 var parentWorkItem;
 var witClient;
 var selectedTeam;
@@ -33,6 +34,7 @@ var vssService;
 var vssWiTrackingClient;
 var vssMenus;
 var vssDataService;
+var vssWorkers;
 class EventHandlers {
     ExistingWitFieldFocussed() {
         var field = document.getElementById("existing-wit-id");

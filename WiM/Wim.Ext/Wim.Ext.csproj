@@ -184,6 +184,7 @@
     <TypeScriptCompile Include="ts\ModalHelper.ts" />
     <TypeScriptCompile Include="ts\ServiceHelper.ts" />
     <TypeScriptCompile Include="ts\ViewHelper.ts" />
+    <TypeScriptCompile Include="ts\VssWorkers.ts" />
     <TypeScriptCompile Include="ts\WimWorkItem.ts" />
     <TypeScriptCompile Include="ts\witTs.ts" />
     <TypeScriptCompile Include="ts\WorkItemHelper.ts" />

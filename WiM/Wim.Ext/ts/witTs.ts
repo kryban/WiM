@@ -20,10 +20,13 @@ import { ButtonHelper } from "./ButtonHelper.js"
 import { WorkItemHelper } from "./workitemhelper.js";
 import { ViewHelper } from "./ViewHelper.js";
 import { MenuBuilder } from "./MenuBuilder.js";
+import { VssWorkers } from "./VssWorkers.js";
 
 const TeamSettingsCollectionName: string = "WimCollection";
 const defaultTaskTitle: string = "Taak titel";
 const defaultTeamName: string = "Team naam";
+
+// to be replaced by VssWorkers
 var parentWorkItem: WimWorkItem;
 var witClient: WorkItemTrackingHttpClient4_1;
 var selectedTeam: string;
@@ -33,6 +36,8 @@ var vssService;
 var vssWiTrackingClient;
 var vssMenus;
 var vssDataService: IExtensionDataService;
+
+var vssWorkers: VssWorkers;
 
 class EventHandlers
 {
