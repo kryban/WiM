@@ -21,6 +21,7 @@ import { WorkItemHelper } from "./workitemhelper.js";
 import { ViewHelper } from "./ViewHelper.js";
 import { MenuBuilder } from "./MenuBuilder.js";
 import { VssWorkers } from "./VssWorkers.js";
+import { EventHandlerRegister } from "./EventHandlerRegister.js";
 
 const TeamSettingsCollectionName: string = "WimCollection";
 const defaultTaskTitle: string = "Taak titel";
@@ -39,7 +40,7 @@ var vssDataService: IExtensionDataService;
 
 var vssWorkers: VssWorkers;
 
-class EventHandlers
+export class EventHandlers
 {
     ExistingWitFieldFocussed() {
         var field = document.getElementById("existing-wit-id") as HTMLInputElement;
@@ -308,36 +309,7 @@ class EventHandlers
 class PreLoader
 {
     RegisterEvents() {
-        var eventHandlers: EventHandlers = new EventHandlers();
-        new Logger().Log("PreLoader.RegisterEvents", "Registering events");
-
-        $("#existing-wit-id").focus(eventHandlers.ExistingWitFieldFocussed);
-        $("#existing-wit-id").keypress(function (e) { eventHandlers.MainPageEnterPressed(e) });
-        $("#existing-wit-button").click(function (e) { eventHandlers.OpenButtonClicked(e) });
-        $("#addTasksButton").click(function (e) { eventHandlers.AddTasksButtonClicked(e) });
-
-        $("#tasks-check-all-checkbox").click(function (e) { eventHandlers.CheckUncheckAllClicked(e.target) });
-        //
-
-        $("#teamDialogCancelBtn").click(eventHandlers.TeamModalCancelButtonClicked);
-        $("#teamDialogConfirmBtn").click(eventHandlers.TeamModalOKButtonClicked);
-        $("#voegTeamToe").click(function (e) { eventHandlers.TeamModalAddTeamButtonClicked((e as unknown as HTMLInputElement).value) });
-
-        $("#taskDialogCancelBtn").click(eventHandlers.TaskModalCancelButtonClicked);
-        $("#taskDialogConfirmBtn").click(eventHandlers.TaskModalOKButtonClicked);
-        $("#voegTaskToe").click(eventHandlers.TaskModalAddTaskButtonClicked);
-
-        // event delegation because elements are created dynamically 
-        $(".input_fields_container_part").on("click", ".remove_field", function (e) { eventHandlers.TeamModalRemoveTeamButtonClicked(e.target) });
-        $(".input_fields_container_part").on("focus", ".teamNaamInput", function (e) { eventHandlers.RemoveDefaultText(e.target) });
-        $(".tasks_input_fields_container_part").on("click", ".remove_task_field", function (e) { eventHandlers.TaskModalRemoveTaskButtonClicked(e.target) });
-        $(".tasks_input_fields_container_part").on("focus", ".taskNaamInput", function (e) { eventHandlers.RemoveDefaultText(e.target) });
-
-        $(".teamSelect").change(function (e) { eventHandlers.TeamSelectedHandler(e.target) });
-
-        new Logger().Log("PreLoader.RegisterEvents", "All events registered");
-
-
+        new EventHandlerRegister().RegisterEvents();
     }
 
     FindCollection() {
