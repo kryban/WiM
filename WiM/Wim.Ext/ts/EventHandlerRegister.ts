@@ -26,7 +26,7 @@ export class EventHandlerRegister
         $("#voegTeamToe").click(function (e) { eventHandlers.TeamModalAddTeamButtonClicked((e as unknown as HTMLInputElement).value) });
 
         $("#taskDialogCancelBtn").click(eventHandlers.TaskModalCancelButtonClicked);
-        $("#taskDialogConfirmBtn").click(eventHandlers.TaskModalOKButtonClicked);
+        $("#taskDialogConfirmBtn").click(function (e) { eventHandlers.TaskModalOKButtonClicked() });
         $("#voegTaskToe").click(eventHandlers.TaskModalAddTaskButtonClicked);
 
         // event delegation because elements are created dynamically 
