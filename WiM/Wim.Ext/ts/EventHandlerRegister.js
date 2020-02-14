@@ -1,8 +1,11 @@
 import { Logger } from "./Logger.js";
 import { EventHandlers } from "./witTs.js";
 export class EventHandlerRegister {
+    constructor(vssWorkers) {
+        this.vssWorkers = vssWorkers;
+    }
     RegisterEvents() {
-        var eventHandlers = new EventHandlers();
+        var eventHandlers = new EventHandlers(this.vssWorkers);
         new Logger().Log("PreLoader.RegisterEvents", "Registering events");
         $("#existing-wit-id").focus(eventHandlers.ExistingWitFieldFocussed);
         $("#existing-wit-id").keypress(function (e) { eventHandlers.MainPageEnterPressed(e); });
@@ -10,7 +13,7 @@ export class EventHandlerRegister {
         $("#addTasksButton").click(function (e) { eventHandlers.AddTasksButtonClicked(e); });
         $("#tasks-check-all-checkbox").click(function (e) { eventHandlers.CheckUncheckAllClicked(e.target); });
         $("#teamDialogCancelBtn").click(eventHandlers.TeamModalCancelButtonClicked);
-        $("#teamDialogConfirmBtn").click(eventHandlers.TeamModalOKButtonClicked);
+        $("#teamDialogConfirmBtn").click(function (e) { eventHandlers.TeamModalOKButtonClicked(); });
         $("#voegTeamToe").click(function (e) { eventHandlers.TeamModalAddTeamButtonClicked(e.value); });
         $("#taskDialogCancelBtn").click(eventHandlers.TaskModalCancelButtonClicked);
         $("#taskDialogConfirmBtn").click(eventHandlers.TaskModalOKButtonClicked);

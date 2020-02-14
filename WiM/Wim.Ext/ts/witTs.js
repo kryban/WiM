@@ -21,22 +21,26 @@ import { ButtonHelper } from "./ButtonHelper.js";
 import { WorkItemHelper } from "./workitemhelper.js";
 import { ViewHelper } from "./ViewHelper.js";
 import { MenuBuilder } from "./MenuBuilder.js";
+import { VssWorkers } from "./VssWorkers.js";
 import { EventHandlerRegister } from "./EventHandlerRegister.js";
 const TeamSettingsCollectionName = "WimCollection";
 const defaultTaskTitle = "Taak titel";
 const defaultTeamName = "Team naam";
 // to be replaced by VssWorkers
-var parentWorkItem;
-var witClient;
-var selectedTeam;
-var vssControls;
-var vssStatusindicator;
-var vssService;
-var vssWiTrackingClient;
-var vssMenus;
-var vssDataService;
+//var parentWorkItem: WimWorkItem;
+//var witClient: WorkItemTrackingHttpClient4_1;
+//var selectedTeam: string;
+//var vssControls: any;
+//var vssStatusindicator;
+//var vssService;
+//var vssWiTrackingClient;
+//var vssMenus;
+//var vssDataService: IExtensionDataService;
 var vssWorkers;
 export class EventHandlers {
+    constructor(vssWorkers) {
+        this.vssWorkers = vssWorkers;
+    }
     ExistingWitFieldFocussed() {
         var field = document.getElementById("existing-wit-id");
         if (field.value === "workitem ID") {
@@ -45,23 +49,24 @@ export class EventHandlers {
     }
     OpenButtonClicked(obj) {
         return __awaiter(this, void 0, void 0, function* () {
-            parentWorkItem = null;
-            witClient = vssWiTrackingClient.getClient();
+            new Logger().Log("this.vssWorkers.vssDataService ok", "" + this.vssWorkers);
+            this.vssWorkers.parentWorkItem = null;
+            this.vssWorkers.witClient = this.vssWorkers.vssWiTrackingClient.getClient();
             var witId = parseInt(document.getElementById("existing-wit-id").value);
             try {
-                yield witClient.getWorkItem(witId) // when only specific fields required , ["System.Title", "System.WorkItemType"])
-                    .then(function (workitemResult) {
+                yield this.vssWorkers.witClient.getWorkItem(witId) // when only specific fields required , ["System.Title", "System.WorkItemType"])
+                    .then((workitemResult) => {
                     new Logger().Log("workitemResult", "new");
-                    parentWorkItem = new WimWorkItem(workitemResult, null);
-                    new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).ShowSelectedWorkitemOnPage(parentWorkItem);
+                    this.vssWorkers.parentWorkItem = new WimWorkItem(workitemResult, null);
+                    new ViewHelper(this.vssWorkers.vssDataService, TeamSettingsCollectionName, this.vssWorkers.parentWorkItem, defaultTeamName, defaultTaskTitle).ShowSelectedWorkitemOnPage(this.vssWorkers.parentWorkItem);
                 });
-                if (parentWorkItem === undefined || parentWorkItem === null) {
-                    new WorkItemHelper(parentWorkItem).WorkItemNietGevonden();
+                if (this.vssWorkers.parentWorkItem === undefined || this.vssWorkers.parentWorkItem === null) {
+                    new WorkItemHelper(this.vssWorkers.parentWorkItem).WorkItemNietGevonden();
                 }
             }
             catch (e) {
                 let exc = e;
-                new WorkItemHelper(parentWorkItem).WorkItemNietGevonden(e);
+                new WorkItemHelper(this.vssWorkers.parentWorkItem).WorkItemNietGevonden(exc);
             }
         });
     }
@@ -84,13 +89,13 @@ export class EventHandlers {
     }
     CreateTasksToAdd(selectedCheckboxes) {
         var retval = [];
-        selectedCheckboxes.forEach(function (element) {
-            var task = new WimWorkItem(null, parentWorkItem);
+        selectedCheckboxes.forEach((element) => {
+            var task = new WimWorkItem(null, this.vssWorkers.parentWorkItem);
             task.title = element.title;
             task.workItemType = "Task";
-            task.workItemProjectName = parentWorkItem.workItemProjectName;
-            task.workItemIterationPath = parentWorkItem.workItemIterationPath;
-            task.workItemAreaPath = parentWorkItem.workItemAreaPath;
+            task.workItemProjectName = this.vssWorkers.parentWorkItem.workItemProjectName;
+            task.workItemIterationPath = this.vssWorkers.parentWorkItem.workItemIterationPath;
+            task.workItemAreaPath = this.vssWorkers.parentWorkItem.workItemAreaPath;
             task.workItemTaskActivity = element.activityType;
             retval.push(task);
         });
@@ -99,8 +104,8 @@ export class EventHandlers {
     }
     CreateJsonPatchDocsForTasks(tasks) {
         var retval = [];
-        tasks.forEach(function (element) {
-            retval.push(new JsonPatchDoc(element, parentWorkItem).Create() // this.jsonPatchDoc(element).returnPatchDoc
+        tasks.forEach((element) => {
+            retval.push(new JsonPatchDoc(element, this.vssWorkers.parentWorkItem).Create() // this.jsonPatchDoc(element).returnPatchDoc
             );
         });
         new Logger().Log("CreateJsonPatchDocsForTasks", null);
@@ -119,8 +124,8 @@ export class EventHandlers {
             //    console.this.log("cancelled");
             //}
             };
-            var waitcontrol = yield vssControls.create(vssStatusindicator.WaitControl, container, options);
-            var client = yield vssService.getCollectionClient(vssWiTrackingClient.WorkItemTrackingHttpClient);
+            var waitcontrol = yield this.vssWorkers.vssControls.create(this.vssWorkers.vssStatusindicator.WaitControl, container, options);
+            var client = yield this.vssWorkers.vssService.getCollectionClient(this.vssWorkers.vssWiTrackingClient.WorkItemTrackingHttpClient);
             //var client = vssService.getCollectionClient(VssWitClient.WorkItemTrackingHttpClient);
             waitcontrol.startWait();
             waitcontrol.setMessage("waiter waits.");
@@ -141,22 +146,22 @@ export class EventHandlers {
     }
     AddTasksButtonClicked(obj) {
         return __awaiter(this, void 0, void 0, function* () {
-            var allowedToAdd = new WorkItemHelper(parentWorkItem).CheckAllowedToAddTaskToPbi();
+            var allowedToAdd = new WorkItemHelper(this.vssWorkers.parentWorkItem).CheckAllowedToAddTaskToPbi();
             var taskCheckboxes = document.getElementsByName("taskcheckbox");
             var selectedCheckboxes = this.GetSelectedCheckboxes(taskCheckboxes);
             var tasksToPairWithWorkitem = this.CreateTasksToAdd(selectedCheckboxes);
             var jsonPatchDocs = this.CreateJsonPatchDocsForTasks(tasksToPairWithWorkitem);
-            this.PairTasksToWorkitem(jsonPatchDocs, parentWorkItem);
+            this.PairTasksToWorkitem(jsonPatchDocs, this.vssWorkers.parentWorkItem);
             var team;
             yield this.GetTeamInAction().then(function (t) { team = t; });
-            yield new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).LoadTasksOnMainWindow(team);
+            yield new ViewHelper(this.vssWorkers.vssDataService, TeamSettingsCollectionName, this.vssWorkers.parentWorkItem, defaultTeamName, defaultTaskTitle).LoadTasksOnMainWindow(team);
             new Logger().Log("AddTasksButtonClicked", null);
         });
     }
     GetTeamInAction() {
         return __awaiter(this, void 0, void 0, function* () {
             let retval;
-            let teamInAction = yield vssDataService.getValue("team-in-action");
+            let teamInAction = yield this.vssWorkers.vssDataService.getValue("team-in-action");
             new Logger().Log("GetTeamInAction", "Retrieved team in action value - " + teamInAction);
             retval = teamInAction;
             return retval;
@@ -165,42 +170,42 @@ export class EventHandlers {
     TeamModalOKButtonClicked() {
         return __awaiter(this, void 0, void 0, function* () {
             let logger = new Logger();
+            let witTs = new WitTsClass(this.vssWorkers);
             var teamsOnForm = document.getElementsByName("teamInpNaam");
-            yield vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    // delete only teams setting. Not other settings
-                    var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
-                    // always 1 element for at least 1 iteration in Promises.all
-                    var teamDeletionPromises = [];
-                    //teamDeletionPromises.push(new Promise(function () { /*empty*/ }))
-                    var added = false;
-                    teamDocs.forEach(function (element) {
-                        teamDeletionPromises.push(vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
-                    });
-                    let witTs = new WitTsClass();
-                    Promise.all(teamDeletionPromises).then(function (service) {
-                        return __awaiter(this, void 0, void 0, function* () {
-                            if (!added) {
-                                logger.Log("teamInpChangeHandler", "Doc verwijderd");
-                                yield witTs.AddTeamDocs(teamsOnForm, vssDataService);
-                            }
-                        });
-                    });
-                    // refactor this
+            logger.Log("this.vssWorkers.vssDataService team ok", "" + this.vssWorkers);
+            yield this.vssWorkers.vssDataService.getDocuments(TeamSettingsCollectionName).then((docs) => __awaiter(this, void 0, void 0, function* () {
+                // delete only teams setting. Not other settings
+                var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
+                // always 1 element for at least 1 iteration in Promises.all
+                var teamDeletionPromises = [];
+                //teamDeletionPromises.push(new Promise(function () { /*empty*/ }))
+                var added = false;
+                teamDocs.forEach((element) => {
+                    teamDeletionPromises.push(this.vssWorkers.vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
+                });
+                Promise.all(teamDeletionPromises).then((service) => __awaiter(this, void 0, void 0, function* () {
                     if (!added) {
                         logger.Log("teamInpChangeHandler", "Doc verwijderd");
-                        yield witTs.AddTeamDocs(teamsOnForm, this.vssDataService);
+                        yield witTs.AddTeamDocs(teamsOnForm);
+                        added = true;
                     }
-                });
-            });
+                }));
+                // refactor this
+                if (!added) {
+                    logger.Log("teamInpChangeHandler", "Doc verwijderd");
+                    yield witTs.AddTeamDocs(teamsOnForm);
+                    added = true;
+                }
+            }));
             logger.Log("teamInpChangeHandler", "Finished");
             new ModalHelper().CloseTeamsModal();
+            witTs.ReloadHost();
             VSS.notifyLoadSucceeded();
         });
     }
     TeamModalCancelButtonClicked() {
         new ModalHelper().CloseTeamsModal();
-        new WitTsClass().ReloadHost();
+        new WitTsClass(this.vssWorkers).ReloadHost();
     }
     TeamModalAddTeamButtonClicked(name) {
         new ModalHelper().AddNewTeamInputRow(name, defaultTeamName);
@@ -217,7 +222,7 @@ export class EventHandlers {
     }
     TaskModalCancelButtonClicked() {
         new ModalHelper().CloseTasksModal();
-        new WitTsClass().ReloadHost();
+        new WitTsClass(this.vssWorkers).ReloadHost();
     }
     TaskModalAddTaskButtonClicked() {
         new ModalHelper().AddNewTaskInputRow(null, null, defaultTaskTitle);
@@ -227,53 +232,53 @@ export class EventHandlers {
     }
     TaskModalOKButtonClicked() {
         var t = document.getElementsByClassName('taskInputRow');
-        new WitTsClass().UpdateTasksDocs(t);
+        new WitTsClass(this.vssWorkers).UpdateTasksDocs(t);
         new Logger().Log("TaskModalOKButtonClicked", null);
     }
     TeamSelectedHandler(obj) {
-        selectedTeam = obj.value.toLowerCase(); //$(this).val();
-        if (selectedTeam === undefined) {
-            this.GetTeamInAction().then(function (v) { this.selectedTeam = v; });
+        this.vssWorkers.selectedTeam = obj.value.toLowerCase(); //$(this).val();
+        if (this.vssWorkers.selectedTeam === undefined) {
+            this.GetTeamInAction().then((v) => { this.vssWorkers.selectedTeam = v; });
         }
-        let viewHelper = new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle);
-        viewHelper.LoadTeamTasks(selectedTeam);
+        let viewHelper = new ViewHelper(this.vssWorkers.vssDataService, TeamSettingsCollectionName, this.vssWorkers.parentWorkItem, defaultTeamName, defaultTaskTitle);
+        viewHelper.LoadTeamTasks(this.vssWorkers.selectedTeam);
         viewHelper.EnableBtn("voegTaskToe");
         viewHelper.EnableBtn("taskDialogConfirmBtn");
         new Logger().Log("TeamSelectedHandler", null);
     }
     CheckUncheckAllClicked(obj) {
-        new CheckBoxHelper(parentWorkItem).CheckUncheck(obj);
+        new CheckBoxHelper(this.vssWorkers.parentWorkItem).CheckUncheck(obj);
     }
 }
 class PreLoader {
-    RegisterEvents() {
-        new EventHandlerRegister().RegisterEvents();
+    constructor(vssWorkers) {
+        this.vssWorkers = vssWorkers;
     }
     FindCollection() {
         let logger = new Logger();
-        logger.Log("FindCollection", "3: " + vssDataService);
-        vssDataService.getDocuments(TeamSettingsCollectionName)
-            .then(function (docs) {
+        logger.Log("FindCollection", "3: " + this.vssWorkers.vssDataService);
+        this.vssWorkers.vssDataService.getDocuments(TeamSettingsCollectionName)
+            .then((docs) => {
             if (docs.length < 1) {
                 this.CreateFirstTimeCollection();
             }
-            this.log("FindCollection", "Number of docs found: " + docs.length);
+            logger.Log("FindCollection", "Number of docs found: " + docs.length);
         }, // on reject
-        function (err) {
+        (err) => {
             this.CreateFirstTimeCollection();
-            this.log("FindCollection", "Nothing found. Default Created.");
+            logger.Log("FindCollection", "Nothing found. Default Created.");
         });
         logger.Log("FindCollection", "Found");
     }
     CreateFirstTimeCollection() {
         let logger = new Logger();
-        logger.Log("CreateFirstTimeCollection", "4: " + vssDataService);
+        logger.Log("CreateFirstTimeCollection", "4: " + this.vssWorkers.vssDataService);
         var newDoc = {
             type: "team",
             text: "DefaultTeam"
         };
-        vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
-            this.log("CreateFirstTimeCollection", "Default document created: " + doc.text);
+        this.vssWorkers.vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
+            logger.Log("CreateFirstTimeCollection", "Default document created: " + doc.text);
         });
         logger.Log("CreateFirstTimeCollection", "Done");
     }
@@ -285,94 +290,89 @@ class PreLoader {
             this.CreateFirstTimeCollection();
         }
     }
-    LoadPreState() {
-        let modalHelper = new ModalHelper();
-        if (document.readyState == "complete") {
-            var name = window.location.pathname.split('/').slice(-1);
-            new CheckBoxHelper(parentWorkItem).DisableCheckBoxes();
-            new ButtonHelper(parentWorkItem).DisableAddButton();
-            //this.registerTasksModelButtonEvents(modalHelper);
-            //this.registerTeamsModelButtonEvents(modalHelper);
-            this.LoadRequired();
-            new Logger().Log("window.onload", "DocumentReady:" + name);
-        }
-    }
+    //LoadPreState() {
+    //    let modalHelper: ModalHelper = new ModalHelper();
+    //    if (document.readyState == "complete") {
+    //        var name = window.location.pathname.split('/').slice(-1);
+    //        new CheckBoxHelper(parentWorkItem).DisableCheckBoxes();
+    //        new ButtonHelper(parentWorkItem).DisableAddButton();
+    //        //this.registerTasksModelButtonEvents(modalHelper);
+    //        //this.registerTeamsModelButtonEvents(modalHelper);
+    //        this.LoadRequired();
+    //        new Logger().Log("window.onload", "DocumentReady:" + name);
+    //    }
+    //}
     LoadPreConditions(window) {
         return __awaiter(this, void 0, void 0, function* () {
-            var name = window.location.pathname.split('/').slice(-1);
-            let modalHelper = new ModalHelper();
-            new CheckBoxHelper(parentWorkItem).DisableCheckBoxes();
-            new ButtonHelper(parentWorkItem).DisableAddButton();
-            //this.registerTasksModelButtonEvents(modalHelper);
-            //this.registerTeamsModelButtonEvents(modalHelper);
             yield this.LoadRequired();
+            var name = window.location.pathname.split('/').slice(-1);
+            new CheckBoxHelper(this.vssWorkers.parentWorkItem).DisableCheckBoxes();
+            new ButtonHelper(this.vssWorkers.parentWorkItem).DisableAddButton();
+            new EventHandlerRegister(this.vssWorkers).RegisterEvents();
             new Logger().Log("window.onload", "DocumentReady:" + name);
         });
     }
     LoadRequired() {
         return __awaiter(this, void 0, void 0, function* () {
             let logger = new Logger();
+            this.vssWorkers = new VssWorkers();
             logger.Log("LoadRequired()", "Begin of LoadRequired()");
-            VSS.ready(function () {
-                return __awaiter(this, void 0, void 0, function* () {
-                    yield VSS.require(["VSS/Controls", "VSS/Controls/StatusIndicator", "VSS/Service", "TFS/WorkItemTracking/RestClient", "VSS/Controls/Menus"], function (c, i, s, r, m) {
-                        return __awaiter(this, void 0, void 0, function* () {
-                            vssControls = c;
-                            vssStatusindicator = i;
-                            vssService = s;
-                            vssWiTrackingClient = r;
-                            vssMenus = m;
-                            logger.Log("LoadRequired", "Required vssControls: " + vssControls);
-                            logger.Log("LoadRequired", "Required vssStatusIndicator: " + vssStatusindicator);
-                            logger.Log("LoadRequired", "Required vssService: " + vssService);
-                            logger.Log("LoadRequired", "Required vssWiTrackingClient: " + vssWiTrackingClient);
-                            logger.Log("LoadRequired", "Required vssMenus: " + vssMenus);
-                            vssDataService = yield new ServiceHelper().GetDataService();
-                            yield new MenuBuilder(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).BuildMenu(vssControls, vssMenus);
-                            new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).CreateTeamSelectElementInitially();
-                            VSS.notifyLoadSucceeded();
-                        });
-                    });
-                });
-            });
+            VSS.ready(() => __awaiter(this, void 0, void 0, function* () {
+                yield VSS.require(["VSS/Controls", "VSS/Controls/StatusIndicator", "VSS/Service", "TFS/WorkItemTracking/RestClient", "VSS/Controls/Menus"], (c, i, s, r, m) => __awaiter(this, void 0, void 0, function* () {
+                    this.vssWorkers.vssControls = c;
+                    this.vssWorkers.vssStatusindicator = i;
+                    this.vssWorkers.vssService = s;
+                    this.vssWorkers.vssWiTrackingClient = r;
+                    this.vssWorkers.vssMenus = m;
+                    logger.Log("LoadRequired", "Required vssControls: " + this.vssWorkers.vssControls);
+                    logger.Log("LoadRequired", "Required vssStatusIndicator: " + this.vssWorkers.vssStatusindicator);
+                    logger.Log("LoadRequired", "Required vssService: " + this.vssWorkers.vssService);
+                    logger.Log("LoadRequired", "Required vssWiTrackingClient: " + this.vssWorkers.vssWiTrackingClient);
+                    logger.Log("LoadRequired", "Required vssMenus: " + this.vssWorkers.vssMenus);
+                    this.vssWorkers.vssDataService = yield new ServiceHelper().GetDataService();
+                    yield new MenuBuilder(this.vssWorkers.vssDataService, TeamSettingsCollectionName, this.vssWorkers.parentWorkItem, defaultTeamName, defaultTaskTitle)
+                        .BuildMenu(this.vssWorkers.vssControls, this.vssWorkers.vssMenus);
+                    new ViewHelper(this.vssWorkers.vssDataService, TeamSettingsCollectionName, this.vssWorkers.parentWorkItem, defaultTeamName, defaultTaskTitle).CreateTeamSelectElementInitially();
+                    VSS.notifyLoadSucceeded();
+                }));
+            }));
         });
     }
 }
 class WitTsClass {
+    constructor(vssWorkers) {
+        this.vssWorkers = vssWorkers;
+    }
     UpdateTasksDocs(tasks) {
         return __awaiter(this, void 0, void 0, function* () {
-            vssDataService.getDocuments(TeamSettingsCollectionName).then(function (docs) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    // delete only tasks setting. Not other settings
-                    var taskDocs = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
-                    let logger = new Logger();
-                    logger.Log("UpdateTasksDocs", "Emptying task settings." + taskDocs.length + " settings will be removed.");
-                    var added = false;
-                    var deletionPromises = [];
-                    //deletionPromises.push(new Promise(function () { /*empty*/ }));
-                    taskDocs.forEach(function (element) {
-                        deletionPromises.push(vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
-                        logger.Log("UpdateTasksDocs", "Created promise for deletion");
-                    });
-                    let curr = this;
-                    yield Promise.all(deletionPromises).then(function (s) {
-                        return __awaiter(this, void 0, void 0, function* () {
-                            if (!added) {
-                                new WitTsClass().AddTasksDocs(tasks, selectedTeam);
-                                added = true;
-                            }
-                            logger.Log("UpdateTasksDocs", "Tasks updated");
-                        });
-                    });
-                    // todo: refactor dit is nodig, zodat als er niets te verwijderen valt (1e opgevoerde regel bij nieuwe team)
-                    // dan toch nog toevoegingen uitgevoerd worden
+            this.vssWorkers.vssDataService.getDocuments(TeamSettingsCollectionName).then((docs) => __awaiter(this, void 0, void 0, function* () {
+                // delete only tasks setting. Not other settings
+                var taskDocs = docs.filter((d) => { return d.type === 'task' && d.owner === this.vssWorkers.selectedTeam; });
+                let logger = new Logger();
+                logger.Log("UpdateTasksDocs", "Emptying task settings." + taskDocs.length + " settings will be removed.");
+                var added = false;
+                var deletionPromises = [];
+                //deletionPromises.push(new Promise(function () { /*empty*/ }));
+                taskDocs.forEach((element) => {
+                    deletionPromises.push(this.vssWorkers.vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
+                    logger.Log("UpdateTasksDocs", "Created promise for deletion");
+                });
+                let curr = this;
+                yield Promise.all(deletionPromises).then((s) => __awaiter(this, void 0, void 0, function* () {
                     if (!added) {
-                        yield curr.AddTasksDocs(tasks, selectedTeam);
+                        new WitTsClass(this.vssWorkers).AddTasksDocs(tasks, this.vssWorkers.selectedTeam);
                         added = true;
                     }
-                    logger.Log("UpdateTasksDocs", "adding new doc "); // + newDoc.taskId);
-                });
-            });
+                    logger.Log("UpdateTasksDocs", "Tasks updated");
+                }));
+                // todo: refactor dit is nodig, zodat als er niets te verwijderen valt (1e opgevoerde regel bij nieuwe team)
+                // dan toch nog toevoegingen uitgevoerd worden
+                if (!added) {
+                    yield curr.AddTasksDocs(tasks, this.vssWorkers.selectedTeam);
+                    added = true;
+                }
+                logger.Log("UpdateTasksDocs", "adding new doc "); // + newDoc.taskId);
+            }));
             VSS.notifyLoadSucceeded();
         });
     }
@@ -391,7 +391,7 @@ class WitTsClass {
                     taskid: taskId,
                     activityType: taskActivityType
                 };
-                yield vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
+                yield this.vssWorkers.vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
                     new Logger().Log("AddTasksDocs", "created document : " + doc.text);
                 });
                 new ModalHelper().CloseTasksModal();
@@ -399,7 +399,7 @@ class WitTsClass {
             }
         });
     }
-    AddTeamDocs(teamsCollection, dataService) {
+    AddTeamDocs(teamsCollection) {
         let logger = new Logger();
         for (var i = 0; i < teamsCollection.length; i++) {
             var teamnaam = teamsCollection[i].value;
@@ -408,12 +408,12 @@ class WitTsClass {
                 type: "team",
                 text: teamnaam
             };
-            dataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
+            this.vssWorkers.vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
                 // Even if no ID was passed to createDocument, one will be generated
                 this.log("AddTeamDocs", doc.text);
             });
             logger.Log("AddTeamDocs", "Team Setting Added: " + teamnaam);
-            this.ReloadHost();
+            //this.ReloadHost();
         }
     }
     ReloadHost() {
@@ -424,9 +424,9 @@ class WitTsClass {
         new Logger().Log("reloadHost", null);
     }
     GetWorkItemTypes(callback) {
-        VSS.require(["TFS/WorkItemTracking/RestClient"], function (_restWitClient) {
-            witClient = _restWitClient.getClient();
-            witClient.getWorkItemTypes(VSS.getWebContext().project.name)
+        VSS.require(["TFS/WorkItemTracking/RestClient"], (_restWitClient) => {
+            this.vssWorkers.witClient = _restWitClient.getClient();
+            this.vssWorkers.witClient.getWorkItemTypes(VSS.getWebContext().project.name)
                 .then(function () {
                 callback();
             });
@@ -434,7 +434,6 @@ class WitTsClass {
     }
 }
 window.onload = function () {
-    let preloader = new PreLoader();
+    let preloader = new PreLoader(vssWorkers);
     preloader.LoadPreConditions(window);
-    preloader.RegisterEvents();
 };

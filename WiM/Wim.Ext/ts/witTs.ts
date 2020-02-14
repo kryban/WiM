@@ -28,20 +28,26 @@ const defaultTaskTitle: string = "Taak titel";
 const defaultTeamName: string = "Team naam";
 
 // to be replaced by VssWorkers
-var parentWorkItem: WimWorkItem;
-var witClient: WorkItemTrackingHttpClient4_1;
-var selectedTeam: string;
-var vssControls: any;
-var vssStatusindicator;
-var vssService;
-var vssWiTrackingClient;
-var vssMenus;
-var vssDataService: IExtensionDataService;
+//var parentWorkItem: WimWorkItem;
+//var witClient: WorkItemTrackingHttpClient4_1;
+//var selectedTeam: string;
+//var vssControls: any;
+//var vssStatusindicator;
+//var vssService;
+//var vssWiTrackingClient;
+//var vssMenus;
+//var vssDataService: IExtensionDataService;
 
 var vssWorkers: VssWorkers;
 
 export class EventHandlers
 {
+    vssWorkers: VssWorkers;
+
+    constructor(vssWorkers: VssWorkers) {
+        this.vssWorkers = vssWorkers;
+    }
+
     ExistingWitFieldFocussed() {
         var field = document.getElementById("existing-wit-id") as HTMLInputElement;
         if (field.value === "workitem ID") {
@@ -51,26 +57,28 @@ export class EventHandlers
 
     async OpenButtonClicked(obj) {
 
-        parentWorkItem = null;
-        witClient = vssWiTrackingClient.getClient();
+        new Logger().Log("this.vssWorkers.vssDataService ok", "" + this.vssWorkers);
+        this.vssWorkers.parentWorkItem = null;
+        this.vssWorkers.witClient = this.vssWorkers.vssWiTrackingClient.getClient();
 
         var witId = parseInt((document.getElementById("existing-wit-id") as HTMLInputElement).value);
 
         try {
-            await witClient.getWorkItem(witId)// when only specific fields required , ["System.Title", "System.WorkItemType"])
-                .then(function (workitemResult) {
+            await this.vssWorkers.witClient.getWorkItem(witId)// when only specific fields required , ["System.Title", "System.WorkItemType"])
+                .then((workitemResult) => {
                     new Logger().Log("workitemResult", "new");
-                    parentWorkItem = new WimWorkItem(workitemResult, null);
-                    new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).ShowSelectedWorkitemOnPage(parentWorkItem);
+                    this.vssWorkers.parentWorkItem = new WimWorkItem(workitemResult, null);
+                    new ViewHelper(this.vssWorkers.vssDataService, TeamSettingsCollectionName, this.vssWorkers.parentWorkItem,
+                        defaultTeamName, defaultTaskTitle).ShowSelectedWorkitemOnPage(this.vssWorkers.parentWorkItem);
                 });
 
-            if (parentWorkItem === undefined || parentWorkItem === null) {
-                new WorkItemHelper(parentWorkItem).WorkItemNietGevonden();
+            if (this.vssWorkers.parentWorkItem === undefined || this.vssWorkers.parentWorkItem === null) {
+                new WorkItemHelper(this.vssWorkers.parentWorkItem).WorkItemNietGevonden();
             }
 
         } catch (e) {
             let exc: Error = e;
-            new WorkItemHelper(parentWorkItem).WorkItemNietGevonden(e);
+            new WorkItemHelper(this.vssWorkers.parentWorkItem).WorkItemNietGevonden(exc);
         }
     }
 
@@ -102,13 +110,13 @@ export class EventHandlers
         var retval = [];
 
         selectedCheckboxes.forEach(
-            function (element) {
-                var task = new WimWorkItem(null, parentWorkItem);
+            (element) => {
+                var task = new WimWorkItem(null, this.vssWorkers.parentWorkItem);
                 task.title = element.title;
                 task.workItemType = "Task";
-                task.workItemProjectName = parentWorkItem.workItemProjectName;
-                task.workItemIterationPath = parentWorkItem.workItemIterationPath;
-                task.workItemAreaPath = parentWorkItem.workItemAreaPath;
+                task.workItemProjectName = this.vssWorkers.parentWorkItem.workItemProjectName;
+                task.workItemIterationPath = this.vssWorkers.parentWorkItem.workItemIterationPath;
+                task.workItemAreaPath = this.vssWorkers.parentWorkItem.workItemAreaPath;
                 task.workItemTaskActivity = element.activityType;
                 retval.push(task);
             });
@@ -120,9 +128,9 @@ export class EventHandlers
     private CreateJsonPatchDocsForTasks(tasks) {
         var retval = [];
 
-        tasks.forEach(function (element) {
+        tasks.forEach((element)=> {
             retval.push(
-                new JsonPatchDoc(element, parentWorkItem).Create() // this.jsonPatchDoc(element).returnPatchDoc
+                new JsonPatchDoc(element, this.vssWorkers.parentWorkItem).Create() // this.jsonPatchDoc(element).returnPatchDoc
             );
         });
 
@@ -146,8 +154,8 @@ export class EventHandlers
             //}
         };
 
-        var waitcontrol = await vssControls.create(vssStatusindicator.WaitControl, container, options);
-        var client = await vssService.getCollectionClient(vssWiTrackingClient.WorkItemTrackingHttpClient);
+        var waitcontrol = await this.vssWorkers.vssControls.create(this.vssWorkers.vssStatusindicator.WaitControl, container, options);
+        var client = await this.vssWorkers.vssService.getCollectionClient(this.vssWorkers.vssWiTrackingClient.WorkItemTrackingHttpClient);
         //var client = vssService.getCollectionClient(VssWitClient.WorkItemTrackingHttpClient);
 
         waitcontrol.startWait();
@@ -178,25 +186,25 @@ export class EventHandlers
     }
 
     async AddTasksButtonClicked(obj) {
-        var allowedToAdd = new WorkItemHelper(parentWorkItem).CheckAllowedToAddTaskToPbi();
+        var allowedToAdd = new WorkItemHelper(this.vssWorkers.parentWorkItem).CheckAllowedToAddTaskToPbi();
         var taskCheckboxes = document.getElementsByName("taskcheckbox");
         var selectedCheckboxes = this.GetSelectedCheckboxes(taskCheckboxes);
         var tasksToPairWithWorkitem = this.CreateTasksToAdd(selectedCheckboxes);
 
         var jsonPatchDocs = this.CreateJsonPatchDocsForTasks(tasksToPairWithWorkitem);
 
-        this.PairTasksToWorkitem(jsonPatchDocs, parentWorkItem);
+        this.PairTasksToWorkitem(jsonPatchDocs, this.vssWorkers.parentWorkItem);
 
         var team;
         await this.GetTeamInAction().then(function (t) { team = t; });
 
-        await new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).LoadTasksOnMainWindow(team);
+        await new ViewHelper(this.vssWorkers.vssDataService, TeamSettingsCollectionName, this.vssWorkers.parentWorkItem, defaultTeamName, defaultTaskTitle).LoadTasksOnMainWindow(team);
         new Logger().Log("AddTasksButtonClicked", null);
     }
 
     async GetTeamInAction(): Promise<string> {
         let retval: string
-        let teamInAction = await vssDataService.getValue("team-in-action");
+        let teamInAction = await this.vssWorkers.vssDataService.getValue("team-in-action");
         new Logger().Log("GetTeamInAction", "Retrieved team in action value - " + teamInAction);
 
         retval = teamInAction as string;
@@ -206,9 +214,10 @@ export class EventHandlers
     async TeamModalOKButtonClicked() {
 
         let logger = new Logger();
+        let witTs = new WitTsClass(this.vssWorkers);
         var teamsOnForm = document.getElementsByName("teamInpNaam");
-
-        await vssDataService.getDocuments(TeamSettingsCollectionName).then(async function (docs) {
+        logger.Log("this.vssWorkers.vssDataService team ok", ""+this.vssWorkers);
+        await this.vssWorkers.vssDataService.getDocuments(TeamSettingsCollectionName).then(async (docs) => {
 
             // delete only teams setting. Not other settings
             var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
@@ -220,35 +229,37 @@ export class EventHandlers
             var added = false;
 
             teamDocs.forEach(
-                function (element) {
-                    teamDeletionPromises.push(vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
+                (element) => {
+                    teamDeletionPromises.push(this.vssWorkers.vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
                 }
             );
 
-            let witTs = new WitTsClass();
-            Promise.all(teamDeletionPromises).then(async function (service) {
+            Promise.all(teamDeletionPromises).then(async (service) => {
 
                 if (!added) {
                     logger.Log("teamInpChangeHandler", "Doc verwijderd");
-                    await witTs.AddTeamDocs(teamsOnForm, vssDataService);
+                    await witTs.AddTeamDocs(teamsOnForm);
+                    added = true;
                 }
             });
 
             // refactor this
             if (!added) {
                 logger.Log("teamInpChangeHandler", "Doc verwijderd");
-                await witTs.AddTeamDocs(teamsOnForm, this.vssDataService);
+                await witTs.AddTeamDocs(teamsOnForm);
+                added = true;
             }
         });
 
         logger.Log("teamInpChangeHandler", "Finished");
         new ModalHelper().CloseTeamsModal();
+        witTs.ReloadHost();
         VSS.notifyLoadSucceeded();
     }
 
     TeamModalCancelButtonClicked() {
         new ModalHelper().CloseTeamsModal();
-        new WitTsClass().ReloadHost();
+        new WitTsClass(this.vssWorkers).ReloadHost();
     }
 
     TeamModalAddTeamButtonClicked(name: string) {
@@ -269,7 +280,7 @@ export class EventHandlers
 
     TaskModalCancelButtonClicked() {
         new ModalHelper().CloseTasksModal();
-        new WitTsClass().ReloadHost();
+        new WitTsClass(this.vssWorkers).ReloadHost();
     }
 
     TaskModalAddTaskButtonClicked() {
@@ -282,19 +293,19 @@ export class EventHandlers
 
     TaskModalOKButtonClicked() {
         var t = document.getElementsByClassName('taskInputRow');
-        new WitTsClass().UpdateTasksDocs(t);
+        new WitTsClass(this.vssWorkers).UpdateTasksDocs(t);
         new Logger().Log("TaskModalOKButtonClicked", null);
     }
 
     TeamSelectedHandler(obj) {
-        selectedTeam = obj.value.toLowerCase(); //$(this).val();
-        if (selectedTeam === undefined) {
-            this.GetTeamInAction().then(function (v) { this.selectedTeam = v; });
+        this.vssWorkers.selectedTeam = obj.value.toLowerCase(); //$(this).val();
+        if (this.vssWorkers.selectedTeam === undefined) {
+            this.GetTeamInAction().then((v) => { this.vssWorkers.selectedTeam = v; });
         }
 
-        let viewHelper = new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle);
+        let viewHelper = new ViewHelper(this.vssWorkers.vssDataService, TeamSettingsCollectionName, this.vssWorkers.parentWorkItem, defaultTeamName, defaultTaskTitle);
 
-        viewHelper.LoadTeamTasks(selectedTeam);
+        viewHelper.LoadTeamTasks(this.vssWorkers.selectedTeam);
         viewHelper.EnableBtn("voegTaskToe");
         viewHelper.EnableBtn("taskDialogConfirmBtn");
 
@@ -302,32 +313,34 @@ export class EventHandlers
     }
 
     CheckUncheckAllClicked(obj) {
-        new CheckBoxHelper(parentWorkItem).CheckUncheck(obj);
+        new CheckBoxHelper(this.vssWorkers.parentWorkItem).CheckUncheck(obj);
     }
 }
 
 class PreLoader
 {
-    RegisterEvents() {
-        new EventHandlerRegister().RegisterEvents();
+    vssWorkers: VssWorkers;
+
+    constructor(vssWorkers: VssWorkers) {
+        this.vssWorkers = vssWorkers;
     }
 
     FindCollection() {
 
         let logger = new Logger();
-        logger.Log("FindCollection", "3: " + vssDataService);
+        logger.Log("FindCollection", "3: " + this.vssWorkers.vssDataService);
 
-        vssDataService.getDocuments(TeamSettingsCollectionName)
+        this.vssWorkers.vssDataService.getDocuments(TeamSettingsCollectionName)
             .then(
-                function (docs) {
+                (docs) => {
                     if (docs.length < 1) {
                         this.CreateFirstTimeCollection();
                     }
-                    this.log("FindCollection", "Number of docs found: " + docs.length);
+                    logger.Log("FindCollection", "Number of docs found: " + docs.length);
                 }, // on reject
-                function (err) {
+                (err) => {
                     this.CreateFirstTimeCollection();
-                    this.log("FindCollection", "Nothing found. Default Created.");
+                    logger.Log("FindCollection", "Nothing found. Default Created.");
                 }
             );
 
@@ -336,14 +349,14 @@ class PreLoader
 
     CreateFirstTimeCollection() {
         let logger = new Logger();
-        logger.Log("CreateFirstTimeCollection", "4: " + vssDataService);
+        logger.Log("CreateFirstTimeCollection", "4: " + this.vssWorkers.vssDataService);
         var newDoc = {
             type: "team",
             text: "DefaultTeam"
         };
 
-        vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
-            this.log("CreateFirstTimeCollection", "Default document created: " + doc.text);
+        this.vssWorkers.vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
+            logger.Log("CreateFirstTimeCollection", "Default document created: " + doc.text);
         });
 
         logger.Log("CreateFirstTimeCollection", "Done");
@@ -358,61 +371,63 @@ class PreLoader
         }
     }
 
-    LoadPreState() {
-        let modalHelper: ModalHelper = new ModalHelper();
+    //LoadPreState() {
+    //    let modalHelper: ModalHelper = new ModalHelper();
 
-        if (document.readyState == "complete") {
-            var name = window.location.pathname.split('/').slice(-1);
+    //    if (document.readyState == "complete") {
+    //        var name = window.location.pathname.split('/').slice(-1);
 
-            new CheckBoxHelper(parentWorkItem).DisableCheckBoxes();
-            new ButtonHelper(parentWorkItem).DisableAddButton();
+    //        new CheckBoxHelper(parentWorkItem).DisableCheckBoxes();
+    //        new ButtonHelper(parentWorkItem).DisableAddButton();
 
-            //this.registerTasksModelButtonEvents(modalHelper);
-            //this.registerTeamsModelButtonEvents(modalHelper);
+    //        //this.registerTasksModelButtonEvents(modalHelper);
+    //        //this.registerTeamsModelButtonEvents(modalHelper);
 
-            this.LoadRequired();
+    //        this.LoadRequired();
 
-            new Logger().Log("window.onload", "DocumentReady:" + name);
-        }
-    }
+    //        new Logger().Log("window.onload", "DocumentReady:" + name);
+    //    }
+    //}
 
     async LoadPreConditions(window) {
 
-        var name = window.location.pathname.split('/').slice(-1);
-        let modalHelper: ModalHelper = new ModalHelper();
-
-        new CheckBoxHelper(parentWorkItem).DisableCheckBoxes();
-        new ButtonHelper(parentWorkItem).DisableAddButton();
-
-        //this.registerTasksModelButtonEvents(modalHelper);
-        //this.registerTeamsModelButtonEvents(modalHelper);
-
         await this.LoadRequired();
+
+        var name = window.location.pathname.split('/').slice(-1);
+
+        new CheckBoxHelper(this.vssWorkers.parentWorkItem).DisableCheckBoxes();
+        new ButtonHelper(this.vssWorkers.parentWorkItem).DisableAddButton();
+        new EventHandlerRegister(this.vssWorkers).RegisterEvents();
 
         new Logger().Log("window.onload", "DocumentReady:" + name);
     }
 
     async LoadRequired() {
         let logger: Logger = new Logger();
+        this.vssWorkers = new VssWorkers();
+
         logger.Log("LoadRequired()", "Begin of LoadRequired()");
-        VSS.ready(async function () {
+        VSS.ready(async () => {
             await VSS.require(["VSS/Controls", "VSS/Controls/StatusIndicator", "VSS/Service", "TFS/WorkItemTracking/RestClient", "VSS/Controls/Menus"],
-                async function (c, i, s, r, m) {
-                    vssControls = c;
-                    vssStatusindicator = i;
-                    vssService = s;
-                    vssWiTrackingClient = r;
-                    vssMenus = m;
+                async (c, i, s, r, m) => {
+                    this.vssWorkers.vssControls = c;
+                    this.vssWorkers.vssStatusindicator = i;
+                    this.vssWorkers.vssService = s;
+                    this.vssWorkers.vssWiTrackingClient = r;
+                    this.vssWorkers.vssMenus = m;
 
-                    logger.Log("LoadRequired", "Required vssControls: " + vssControls);
-                    logger.Log("LoadRequired", "Required vssStatusIndicator: " + vssStatusindicator);
-                    logger.Log("LoadRequired", "Required vssService: " + vssService);
-                    logger.Log("LoadRequired", "Required vssWiTrackingClient: " + vssWiTrackingClient);
-                    logger.Log("LoadRequired", "Required vssMenus: " + vssMenus);
+                    logger.Log("LoadRequired", "Required vssControls: " + this.vssWorkers.vssControls);
+                    logger.Log("LoadRequired", "Required vssStatusIndicator: " + this.vssWorkers.vssStatusindicator);
+                    logger.Log("LoadRequired", "Required vssService: " + this.vssWorkers.vssService);
+                    logger.Log("LoadRequired", "Required vssWiTrackingClient: " + this.vssWorkers.vssWiTrackingClient);
+                    logger.Log("LoadRequired", "Required vssMenus: " + this.vssWorkers.vssMenus);
 
-                    vssDataService = await new ServiceHelper().GetDataService();
-                    await new MenuBuilder(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).BuildMenu(vssControls, vssMenus);
-                    new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle).CreateTeamSelectElementInitially();
+                    this.vssWorkers.vssDataService = await new ServiceHelper().GetDataService();
+                    await new MenuBuilder(this.vssWorkers.vssDataService, TeamSettingsCollectionName,
+                        this.vssWorkers.parentWorkItem, defaultTeamName, defaultTaskTitle)
+                        .BuildMenu(this.vssWorkers.vssControls, this.vssWorkers.vssMenus);
+                    new ViewHelper(this.vssWorkers.vssDataService, TeamSettingsCollectionName, this.vssWorkers.parentWorkItem,
+                        defaultTeamName, defaultTaskTitle).CreateTeamSelectElementInitially();
 
                     VSS.notifyLoadSucceeded();
                 });
@@ -422,11 +437,17 @@ class PreLoader
 
 class WitTsClass
 {
+    vssWorkers: VssWorkers;
+
+    constructor(vssWorkers: VssWorkers) {
+        this.vssWorkers = vssWorkers;
+    }
+
     async UpdateTasksDocs(tasks) {
 
-        vssDataService.getDocuments(TeamSettingsCollectionName).then(async function (docs) {
+        this.vssWorkers.vssDataService.getDocuments(TeamSettingsCollectionName).then(async (docs) => {
             // delete only tasks setting. Not other settings
-            var taskDocs = docs.filter(function (d) { return d.type === 'task' && d.owner === selectedTeam; });
+            var taskDocs = docs.filter((d) => { return d.type === 'task' && d.owner === this.vssWorkers.selectedTeam; });
             let logger = new Logger();
             logger.Log("UpdateTasksDocs", "Emptying task settings." + taskDocs.length + " settings will be removed.");
 
@@ -435,17 +456,17 @@ class WitTsClass
             //deletionPromises.push(new Promise(function () { /*empty*/ }));
 
             taskDocs.forEach(
-                function (element) {
-                    deletionPromises.push(vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
+                (element) => {
+                    deletionPromises.push(this.vssWorkers.vssDataService.deleteDocument(TeamSettingsCollectionName, element.id));
                     logger.Log("UpdateTasksDocs","Created promise for deletion");
                 }
             );
 
             let curr: WitTsClass = this
-            await Promise.all(deletionPromises).then(async function (s) {
+            await Promise.all(deletionPromises).then(async (s) => {
 
                 if (!added) {
-                    new WitTsClass().AddTasksDocs(tasks, selectedTeam);
+                    new WitTsClass(this.vssWorkers).AddTasksDocs(tasks, this.vssWorkers.selectedTeam);
                     added = true;
                 }
                 logger.Log("UpdateTasksDocs", "Tasks updated")
@@ -455,7 +476,7 @@ class WitTsClass
             // dan toch nog toevoegingen uitgevoerd worden
 
             if (!added) {
-                await curr.AddTasksDocs(tasks, selectedTeam);
+                await curr.AddTasksDocs(tasks, this.vssWorkers.selectedTeam);
                 added = true;
             }
 
@@ -481,7 +502,7 @@ class WitTsClass
                 activityType: taskActivityType
             };
 
-            await vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
+            await this.vssWorkers.vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
                 new Logger().Log("AddTasksDocs","created document : " + doc.text);
             });
 
@@ -490,7 +511,7 @@ class WitTsClass
         }
     }
 
-    AddTeamDocs(teamsCollection, dataService) {
+    AddTeamDocs(teamsCollection) {
         let logger = new Logger();
 
         for (var i = 0; i < teamsCollection.length; i++) {
@@ -503,13 +524,13 @@ class WitTsClass
                 text: teamnaam
             };
 
-            dataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
+            this.vssWorkers.vssDataService.createDocument(TeamSettingsCollectionName, newDoc).then(function (doc) {
                 // Even if no ID was passed to createDocument, one will be generated
                 this.log("AddTeamDocs", doc.text);
             });
 
             logger.Log("AddTeamDocs", "Team Setting Added: " + teamnaam);
-            this.ReloadHost();
+            //this.ReloadHost();
         }
     }
 
@@ -522,10 +543,10 @@ class WitTsClass
     }
 
     GetWorkItemTypes(callback) {
-        VSS.require(["TFS/WorkItemTracking/RestClient"], function (_restWitClient) {
-            witClient = _restWitClient.getClient();
+        VSS.require(["TFS/WorkItemTracking/RestClient"], (_restWitClient) => {
+            this.vssWorkers.witClient = _restWitClient.getClient();
 
-            witClient.getWorkItemTypes(VSS.getWebContext().project.name)
+            this.vssWorkers.witClient.getWorkItemTypes(VSS.getWebContext().project.name)
                 .then(function () {
                     callback();
                 });
@@ -540,7 +561,6 @@ class WitTsClass
 
 window.onload = function ()
 {
-    let preloader: PreLoader = new PreLoader();
+    let preloader: PreLoader = new PreLoader(vssWorkers);
     preloader.LoadPreConditions(window);
-    preloader.RegisterEvents();
 };
