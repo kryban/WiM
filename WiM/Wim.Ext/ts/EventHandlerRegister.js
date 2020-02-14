@@ -1,5 +1,5 @@
 import { Logger } from "./Logger.js";
-import { EventHandlers } from "./witTs.js";
+import { EventHandlers } from "./EventHandlers.js";
 export class EventHandlerRegister {
     constructor(vssWorkers) {
         this.vssWorkers = vssWorkers;

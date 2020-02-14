@@ -1,5 +1,5 @@
 ﻿import { Logger } from "./Logger.js";
-import { EventHandlers } from "./witTs.js";
+import { EventHandlers } from "./EventHandlers.js";
 import { VssWorkers } from "./VssWorkers.js";
 
 export class EventHandlerRegister
