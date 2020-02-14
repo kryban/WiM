@@ -87,7 +87,40 @@ export class WitTsClass
         }
     }
 
-    AddTeamDocs(teamsCollection) {
+    async UpdateTeamDocs(witTs: WitTsClass, teamsOnForm: NodeListOf<HTMLElement>) {
+
+        let logger = new Logger();
+        // first delete all team settings
+        await this.vssWorkers.vssDataService.getDocuments(this.vssWorkers.TeamSettingsCollectionName).then(async (docs) => {
+            // delete only teams setting. Not other settings
+            var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
+            // always 1 element for at least 1 iteration in Promises.all
+            var teamDeletionPromises: IPromise<void>[] = [];
+            //teamDeletionPromises.push(new Promise(function () { /*empty*/ }))
+            var added = false;
+            teamDocs.forEach((element) => {
+                teamDeletionPromises.push(this.vssWorkers.vssDataService.deleteDocument(this.vssWorkers.TeamSettingsCollectionName, element.id));
+            });
+            Promise.all(teamDeletionPromises).then(async (service) => {
+                if (!added) {
+                    logger.Log("teamInpChangeHandler", "Doc verwijderd");
+                    await witTs.AddTeamDocs(teamsOnForm);
+                    added = true;
+                }
+            });
+            // refactor this
+            if (!added) {
+                logger.Log("teamInpChangeHandler", "Doc verwijderd");
+                await witTs.AddTeamDocs(teamsOnForm);
+                added = true;
+            }
+        });
+        logger.Log("teamInpChangeHandler", "Finished");
+        new ModalHelper().CloseTeamsModal();
+        VSS.notifyLoadSucceeded();
+    }
+
+    async AddTeamDocs(teamsCollection) {
         let logger = new Logger();
 
         for (var i = 0; i < teamsCollection.length; i++) {
@@ -100,7 +133,7 @@ export class WitTsClass
                 text: teamnaam
             };
 
-            this.vssWorkers.vssDataService.createDocument(this.vssWorkers.TeamSettingsCollectionName, newDoc).then(function (doc) {
+            await this.vssWorkers.vssDataService.createDocument(this.vssWorkers.TeamSettingsCollectionName, newDoc).then(function (doc) {
                 // Even if no ID was passed to createDocument, one will be generated
                 this.log("AddTeamDocs", doc.text);
             });

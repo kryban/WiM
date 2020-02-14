@@ -12,7 +12,6 @@ import { CheckBoxHelper } from "./CheckBoxHelper.js";
 export class EventHandlers {
     vssWorkers: VssWorkers;
 
-
     constructor(vssWorkers: VssWorkers) {
         this.vssWorkers = vssWorkers;
     }
@@ -182,49 +181,12 @@ export class EventHandlers {
     }
 
     async TeamModalOKButtonClicked() {
-
-        let logger = new Logger();
         let witTs = new WitTsClass(this.vssWorkers);
         var teamsOnForm = document.getElementsByName("teamInpNaam");
-        logger.Log("this.vssWorkers.vssDataService team ok", "" + this.vssWorkers);
-        await this.vssWorkers.vssDataService.getDocuments(this.vssWorkers.TeamSettingsCollectionName).then(async (docs) => {
-
-            // delete only teams setting. Not other settings
-            var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
-
-            // always 1 element for at least 1 iteration in Promises.all
-            var teamDeletionPromises: IPromise<void>[] = [];
-            //teamDeletionPromises.push(new Promise(function () { /*empty*/ }))
-
-            var added = false;
-
-            teamDocs.forEach(
-                (element) => {
-                    teamDeletionPromises.push(this.vssWorkers.vssDataService.deleteDocument(this.vssWorkers.TeamSettingsCollectionName, element.id));
-                }
-            );
-
-            Promise.all(teamDeletionPromises).then(async (service) => {
-
-                if (!added) {
-                    logger.Log("teamInpChangeHandler", "Doc verwijderd");
-                    await witTs.AddTeamDocs(teamsOnForm);
-                    added = true;
-                }
-            });
-
-            // refactor this
-            if (!added) {
-                logger.Log("teamInpChangeHandler", "Doc verwijderd");
-                await witTs.AddTeamDocs(teamsOnForm);
-                added = true;
-            }
-        });
-
-        logger.Log("teamInpChangeHandler", "Finished");
-        new ModalHelper().CloseTeamsModal();
+        await witTs.UpdateTeamDocs(witTs, teamsOnForm);
         witTs.ReloadHost();
-        VSS.notifyLoadSucceeded();
+
+        new Logger().Log("TeamModalOKButtonClicked", null);
     }
 
     TeamModalCancelButtonClicked() {
@@ -262,9 +224,9 @@ export class EventHandlers {
     }
 
     TaskModalOKButtonClicked() {
-        var t = document.getElementsByClassName('taskInputRow');
         var witTs = new WitTsClass(this.vssWorkers);
-        witTs.UpdateTasksDocs(t);
+        var tasksOnForm = document.getElementsByClassName('taskInputRow');
+        witTs.UpdateTasksDocs(tasksOnForm);
         witTs.ReloadHost();
 
         new Logger().Log("TaskModalOKButtonClicked", null);

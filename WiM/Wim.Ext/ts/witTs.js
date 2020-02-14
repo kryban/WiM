@@ -77,6 +77,39 @@ export class WitTsClass {
             }
         });
     }
+    UpdateTeamDocs(witTs, teamsOnForm) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let logger = new Logger();
+            // first delete all team settings
+            yield this.vssWorkers.vssDataService.getDocuments(this.vssWorkers.TeamSettingsCollectionName).then((docs) => __awaiter(this, void 0, void 0, function* () {
+                // delete only teams setting. Not other settings
+                var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
+                // always 1 element for at least 1 iteration in Promises.all
+                var teamDeletionPromises = [];
+                //teamDeletionPromises.push(new Promise(function () { /*empty*/ }))
+                var added = false;
+                teamDocs.forEach((element) => {
+                    teamDeletionPromises.push(this.vssWorkers.vssDataService.deleteDocument(this.vssWorkers.TeamSettingsCollectionName, element.id));
+                });
+                Promise.all(teamDeletionPromises).then((service) => __awaiter(this, void 0, void 0, function* () {
+                    if (!added) {
+                        logger.Log("teamInpChangeHandler", "Doc verwijderd");
+                        yield witTs.AddTeamDocs(teamsOnForm);
+                        added = true;
+                    }
+                }));
+                // refactor this
+                if (!added) {
+                    logger.Log("teamInpChangeHandler", "Doc verwijderd");
+                    yield witTs.AddTeamDocs(teamsOnForm);
+                    added = true;
+                }
+            }));
+            logger.Log("teamInpChangeHandler", "Finished");
+            new ModalHelper().CloseTeamsModal();
+            VSS.notifyLoadSucceeded();
+        });
+    }
     AddTeamDocs(teamsCollection) {
         let logger = new Logger();
         for (var i = 0; i < teamsCollection.length; i++) {
