@@ -17,7 +17,7 @@ export class EventHandlerRegister {
         $("#voegTeamToe").click(function (e) { eventHandlers.TeamModalAddTeamButtonClicked(e.value); });
         $("#taskDialogCancelBtn").click(eventHandlers.TaskModalCancelButtonClicked);
         $("#taskDialogConfirmBtn").click(function (e) { eventHandlers.TaskModalOKButtonClicked(); });
-        $("#voegTaskToe").click(eventHandlers.TaskModalAddTaskButtonClicked);
+        $("#voegTaskToe").click(function (e) { eventHandlers.TaskModalAddTaskButtonClicked(); });
         // event delegation because elements are created dynamically 
         $(".input_fields_container_part").on("click", ".remove_field", function (e) { eventHandlers.TeamModalRemoveTeamButtonClicked(e.target); });
         $(".input_fields_container_part").on("focus", ".teamNaamInput", function (e) { eventHandlers.RemoveDefaultText(e.target); });

@@ -111,20 +111,22 @@ export class WitTsClass {
         });
     }
     AddTeamDocs(teamsCollection) {
-        let logger = new Logger();
-        for (var i = 0; i < teamsCollection.length; i++) {
-            var teamnaam = teamsCollection[i].value;
-            logger.Log("AddTeamDocs", teamnaam);
-            var newDoc = {
-                type: "team",
-                text: teamnaam
-            };
-            this.vssWorkers.vssDataService.createDocument(this.vssWorkers.TeamSettingsCollectionName, newDoc).then(function (doc) {
-                // Even if no ID was passed to createDocument, one will be generated
-                this.log("AddTeamDocs", doc.text);
-            });
-            logger.Log("AddTeamDocs", "Team Setting Added: " + teamnaam);
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            let logger = new Logger();
+            for (var i = 0; i < teamsCollection.length; i++) {
+                var teamnaam = teamsCollection[i].value;
+                logger.Log("AddTeamDocs", teamnaam);
+                var newDoc = {
+                    type: "team",
+                    text: teamnaam
+                };
+                yield this.vssWorkers.vssDataService.createDocument(this.vssWorkers.TeamSettingsCollectionName, newDoc).then(function (doc) {
+                    // Even if no ID was passed to createDocument, one will be generated
+                    this.log("AddTeamDocs", doc.text);
+                });
+                logger.Log("AddTeamDocs", "Team Setting Added: " + teamnaam);
+            }
+        });
     }
     ReloadHost() {
         VSS.getService(VSS.ServiceIds.Navigation).then(function (navigationService) {
