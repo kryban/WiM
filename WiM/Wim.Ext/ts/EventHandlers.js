@@ -37,7 +37,7 @@ export class EventHandlers {
                     .then((workitemResult) => {
                     new Logger().Log("workitemResult", "new");
                     this.vssWorkers.parentWorkItem = new WimWorkItem(workitemResult, null);
-                    new ViewHelper(this.vssWorkers.vssDataService, this.vssWorkers.TeamSettingsCollectionName, this.vssWorkers.parentWorkItem, this.vssWorkers.defaultTeamName, this.vssWorkers.defaultTaskTitle).ShowSelectedWorkitemOnPage(this.vssWorkers.parentWorkItem);
+                    new ViewHelper(this.vssWorkers).ShowSelectedWorkitemOnPage(this.vssWorkers.parentWorkItem);
                 });
                 if (this.vssWorkers.parentWorkItem === undefined || this.vssWorkers.parentWorkItem === null) {
                     new WorkItemHelper(this.vssWorkers.parentWorkItem).WorkItemNietGevonden();
@@ -133,7 +133,7 @@ export class EventHandlers {
             this.PairTasksToWorkitem(jsonPatchDocs, this.vssWorkers.parentWorkItem);
             var team;
             yield this.GetTeamInAction().then(function (t) { team = t; });
-            yield new ViewHelper(this.vssWorkers.vssDataService, this.vssWorkers.TeamSettingsCollectionName, this.vssWorkers.parentWorkItem, this.vssWorkers.defaultTeamName, this.vssWorkers.defaultTaskTitle).LoadTasksOnMainWindow(team);
+            yield new ViewHelper(this.vssWorkers).LoadTasksOnMainWindow(team);
             new Logger().Log("AddTasksButtonClicked", null);
         });
     }
@@ -194,7 +194,7 @@ export class EventHandlers {
         if (this.vssWorkers.selectedTeam === undefined) {
             this.GetTeamInAction().then((v) => { this.vssWorkers.selectedTeam = v; });
         }
-        let viewHelper = new ViewHelper(this.vssWorkers.vssDataService, this.vssWorkers.TeamSettingsCollectionName, this.vssWorkers.parentWorkItem, this.vssWorkers.defaultTeamName, this.vssWorkers.defaultTaskTitle);
+        let viewHelper = new ViewHelper(this.vssWorkers);
         viewHelper.LoadTeamTasks(this.vssWorkers.selectedTeam);
         viewHelper.EnableBtn("voegTaskToe");
         viewHelper.EnableBtn("taskDialogConfirmBtn");

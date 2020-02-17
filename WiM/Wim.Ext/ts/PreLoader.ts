@@ -15,7 +15,6 @@ export class PreLoader {
     }
 
     FindCollection() {
-
         let logger = new Logger();
         logger.Log("FindCollection", "3: " + this.vssWorkers.vssDataService);
 
@@ -60,24 +59,6 @@ export class PreLoader {
         }
     }
 
-    //LoadPreState() {
-    //    let modalHelper: ModalHelper = new ModalHelper();
-
-    //    if (document.readyState == "complete") {
-    //        var name = window.location.pathname.split('/').slice(-1);
-
-    //        new CheckBoxHelper(parentWorkItem).DisableCheckBoxes();
-    //        new ButtonHelper(parentWorkItem).DisableAddButton();
-
-    //        //this.registerTasksModelButtonEvents(modalHelper);
-    //        //this.registerTeamsModelButtonEvents(modalHelper);
-
-    //        this.LoadRequired();
-
-    //        new Logger().Log("window.onload", "DocumentReady:" + name);
-    //    }
-    //}
-
     async LoadPreConditions(window) {
 
         await this.LoadRequired();
@@ -112,11 +93,8 @@ export class PreLoader {
                     logger.Log("LoadRequired", "Required vssMenus: " + this.vssWorkers.vssMenus);
 
                     this.vssWorkers.vssDataService = await new ServiceHelper().GetDataService();
-                    await new MenuBuilder(this.vssWorkers.vssDataService, this.vssWorkers.TeamSettingsCollectionName,
-                        this.vssWorkers.parentWorkItem, this.vssWorkers.defaultTeamName, this.vssWorkers.defaultTaskTitle)
-                        .BuildMenu(this.vssWorkers.vssControls, this.vssWorkers.vssMenus);
-                    new ViewHelper(this.vssWorkers.vssDataService, this.vssWorkers.TeamSettingsCollectionName, this.vssWorkers.parentWorkItem,
-                        this.vssWorkers.defaultTeamName, this.vssWorkers.defaultTaskTitle).CreateTeamSelectElementInitially();
+                    await new MenuBuilder(this.vssWorkers).BuildMenu(this.vssWorkers.vssControls, this.vssWorkers.vssMenus);
+                    new ViewHelper(this.vssWorkers).CreateTeamSelectElementInitially();
 
                     VSS.notifyLoadSucceeded();
                 });

@@ -2,6 +2,7 @@
 import { Logger } from "./Logger.js";
 import { ViewHelper } from "./ViewHelper.js";
 import { WimWorkItem } from "./wimworkitem.js";
+import { VssWorkers } from "./VssWorkers.js";
 
 export class MenuBuilder {
     menuSettings;
@@ -12,21 +13,22 @@ export class MenuBuilder {
     defaultTaskTitle: string;
     viewHelper;
 
-    constructor(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle) {
-        this.vssDataservice = vssDataService;
-        this.TeamSettingsCollectionName = TeamSettingsCollectionName;
-        this.parentWorkItem = parentWorkItem;
-        this.defaultTeamName = defaultTeamName;
-        this.defaultTaskTitle = defaultTaskTitle;
-        this.viewHelper = new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle);
+    constructor(vssWorkers: VssWorkers) {
+        this.vssDataservice = vssWorkers.vssDataService;
+        this.TeamSettingsCollectionName = vssWorkers.TeamSettingsCollectionName;
+        this.parentWorkItem = vssWorkers.parentWorkItem;
+        this.defaultTeamName = vssWorkers.defaultTeamName;
+        this.defaultTaskTitle = vssWorkers.defaultTaskTitle;
+
+        this.viewHelper = new ViewHelper(vssWorkers);
     }
 
     async GetMenuSettings(): Promise<any[]> {
         let menusettings = [];
         await this.vssDataservice.getDocuments(this.TeamSettingsCollectionName).then(
-            async function (docs) {
+            async (docs) => {
                 await docs.forEach(
-                    async function (element) {
+                    async (element) => {
                         await menusettings.push(element)
                     }
                 )

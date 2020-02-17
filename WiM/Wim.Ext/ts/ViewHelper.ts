@@ -4,6 +4,7 @@ import { WorkItemHelper } from "./workitemhelper.js";
 import { CheckBoxHelper } from "./CheckBoxHelper.js";
 import { ButtonHelper } from "./ButtonHelper.js";
 import { WimWorkItem } from "./wimworkitem.js";
+import { VssWorkers } from "./VssWorkers.js";
 
 export class ViewHelper {
 
@@ -14,17 +15,13 @@ export class ViewHelper {
     defaultTaskTitle: string;
     teamInAction: string;
 
-    constructor(dataService: IExtensionDataService,
-        TeamSettingsCollectionName: string,
-        parentWorkItem: WimWorkItem,
-        defaultTeamName: string,
-        defaultTaskTitle: string)
+    constructor(vssWorkers: VssWorkers)
     {
-        this.dataservice = dataService;
-        this.TeamSettingsCollectionName = TeamSettingsCollectionName;
-        this.parentWorkItem = parentWorkItem;
-        this.defaultTeamName = defaultTeamName;
-        this.defaultTaskTitle = defaultTaskTitle;
+        this.dataservice = vssWorkers.vssDataService;
+        this.TeamSettingsCollectionName = vssWorkers.TeamSettingsCollectionName;
+        this.parentWorkItem = vssWorkers.parentWorkItem;
+        this.defaultTeamName = vssWorkers.defaultTeamName;
+        this.defaultTaskTitle = vssWorkers.defaultTaskTitle;
     }
 
     SetTeamInAction(teamnaam: string, dService: IExtensionDataService) {

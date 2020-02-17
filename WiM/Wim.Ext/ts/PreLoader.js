@@ -55,18 +55,6 @@ export class PreLoader {
             this.CreateFirstTimeCollection();
         }
     }
-    //LoadPreState() {
-    //    let modalHelper: ModalHelper = new ModalHelper();
-    //    if (document.readyState == "complete") {
-    //        var name = window.location.pathname.split('/').slice(-1);
-    //        new CheckBoxHelper(parentWorkItem).DisableCheckBoxes();
-    //        new ButtonHelper(parentWorkItem).DisableAddButton();
-    //        //this.registerTasksModelButtonEvents(modalHelper);
-    //        //this.registerTeamsModelButtonEvents(modalHelper);
-    //        this.LoadRequired();
-    //        new Logger().Log("window.onload", "DocumentReady:" + name);
-    //    }
-    //}
     LoadPreConditions(window) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.LoadRequired();
@@ -95,9 +83,8 @@ export class PreLoader {
                     logger.Log("LoadRequired", "Required vssWiTrackingClient: " + this.vssWorkers.vssWiTrackingClient);
                     logger.Log("LoadRequired", "Required vssMenus: " + this.vssWorkers.vssMenus);
                     this.vssWorkers.vssDataService = yield new ServiceHelper().GetDataService();
-                    yield new MenuBuilder(this.vssWorkers.vssDataService, this.vssWorkers.TeamSettingsCollectionName, this.vssWorkers.parentWorkItem, this.vssWorkers.defaultTeamName, this.vssWorkers.defaultTaskTitle)
-                        .BuildMenu(this.vssWorkers.vssControls, this.vssWorkers.vssMenus);
-                    new ViewHelper(this.vssWorkers.vssDataService, this.vssWorkers.TeamSettingsCollectionName, this.vssWorkers.parentWorkItem, this.vssWorkers.defaultTeamName, this.vssWorkers.defaultTaskTitle).CreateTeamSelectElementInitially();
+                    yield new MenuBuilder(this.vssWorkers).BuildMenu(this.vssWorkers.vssControls, this.vssWorkers.vssMenus);
+                    new ViewHelper(this.vssWorkers).CreateTeamSelectElementInitially();
                     VSS.notifyLoadSucceeded();
                 }));
             }));

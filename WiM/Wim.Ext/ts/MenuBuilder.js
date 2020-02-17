@@ -10,26 +10,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { Logger } from "./Logger.js";
 import { ViewHelper } from "./ViewHelper.js";
 export class MenuBuilder {
-    constructor(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle) {
-        this.vssDataservice = vssDataService;
-        this.TeamSettingsCollectionName = TeamSettingsCollectionName;
-        this.parentWorkItem = parentWorkItem;
-        this.defaultTeamName = defaultTeamName;
-        this.defaultTaskTitle = defaultTaskTitle;
-        this.viewHelper = new ViewHelper(vssDataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle);
+    constructor(vssWorkers) {
+        this.vssDataservice = vssWorkers.vssDataService;
+        this.TeamSettingsCollectionName = vssWorkers.TeamSettingsCollectionName;
+        this.parentWorkItem = vssWorkers.parentWorkItem;
+        this.defaultTeamName = vssWorkers.defaultTeamName;
+        this.defaultTaskTitle = vssWorkers.defaultTaskTitle;
+        this.viewHelper = new ViewHelper(vssWorkers);
     }
     GetMenuSettings() {
         return __awaiter(this, void 0, void 0, function* () {
             let menusettings = [];
-            yield this.vssDataservice.getDocuments(this.TeamSettingsCollectionName).then(function (docs) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    yield docs.forEach(function (element) {
-                        return __awaiter(this, void 0, void 0, function* () {
-                            yield menusettings.push(element);
-                        });
-                    });
-                });
-            });
+            yield this.vssDataservice.getDocuments(this.TeamSettingsCollectionName).then((docs) => __awaiter(this, void 0, void 0, function* () {
+                yield docs.forEach((element) => __awaiter(this, void 0, void 0, function* () {
+                    yield menusettings.push(element);
+                }));
+            }));
             return menusettings;
         });
     }

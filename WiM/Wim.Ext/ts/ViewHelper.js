@@ -13,12 +13,12 @@ import { WorkItemHelper } from "./workitemhelper.js";
 import { CheckBoxHelper } from "./CheckBoxHelper.js";
 import { ButtonHelper } from "./ButtonHelper.js";
 export class ViewHelper {
-    constructor(dataService, TeamSettingsCollectionName, parentWorkItem, defaultTeamName, defaultTaskTitle) {
-        this.dataservice = dataService;
-        this.TeamSettingsCollectionName = TeamSettingsCollectionName;
-        this.parentWorkItem = parentWorkItem;
-        this.defaultTeamName = defaultTeamName;
-        this.defaultTaskTitle = defaultTaskTitle;
+    constructor(vssWorkers) {
+        this.dataservice = vssWorkers.vssDataService;
+        this.TeamSettingsCollectionName = vssWorkers.TeamSettingsCollectionName;
+        this.parentWorkItem = vssWorkers.parentWorkItem;
+        this.defaultTeamName = vssWorkers.defaultTeamName;
+        this.defaultTaskTitle = vssWorkers.defaultTaskTitle;
     }
     SetTeamInAction(teamnaam, dService) {
         dService.setValue("team-in-action", teamnaam).then(function () {
