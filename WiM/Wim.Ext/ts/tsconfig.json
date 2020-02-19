@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
     "target": "ES6",
+    "allowSyntheticDefaultImports": true,
     "sourceMap": false,
     "lib": [
       "dom",
       "es6"
     ],
     "skipLibCheck": true,
-    "types": []
+    "types": ["react"],
+    "jsx": "react"
   },
   "include": [
     "*.ts"

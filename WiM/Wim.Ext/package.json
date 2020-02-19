@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "npm packages for WiM",
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "@types/react-dom": "^16.9.5"
+  },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

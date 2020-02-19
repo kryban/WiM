@@ -14,6 +14,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/tfs.d.ts" />
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/vss.d.ts" />
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/vss.sdk.d.ts" />
+/// <reference path="../node_modules/@types/react/index.d.ts" /> 
+/// <reference path="../node_modules/@types/react-dom/index.d.ts" /> 
 import { Logger } from "./Logger.js";
 import { ModalHelper } from "./ModalHelper.js";
 import { PreLoader } from "./PreLoader.js";

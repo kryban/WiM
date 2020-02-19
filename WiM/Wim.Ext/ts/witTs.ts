@@ -6,11 +6,16 @@
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/tfs.d.ts" />
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/vss.d.ts" />
 /// <reference path="../node_modules/vss-web-extension-sdk/typings/vss.sdk.d.ts" />
+/// <reference path="../node_modules/@types/react/index.d.ts" /> 
+/// <reference path="../node_modules/@types/react-dom/index.d.ts" /> 
 
 import { Logger } from "./Logger.js"
 import { ModalHelper } from "./ModalHelper.js"
 import { VssWorkers } from "./VssWorkers.js";
 import { PreLoader } from "./PreLoader.js";
+import React from 'react';
+import ReactDOM from 'react-dom'; 
+
 
 var vssWorkers: VssWorkers;
 

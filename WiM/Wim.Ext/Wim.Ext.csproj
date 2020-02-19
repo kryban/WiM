@@ -135,6 +135,9 @@
     <Content Include="extManifest.json" />
     <Content Include="doc\OLDManifest" />
     <Content Include="doc\OLDpackage-lock.json" />
+    <Content Include="node_modules\%40types\react-dom\LICENSE" />
+    <Content Include="node_modules\%40types\react-dom\package.json" />
+    <Content Include="node_modules\%40types\react-dom\README.md" />
     <None Include="packages.config" />
     <Content Include="ts\tsconfig.json" />
     <None Include="Web.Debug.config">
@@ -161,6 +164,11 @@
     <TypeScriptCompile Include="node_modules\%40types\knockout\index.d.ts" />
     <TypeScriptCompile Include="node_modules\%40types\mousetrap\index.d.ts" />
     <TypeScriptCompile Include="node_modules\%40types\q\index.d.ts" />
+    <TypeScriptCompile Include="node_modules\%40types\react-dom\experimental.d.ts" />
+    <TypeScriptCompile Include="node_modules\%40types\react-dom\index.d.ts" />
+    <TypeScriptCompile Include="node_modules\%40types\react-dom\node-stream\index.d.ts" />
+    <TypeScriptCompile Include="node_modules\%40types\react-dom\server\index.d.ts" />
+    <TypeScriptCompile Include="node_modules\%40types\react-dom\test-utils\index.d.ts" />
     <TypeScriptCompile Include="node_modules\%40types\react\index.d.ts" />
     <TypeScriptCompile Include="node_modules\%40types\requirejs\index.d.ts" />
     <TypeScriptCompile Include="node_modules\%40types\sizzle\index.d.ts" />
