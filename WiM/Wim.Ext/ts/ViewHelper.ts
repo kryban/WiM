@@ -67,13 +67,13 @@ export class ViewHelper {
 
                 if (dservice !== null) {
                     dservice.deleteDocument(this.TeamSettingsCollectionName, doc.id).then(function () {
-                        this.log("DeleteTeamSettings", "Doc verwijderd");
+                        new Logger().Log("DeleteTeamSettings", "Doc verwijderd");
                         VSS.notifyLoadSucceeded();
                     });
                 }
 
                 dservice.deleteDocument(this.TeamSettingsCollectionName, doc.id).then(function () {
-                    this.log("DeleteTeamSettings", "Doc verwijderddd");
+                    new Logger().Log("DeleteTeamSettings", "Doc verwijderddd");
                 });
             }
         )
@@ -107,7 +107,7 @@ export class ViewHelper {
 
         await dService.createDocument(this.TeamSettingsCollectionName, newDoc).then(function (doc) {
             // Even if no ID was passed to createDocument, one will be generated
-            this.log("SetTeamSettingsNew", doc.text);
+            new Logger().Log("SetTeamSettingsNew", doc.text);
         });
 
         VSS.notifyLoadSucceeded();

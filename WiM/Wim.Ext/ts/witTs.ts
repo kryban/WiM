@@ -1,4 +1,5 @@
-﻿//////////////settings////////////////////////////////////////////////////////////////////
+﻿
+//////////////settings////////////////////////////////////////////////////////////////////
 //https://docs.microsoft.com/en-us/azure/devops/extend/develop/data-storage?view=azure-devops&viewFallbackFrom=vsts
 //see all settings
 //http://krylp:8080/tfs/DefaultCollection/_apis/ExtensionManagement/InstalledExtensions/bandik/WimDevOpExtension/Data/Scopes/Default/Current/Collections/WimCollection/Documents 
@@ -14,8 +15,7 @@ import { ModalHelper } from "./ModalHelper.js"
 import { VssWorkers } from "./VssWorkers.js";
 import { PreLoader } from "./PreLoader.js";
 import React from 'react';
-import ReactDOM from 'react-dom'; 
-
+import ReactDOM from 'react-dom';
 
 var vssWorkers: VssWorkers;
 
@@ -99,6 +99,7 @@ export class WitTsClass
         await this.vssWorkers.vssDataService.getDocuments(this.vssWorkers.TeamSettingsCollectionName).then(async (docs) => {
             // delete only teams setting. Not other settings
             var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
+            logger.Log("UpdateTeamDocs", "Queried team docs: " + teamDocs.length);
             // always 1 element for at least 1 iteration in Promises.all
             var teamDeletionPromises: IPromise<void>[] = [];
             //teamDeletionPromises.push(new Promise(function () { /*empty*/ }))
@@ -106,21 +107,21 @@ export class WitTsClass
             teamDocs.forEach((element) => {
                 teamDeletionPromises.push(this.vssWorkers.vssDataService.deleteDocument(this.vssWorkers.TeamSettingsCollectionName, element.id));
             });
-            Promise.all(teamDeletionPromises).then(async (service) => {
+             await Promise.all(teamDeletionPromises).then(async (service) => {
                 if (!added) {
-                    logger.Log("teamInpChangeHandler", "Doc verwijderd");
+                    logger.Log("UpdateTeamDocs", "Docs verwijderd");
                     await witTs.AddTeamDocs(teamsOnForm);
                     added = true;
                 }
             });
             // refactor this
             if (!added) {
-                logger.Log("teamInpChangeHandler", "Doc verwijderd");
+                logger.Log("UpdateTeamDocs", "Doc verwijderd");
                 await witTs.AddTeamDocs(teamsOnForm);
                 added = true;
             }
         });
-        logger.Log("teamInpChangeHandler", "Finished");
+        logger.Log("UpdateTeamDocs", "Finished");
         new ModalHelper().CloseTeamsModal();
         VSS.notifyLoadSucceeded();
     }
@@ -132,6 +133,8 @@ export class WitTsClass
 
             var teamnaam = teamsCollection[i].value;
             logger.Log("AddTeamDocs", teamnaam);
+            logger.Log("AddTeamDocs", "Number of teams to set: " + teamsCollection.length);
+            logger.Log("AddTeamDocs", "Teams set: " + (i+1));
 
             var newDoc = {
                 type: "team",
@@ -140,7 +143,7 @@ export class WitTsClass
 
             await this.vssWorkers.vssDataService.createDocument(this.vssWorkers.TeamSettingsCollectionName, newDoc).then(function (doc) {
                 // Even if no ID was passed to createDocument, one will be generated
-                this.log("AddTeamDocs", doc.text);
+                logger.Log("AddTeamDocs", doc.text);
             });
 
             logger.Log("AddTeamDocs", "Team Setting Added: " + teamnaam);

@@ -67,6 +67,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="components\front.jsx" />
     <Content Include="doc\todo.txt" />
     <Content Include="images\overview-addTasks.png" />
     <Content Include="images\overview-manageTasks.png" />
@@ -154,6 +155,7 @@
     <Folder Include="ps\" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="components\componentTsxFile.tsx" />
     <TypeScriptCompile Include="node_modules\%40types\jqueryui\index.d.ts" />
     <TypeScriptCompile Include="node_modules\%40types\jquery\dist\jquery.slim.d.ts" />
     <TypeScriptCompile Include="node_modules\%40types\jquery\index.d.ts" />

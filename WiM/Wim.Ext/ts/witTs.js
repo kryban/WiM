@@ -86,6 +86,7 @@ export class WitTsClass {
             yield this.vssWorkers.vssDataService.getDocuments(this.vssWorkers.TeamSettingsCollectionName).then((docs) => __awaiter(this, void 0, void 0, function* () {
                 // delete only teams setting. Not other settings
                 var teamDocs = docs.filter(function (d) { return d.type === 'team'; });
+                logger.Log("UpdateTeamDocs", "Queried team docs: " + teamDocs.length);
                 // always 1 element for at least 1 iteration in Promises.all
                 var teamDeletionPromises = [];
                 //teamDeletionPromises.push(new Promise(function () { /*empty*/ }))
@@ -93,21 +94,21 @@ export class WitTsClass {
                 teamDocs.forEach((element) => {
                     teamDeletionPromises.push(this.vssWorkers.vssDataService.deleteDocument(this.vssWorkers.TeamSettingsCollectionName, element.id));
                 });
-                Promise.all(teamDeletionPromises).then((service) => __awaiter(this, void 0, void 0, function* () {
+                yield Promise.all(teamDeletionPromises).then((service) => __awaiter(this, void 0, void 0, function* () {
                     if (!added) {
-                        logger.Log("teamInpChangeHandler", "Doc verwijderd");
+                        logger.Log("UpdateTeamDocs", "Docs verwijderd");
                         yield witTs.AddTeamDocs(teamsOnForm);
                         added = true;
                     }
                 }));
                 // refactor this
                 if (!added) {
-                    logger.Log("teamInpChangeHandler", "Doc verwijderd");
+                    logger.Log("UpdateTeamDocs", "Doc verwijderd");
                     yield witTs.AddTeamDocs(teamsOnForm);
                     added = true;
                 }
             }));
-            logger.Log("teamInpChangeHandler", "Finished");
+            logger.Log("UpdateTeamDocs", "Finished");
             new ModalHelper().CloseTeamsModal();
             VSS.notifyLoadSucceeded();
         });
@@ -118,13 +119,15 @@ export class WitTsClass {
             for (var i = 0; i < teamsCollection.length; i++) {
                 var teamnaam = teamsCollection[i].value;
                 logger.Log("AddTeamDocs", teamnaam);
+                logger.Log("AddTeamDocs", "Number of teams to set: " + teamsCollection.length);
+                logger.Log("AddTeamDocs", "Teams set: " + (i + 1));
                 var newDoc = {
                     type: "team",
                     text: teamnaam
                 };
                 yield this.vssWorkers.vssDataService.createDocument(this.vssWorkers.TeamSettingsCollectionName, newDoc).then(function (doc) {
                     // Even if no ID was passed to createDocument, one will be generated
-                    this.log("AddTeamDocs", doc.text);
+                    logger.Log("AddTeamDocs", doc.text);
                 });
                 logger.Log("AddTeamDocs", "Team Setting Added: " + teamnaam);
             }

@@ -92,7 +92,6 @@ export class ModalHelper {
         }
 
         var removeTaskFieldNode = document.createElement("a");
-        removeTaskFieldNode.setAttribute("onclick", "removeTaskFieldClickHandler(this)");
         removeTaskFieldNode.setAttribute("href", "#");
         removeTaskFieldNode.setAttribute("style", "margin-left:10px;");
         removeTaskFieldNode.setAttribute("class", "remove_task_field");

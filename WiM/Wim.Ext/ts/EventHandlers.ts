@@ -117,7 +117,7 @@ export class EventHandlers {
             //cancellable: true,
             //cancelTextFormat: "{0} to cancel",
             //cancelCallback: function () {
-            //    console.this.log("cancelled");
+            //    new Logger().Log("cancelled");
             //}
         };
 
